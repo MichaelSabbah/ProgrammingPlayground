@@ -41,7 +41,7 @@ public class ElementTO {
 			this.createDate = elementEntity.getCreateDate();
 			this.creatorEmail = elementEntity.getCreatorEmail();
 			this.creatorPlayground = elementEntity.getCreatorPlayground();
-			this.location = new Location(elementEntity.getLocation().getX(),elementEntity.getLocation().getY());
+			this.location = new Location(elementEntity.getX(),elementEntity.getY());
 			this.name = elementEntity.getName();
 			this.expirationDate = elementEntity.getExpirationDate();
 			this.type = elementEntity.getType();
@@ -143,7 +143,9 @@ public class ElementTO {
 		elementEntity.setCreatorPlayground(this.creatorPlayground);
 		elementEntity.setExpirationDate(this.expirationDate);
 		elementEntity.setId(this.id);
-		elementEntity.setLocation(elementEntity.getLocation());
+		//elementEntity.setLocation(new Location(elementEntity.getX(),elementEntity.getY()));
+		elementEntity.setX(this.getLocation().getX());
+		elementEntity.setY(this.getLocation().getY());
 		elementEntity.setName(elementEntity.getName());
 		elementEntity.setPlaygorund(elementEntity.getPlaygorund());
 		elementEntity.setType(elementEntity.getType());

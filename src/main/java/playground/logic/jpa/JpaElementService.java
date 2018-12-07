@@ -2,11 +2,14 @@ package playground.logic.jpa;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import playground.logic.ElementAlreadyExistsException;
 import playground.logic.ElementEntity;
 import playground.logic.ElementNotFoundException;
 import playground.logic.ElementService;
 
+//@Service
 public class JpaElementService implements ElementService{
 
 	@Override

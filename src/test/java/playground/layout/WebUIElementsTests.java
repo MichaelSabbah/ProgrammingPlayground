@@ -340,7 +340,9 @@ public class WebUIElementsTests {
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
-		elementEntity.setLocation(new Location(1,1));
+//		elementEntity.setLocation(new Location(1,1));
+		elementEntity.setX(1.0);
+		elementEntity.setY(1.0);
 		elementEntity.setId("1");
 		elementEntity.setPlaygorund("playground");
 		elementEntity.setCreatorPlayground("playground");
@@ -385,7 +387,9 @@ public class WebUIElementsTests {
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
-		elementEntity.setLocation(new Location(1,1));
+//		elementEntity.setLocation(new Location(1,1));
+		elementEntity.setX(1.0);
+		elementEntity.setY(1.0);
 		elementEntity.setId("1");
 		elementEntity.setPlaygorund("playground");
 		elementEntity.setCreatorPlayground("playground");

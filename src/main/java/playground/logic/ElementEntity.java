@@ -3,11 +3,17 @@ package playground.logic;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class ElementEntity {
 	
 	private String playgorund;
 	private String id;
-	private Location location;
+	//private Location location;
+	private Double x;
+	private Double y;
 	private String name;
 	private Date createDate;
 	private Date expirationDate;
@@ -20,7 +26,9 @@ public class ElementEntity {
 			String type, String creatorPlayground, String creatorEmail){
 		this.playgorund = playgorund;
 		this.id = id;
-		this.location = new Location(40, 90);
+		//this.location = new Location(40, 90);
+		this.x = 0.0;
+		this.y = 0.0;
 		this.name = name;
 		this.createDate = createDate;
 		this.expirationDate = expirationDate;
@@ -33,7 +41,23 @@ public class ElementEntity {
 	public ElementEntity()
 	{
 		this.attributes = new HashMap();
-		this.location = new Location(40, 50);
+		//this.location = new Location(40, 50);
+	}
+
+	public Double getX() {
+		return x;
+	}
+
+	public void setX(Double x) {
+		this.x = x;
+	}
+
+	public Double getY() {
+		return y;
+	}
+
+	public void setY(Double y) {
+		this.y = y;
 	}
 
 	public String getPlaygorund() {
@@ -43,7 +67,8 @@ public class ElementEntity {
 	public void setPlaygorund(String playgorund) {
 		this.playgorund = playgorund;
 	}
-
+	
+	@Id
 	public String getId() {
 		return id;
 	}
@@ -52,13 +77,13 @@ public class ElementEntity {
 		this.id = id;
 	}
 
-	public Location getLocation() {
+	/*public Location getLocation() {
 		return location;
 	}
 
 	public void setLocation(Location location) {
 		this.location = location;
-	}
+	}*/
 
 	public String getName() {
 		return name;

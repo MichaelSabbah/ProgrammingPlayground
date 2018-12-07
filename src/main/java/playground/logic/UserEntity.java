@@ -1,5 +1,9 @@
 package playground.logic;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class UserEntity {
 
 	private String email;
@@ -65,7 +69,8 @@ public class UserEntity {
 	public void setConfirmCode(int confirmCode) {
 		this.confirmCode = confirmCode;
 	}
-
+	
+	@Id
 	public String getEmail() {
 		return email;
 	}

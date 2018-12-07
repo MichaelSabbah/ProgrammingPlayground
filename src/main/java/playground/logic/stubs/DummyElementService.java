@@ -12,7 +12,7 @@ import playground.logic.ElementEntity;
 import playground.logic.ElementNotFoundException;
 import playground.logic.ElementService;
 
-//@Service
+@Service
 public class DummyElementService implements ElementService{
 
 	private List<ElementEntity> elements;
@@ -84,12 +84,12 @@ public class DummyElementService implements ElementService{
 		       dirty = true;
 			}
 			
-			if(entityUpdates.getLocation() != null &&
+			/*if(entityUpdates.getLocation() != null &&
 			   !entityUpdates.getLocation().equals(existing.getLocation())) {
 				
 			   existing.setLocation(entityUpdates.getLocation());
 			   dirty = true;
-			}
+			}*/
 			
 			if(entityUpdates.getName() != null  &&
 			   entityUpdates.equals(existing.getName())) {
@@ -134,7 +134,7 @@ public class DummyElementService implements ElementService{
 			throw new ElementNotFoundException();
 		List<ElementEntity> elementsByDistance = new ArrayList<>();
 		for(ElementEntity element : elements){
-			if(isInDistance(x,y,element.getLocation().getX(),element.getLocation().getY(),distance)) {
+			if(isInDistance(x,y,element.getX(),element.getY(),distance)) {
 				elementsByDistance.add(element);
 			}
 		}

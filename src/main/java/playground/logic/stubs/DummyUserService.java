@@ -15,7 +15,7 @@ import playground.logic.UserExistsException;
 import playground.logic.UserNotExists;
 import playground.logic.UserService;
 
-//@Service
+@Service
 public class DummyUserService implements UserService{
 
 	private List<UserEntity> users;
