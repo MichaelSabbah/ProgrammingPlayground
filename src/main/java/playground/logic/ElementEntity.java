@@ -11,7 +11,7 @@ public class ElementEntity {
 	
 	private String playgorund;
 	private String id;
-	//private Location location;
+	// private Location location;
 	private Double x;
 	private Double y;
 	private String name;
