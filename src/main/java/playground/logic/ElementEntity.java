@@ -26,7 +26,7 @@ public class ElementEntity {
 			String type, String creatorPlayground, String creatorEmail){
 		this.playgorund = playgorund;
 		this.id = id;
-		//this.location = new Location(40, 90);
+		// this.location = new Location(40, 90);
 		this.x = 0.0;
 		this.y = 0.0;
 		this.name = name;
