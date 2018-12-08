@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -135,14 +136,16 @@ public class WebUI {
 			method=RequestMethod.GET,
 			path="/playground/elements/{userPlayground}/{email}/all",
 			produces=MediaType.APPLICATION_JSON_VALUE)
-	public ElementTO[] getAllElementsByPlayer(@PathVariable("userPlayground") String userPlayground,
-										@PathVariable("email") String email) {
+	public ElementTO[] getAllElementsByPlayer(@RequestParam(name="size", required=false, defaultValue="10") int size, 
+											  @RequestParam(name="page", required=false, defaultValue="0") int page,
+											  @PathVariable("userPlayground") String userPlayground,
+											  @PathVariable("email") String email) {
 		return 
-		this.elementService.getAllElements() 
-			.stream() 
-			.map(ElementTO::new) 
-			.collect(Collectors.toList()) 
-			.toArray(new ElementTO[0]);		
+			this.elementService.getAllElements() 
+				.stream() 
+				.map(ElementTO::new) 
+				.collect(Collectors.toList()) 
+				.toArray(new ElementTO[0]);		
 	}
 	
 	@RequestMapping(
