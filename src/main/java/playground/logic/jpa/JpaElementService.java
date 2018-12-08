@@ -11,7 +11,6 @@ import playground.logic.ElementAlreadyExistsException;
 import playground.logic.ElementEntity;
 import playground.logic.ElementNotFoundException;
 import playground.logic.ElementService;
-import playground.logic.MessageNotFoundException;
 
 //@Service
 public class JpaElementService implements ElementService{
@@ -44,9 +43,9 @@ public class JpaElementService implements ElementService{
 		
 		String elementId = playground + "@" + id;
 		if(elements.existsById(elementId)){
-			existing = this.elements.findById(name)
-					   .orElseThrow(()->
-					   new MessageNotFoundException("no message with name: " + name));
+//			existing = this.elements.findById(elementId)
+//					   .orElseThrow(()->
+//					   new ElementNotFoundException("no message with name: " + name));
 		}else {
 			throw new ElementNotFoundException("Not such element with playground: " + playground + 
 												" id: " + id);
@@ -101,7 +100,7 @@ public class JpaElementService implements ElementService{
 		   dirty = true;
 		}
 		if(dirty){
-			elements.set(elementPosition,existing);
+			//elements.set(elementPosition,existing);
 		}
 		return existing;
 	}
