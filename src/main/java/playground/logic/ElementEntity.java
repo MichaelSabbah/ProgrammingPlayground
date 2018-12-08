@@ -6,7 +6,12 @@ import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
 public class ElementEntity {
@@ -23,6 +28,7 @@ public class ElementEntity {
 	private Map<String,Object> attributes;
 	private String creatorPlayground;
 	private String creatorEmail;
+	private String elementId;
 	
 	public ElementEntity(String playground, String id, String name, Date createDate, Date expirationDate,
 			String type, String creatorPlayground, String creatorEmail){
@@ -62,7 +68,8 @@ public class ElementEntity {
 	public void setY(Double y) {
 		this.y = y;
 	}
-
+	
+	@Transient
 	public String getPlayground() {
 		return playground;
 	}
@@ -71,7 +78,7 @@ public class ElementEntity {
 		this.playground = playground;
 	}
 	
-	@Id
+	@Transient
 	public String getId() {
 		return id;
 	}
@@ -79,7 +86,12 @@ public class ElementEntity {
 	public void setId(String id) {
 		this.id = id;
 	}
-
+	
+	@Id
+	public String getElementId(){
+		return playground + "@" + id;
+	}
+	
 	/*public Location getLocation() {
 		return location;
 	}
@@ -95,7 +107,8 @@ public class ElementEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -103,7 +116,8 @@ public class ElementEntity {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
-
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getExpirationDate() {
 		return expirationDate;
 	}
@@ -124,7 +138,24 @@ public class ElementEntity {
 	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
-
+	
+	@Lob
+	public String getJsonAttributes() {
+		try {
+			return new ObjectMapper().writeValueAsString(this.attributes);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public void setJsonAttributes(String jsonAttributes) {
+		try {
+			this.attributes = new ObjectMapper().readValue(jsonAttributes, Map.class);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}

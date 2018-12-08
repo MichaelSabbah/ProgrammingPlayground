@@ -104,5 +104,6 @@
 	<classpathentry kind="lib" path="C:/Users/USER/Desktop/studies/FirthYear/IntegrativeSoftwareEngineering/Project/web.db.lib/tomcat-embed-websocket-8.5.34.jar"/>
 	<classpathentry kind="lib" path="C:/Users/USER/Desktop/studies/FirthYear/IntegrativeSoftwareEngineering/Project/web.db.lib/validation-api-2.0.1.Final.jar"/>
 	<classpathentry kind="lib" path="C:/Users/USER/Desktop/studies/FirthYear/IntegrativeSoftwareEngineering/Project/web.db.lib/xmlunit-core-2.5.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/USER/Desktop/studies/FirthYear/IntegrativeSoftwareEngineering/Project/lib-extra-mysql-support/lib-extra-mysql-support/mysql-connector-java-5.1.47.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
