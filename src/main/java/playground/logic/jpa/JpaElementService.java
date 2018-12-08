@@ -103,8 +103,7 @@ public class JpaElementService implements ElementService{
 	public List<ElementEntity> getAllElements() {
 		
 		return elements
-				.findAll()
-				.;
+				.findAll();
 	}
 
 	@Override
