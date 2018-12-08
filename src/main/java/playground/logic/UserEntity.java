@@ -122,7 +122,7 @@ public class UserEntity {
 	@Override
 	public boolean equals(Object obj) {
 		UserEntity userObj = (UserEntity)obj;
-		if(this.getEmail()== userObj.getEmail())
+		if(this.getEmail().equals(userObj.getEmail()))
 		{
 			return true;
 		}

@@ -2,14 +2,16 @@ package playground.logic;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class ElementEntity {
 	
-	private String playgorund;
+	private String playground;
 	private String id;
 	// private Location location;
 	private Double x;
@@ -18,13 +20,13 @@ public class ElementEntity {
 	private Date createDate;
 	private Date expirationDate;
 	private String type;
-	private HashMap<String,Object> attributes;
+	private Map<String,Object> attributes;
 	private String creatorPlayground;
 	private String creatorEmail;
 	
-	public ElementEntity(String playgorund, String id, String name, Date createDate, Date expirationDate,
+	public ElementEntity(String playground, String id, String name, Date createDate, Date expirationDate,
 			String type, String creatorPlayground, String creatorEmail){
-		this.playgorund = playgorund;
+		this.playground = playground;
 		this.id = id;
 		this.x = 0.0;
 		this.y = 0.0;
@@ -40,6 +42,8 @@ public class ElementEntity {
 	public ElementEntity()
 	{
 		this.attributes = new HashMap();
+		this.x = 0.0;
+		this.y = 0.0;
 		//this.location = new Location(40, 50);
 	}
 
@@ -59,12 +63,12 @@ public class ElementEntity {
 		this.y = y;
 	}
 
-	public String getPlaygorund() {
-		return playgorund;
+	public String getPlayground() {
+		return playground;
 	}
 
-	public void setPlaygorund(String playgorund) {
-		this.playgorund = playgorund;
+	public void setPlayground(String playground) {
+		this.playground = playground;
 	}
 	
 	@Id
@@ -115,12 +119,13 @@ public class ElementEntity {
 	public void setType(String type) {
 		this.type = type;
 	}
-
-	public HashMap<String, Object> getAttributes() {
+	
+	@Transient
+	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(HashMap<String, Object> attributes) {
+	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -143,7 +148,7 @@ public class ElementEntity {
 	@Override
 	public boolean equals(Object obj) {
 		ElementEntity other = (ElementEntity)obj;
-		return this.getPlaygorund().equals(other.getPlaygorund()) && 
+		return this.getPlayground().equals(other.getPlayground()) && 
 			   this.getId().equals(other.getId());
 	}
 }

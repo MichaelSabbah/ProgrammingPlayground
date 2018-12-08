@@ -8,5 +8,4 @@ public interface UserService {
 	public void updateUser(UserEntity user)throws Exception;
 	public void cleanAll();
 	
-
 }

@@ -17,6 +17,8 @@ import playground.logic.ElementAlreadyExistsException;
 import playground.logic.ElementEntity;
 import playground.logic.ElementNotFoundException;
 import playground.logic.ElementService;
+import playground.logic.UserEntity;
+import playground.logic.UserService;
 import playground.layout.NewUserForm;
 
 @RestController
@@ -29,10 +31,16 @@ public class WebUI {
 	}*/
 	
 	private ElementService elementService;
+	private UserService userService;
 	
 	@Autowired
 	public void setElementService(ElementService elementService) {
 		this.elementService = elementService;
+	}
+	
+	@Autowired
+	private void setUserService(UserService userService){
+		this.userService = userService;
 	}
 
 	@RequestMapping(
@@ -40,8 +48,9 @@ public class WebUI {
 			path="/playground/users",
 			produces=MediaType.APPLICATION_JSON_VALUE,
 			consumes=MediaType.APPLICATION_JSON_VALUE)
-	public UserTO register (@RequestBody NewUserForm newUserForm) {
-		return new UserTO();
+	public UserTO register (@RequestBody NewUserForm newUserForm) throws Exception {
+		UserEntity userEntity = newUserForm.toUserEntity();
+		return new UserTO(this.userService.addUser(userEntity));
 	}
 	
 	@RequestMapping(
@@ -49,9 +58,10 @@ public class WebUI {
 			path="/playground/users/confirm/{playground}/{email}/{code}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
 	public UserTO verifyRegistration(@PathVariable("playground") String playground,
-									@PathVariable("playground") String email,
-									@PathVariable("playground") String code) {
-		return new UserTO();
+									@PathVariable("email") String email,
+									@PathVariable("code") String code) throws Exception {
+		UserEntity userEntity = new UserEntity(email,playground,Integer.parseInt(code));
+		return new UserTO(this.userService.confirmUser(userEntity));
 	}
 	
 	@RequestMapping(
@@ -59,8 +69,8 @@ public class WebUI {
 			path="/playground/users/login/{playground}/{email}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
 	public UserTO login(@PathVariable("playground") String playground,
-						@PathVariable("email") String email) {
-		return new UserTO();
+						@PathVariable("email") String email) throws Exception {
+		return new UserTO(this.userService.loginUser(new UserEntity(email,playground)));
 	}
 	
 	@RequestMapping(
@@ -69,7 +79,11 @@ public class WebUI {
 			consumes=MediaType.APPLICATION_JSON_VALUE)
 	public void updateUser(@PathVariable("playground") String playground,
 							   @PathVariable("email") String email,
-							   @RequestBody UserTO userTo){
+							   @RequestBody UserTO userTo) throws Exception{
+		UserEntity userEntity = userTo.toUserEntity();
+		userEntity.setEmail(email);
+		userEntity.setPlayground(playground);
+		this.userService.updateUser(userEntity);
 		
 	}
 	
@@ -133,10 +147,10 @@ public class WebUI {
 			path = "/playground/elements/{userPlayground}/{email}/near/{x}/{y}/{distance}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
 	public ElementTO[] getNearByElementsByLocation(@PathVariable("userPlayground")String userPlayground,
-			@PathVariable("email")String email,@PathVariable("x")String x,
-			@PathVariable("y")String y,@PathVariable("distance")String distance) throws NumberFormatException, ElementNotFoundException{
+			@PathVariable("email")String email,@PathVariable("x")Integer x,
+			@PathVariable("y")Integer y,@PathVariable("distance")Integer distance) throws NumberFormatException, ElementNotFoundException{
 		return 
-		this.elementService.getElementsByDistance(Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(distance)) // MessageEntity List
+		this.elementService.getElementsByDistance(x, y, distance) // MessageEntity List
 			.stream() 
 			.map(ElementTO::new) 
 			.collect(Collectors.toList()) 

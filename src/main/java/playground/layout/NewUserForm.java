@@ -1,5 +1,7 @@
 package playground.layout;
 
+import playground.logic.UserEntity;
+
 public class NewUserForm {
 	
 	private String email;
@@ -17,6 +19,13 @@ public class NewUserForm {
 		this.username = username;
 		this.avatar = avatar;
 		this.role = role;
+	}
+	
+	public UserEntity toUserEntity()
+	{
+		UserEntity userEntity = new UserEntity(this.getEmail(), 
+				this.getUsername(), this.getAvatar(), this.getRole());
+		return userEntity;
 	}
 
 	public String getEmail() {
@@ -55,6 +64,5 @@ public class NewUserForm {
 	public String toString() {
 		return "NewUserForm [email=" + email + ", username=" + username + ", avatar=" + avatar + ", role=" + role + "]";
 	}
-	
-	
+
 }

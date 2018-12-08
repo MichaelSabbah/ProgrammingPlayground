@@ -25,7 +25,7 @@ public class DummyElementService implements ElementService{
 	@Override
 	public ElementEntity addNewElement(ElementEntity element) throws ElementAlreadyExistsException {
 		if(elements.contains(element))
-			throw new ElementAlreadyExistsException("Element exists with id: playground: " + element.getPlaygorund()
+			throw new ElementAlreadyExistsException("Element exists with id: playground: " + element.getPlayground()
 													+"id: " + element.getId());
 		elements.add(element);
 		
@@ -39,7 +39,7 @@ public class DummyElementService implements ElementService{
 		synchronized (elements) {
 			ElementEntity tempElement = new ElementEntity();
 			existing = null;
-			tempElement.setPlaygorund(playground);
+			tempElement.setPlayground(playground);
 			tempElement.setId(id);
 			int elementPosition = elements.indexOf(tempElement);
 			if(elementPosition > -1){
@@ -114,7 +114,7 @@ public class DummyElementService implements ElementService{
 	@Override
 	public ElementEntity getElementById(String playground, String id) throws ElementNotFoundException {
 		ElementEntity tempElement = new ElementEntity();
-		tempElement.setPlaygorund(playground);
+		tempElement.setPlayground(playground);
 		tempElement.setId(id);
 		int elementPosition = elements.indexOf(tempElement);
 		if(elementPosition < 0)

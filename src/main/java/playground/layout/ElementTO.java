@@ -2,26 +2,27 @@ package playground.layout;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import playground.logic.ElementEntity;
 import playground.logic.Location;
 
 public class ElementTO {
 
-	private String playgorund;
+	private String playground;
 	private String id;
 	private Location location;
 	private String name;
 	private Date createDate;
 	private Date expirationDate;
 	private String type;
-	private HashMap<String,Object> attributes;
+	private Map<String,Object> attributes;
 	private String creatorPlayground;
 	private String creatorEmail;
 	
-	public ElementTO(String playgorund, String id, String name, Date createDate, Date expirationDate,
+	public ElementTO(String playground, String id, String name, Date createDate, Date expirationDate,
 			String type, String creatorPlayground, String creatorEmail) {
-		this.playgorund = playgorund;
+		this.playground = playground;
 		this.id = id;
 		this.location = new Location(40, 90);
 		this.name = name;
@@ -36,7 +37,7 @@ public class ElementTO {
 	public ElementTO(ElementEntity elementEntity){
 		this();
 		if(elementEntity != null) {
-			this.playgorund = elementEntity.getPlaygorund();
+			this.playground = elementEntity.getPlayground();
 			this.id = elementEntity.getId();
 			this.createDate = elementEntity.getCreateDate();
 			this.creatorEmail = elementEntity.getCreatorEmail();
@@ -55,12 +56,12 @@ public class ElementTO {
 		this.location = new Location(40, 50);
 	}
 
-	public String getPlaygorund() {
-		return playgorund;
+	public String getPlayground() {
+		return playground;
 	}
 
-	public void setPlaygorund(String playgorund) {
-		this.playgorund = playgorund;
+	public void setPlayground(String playground) {
+		this.playground = playground;
 	}
 
 	public String getId() {
@@ -111,11 +112,11 @@ public class ElementTO {
 		this.type = type;
 	}
 
-	public HashMap<String, Object> getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(HashMap<String, Object> attributes) {
+	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -147,7 +148,7 @@ public class ElementTO {
 		elementEntity.setX(this.getLocation().getX());
 		elementEntity.setY(this.getLocation().getY());
 		elementEntity.setName(elementEntity.getName());
-		elementEntity.setPlaygorund(elementEntity.getPlaygorund());
+		elementEntity.setPlayground(elementEntity.getPlayground());
 		elementEntity.setType(elementEntity.getType());
 		return elementEntity;
 	}

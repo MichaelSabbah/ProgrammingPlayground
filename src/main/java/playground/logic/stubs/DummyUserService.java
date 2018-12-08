@@ -25,7 +25,7 @@ public class DummyUserService implements UserService{
 	@PostConstruct
 	public void init()
 	{
-		this.users = Collections.synchronizedList(new ArrayList<UserEntity>());
+		this.users = Collections.synchronizedList(new ArrayList<>());
 	}
 
 	@Override
@@ -44,10 +44,10 @@ public class DummyUserService implements UserService{
 	@Override
 	public UserEntity confirmUser(UserEntity user) throws Exception {
 		int index = this.users.indexOf(user);
-		if(index != -1)
+		if(index > -1)
 		{
 			UserEntity localUser = this.users.get(index);
-			if(localUser.getConfirmCode() != -1 && localUser.getConfirmCode() == user.getConfirmCode() && localUser.getPlayground() == user.getPlayground())
+			if(localUser.getConfirmCode() != -1 && localUser.getConfirmCode() == user.getConfirmCode() && localUser.getPlayground().equals(user.getPlayground()))
 			{
 				localUser.setConfirmCode(-1);
 				return localUser;
