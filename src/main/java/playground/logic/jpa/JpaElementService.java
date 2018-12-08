@@ -43,78 +43,68 @@ public class JpaElementService implements ElementService{
 		
 		String elementId = playground + "@" + id;
 		if(elements.existsById(elementId)){
-//			existing = this.elements.findById(elementId)
-//					   .orElseThrow(()->
-//					   new ElementNotFoundException("no message with name: " + name));
+			existing = this.elements.findById(elementId)
+					   .orElseThrow(()->
+					   new ElementNotFoundException("no element with id: " + elementId));
 		}else {
-			throw new ElementNotFoundException("Not such element with playground: " + playground + 
-												" id: " + id);
+			throw new ElementNotFoundException("no element with id: " + elementId);
 		}
-		
-		boolean dirty = false;
 		
 		if(entityUpdates.getAttributes() != null && !entityUpdates.getAttributes().isEmpty()) {
 			existing.setAttributes(entityUpdates.getAttributes());
-			dirty = true;
 		}
 		
 		if(entityUpdates.getCreateDate() != null &&
 		   !entityUpdates.getCreateDate().equals(existing.getCreateDate())) {
-			
 			existing.setCreateDate(entityUpdates.getCreateDate());
-			dirty = true;
 		}
 		
 		if(entityUpdates.getCreatorEmail() != null &&
-		   !entityUpdates.getCreatorEmail().equals(existing.getCreatorEmail())) {
-			
+		   !entityUpdates.getCreatorEmail().equals(existing.getCreatorEmail())) {	
 			existing.setCreatorEmail(entityUpdates.getCreatorEmail());
-			dirty = true;
 		}
 		
 		if(entityUpdates.getCreatorPlayground() != null &&
-		   !entityUpdates.getCreatorPlayground().equals(existing.getCreatorPlayground())) {
-			
+		   !entityUpdates.getCreatorPlayground().equals(existing.getCreatorPlayground())) {	
 		   existing.setCreatorPlayground(entityUpdates.getCreatorPlayground());
-		   dirty = true;
 		}
 		
 		if(entityUpdates.getExpirationDate() != null &&
 		   !entityUpdates.getExpirationDate().equals(existing.getExpirationDate())) {
-			
 		   existing.setExpirationDate(entityUpdates.getExpirationDate());
-	       dirty = true;
 		}
 		
 		if(entityUpdates.getName() != null  &&
-		   entityUpdates.equals(existing.getName())) {
-		   
+		   entityUpdates.equals(existing.getName())) {   
 		   existing.setName(entityUpdates.getName());
-		   dirty = true;
 		}
 		
 		if(entityUpdates.getType() != null &&
-		   !entityUpdates.getType().equals(existing.getType())) {
-		   
+		   !entityUpdates.getType().equals(existing.getType())) { 
 		   existing.setType(entityUpdates.getType());
-		   dirty = true;
 		}
-		if(dirty){
-			//elements.set(elementPosition,existing);
-		}
-		return existing;
+
+		return this.elements.save(existing);
 	}
 
 	@Override
+	@Transactional
 	public ElementEntity getElementById(String playground, String id) throws ElementNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		String elementId = playground + "@" + id;
+		
+		return 
+			this.elements.findById(elementId)
+			.orElseThrow(()->
+				new ElementNotFoundException(
+					"no element with id: " + elementId));
 	}
 
 	@Override
 	public List<ElementEntity> getAllElements() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return elements
+				.findAll()
+				.;
 	}
 
 	@Override
@@ -131,7 +121,7 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	public void cleanup() {
-		// TODO Auto-generated method stub
+		elements.deleteAll();
 		
 	}
 

@@ -507,12 +507,11 @@ public class WebUIElementsTests {
 		userEntity.setUsername("test");
 		userEntity.setRole("admin");
 		userEntity.setPlayground("playground");
-		userEntity.setConfirmCode(777);
 		userEntity.setAvatar("smiley.jpg");
-		this.userService.addUser(userEntity);
+		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
 
 		//When
-		UserTO userTO = this.restTemplate.getForObject(this.usersUrl+"/confirm/{playground}/{email}/{code}", UserTO.class, "playground","test@user.com",777);
+		UserTO userTO = this.restTemplate.getForObject(this.usersUrl+"/confirm/{playground}/{email}/{code}", UserTO.class, "playground","test@user.com",confirmCode);
 
 		//Then
 		assertThat(userTO)

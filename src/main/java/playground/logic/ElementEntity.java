@@ -42,6 +42,7 @@ public class ElementEntity {
 		this.type = type;
 		this.creatorPlayground = creatorPlayground;
 		this.creatorEmail = creatorEmail;
+		this.elementId = playground + "@" + id;
 		this.attributes = new HashMap();
 	}
 	
@@ -90,6 +91,10 @@ public class ElementEntity {
 	@Id
 	public String getElementId(){
 		return playground + "@" + id;
+	}
+	
+	public void setElementId(String elementId) {
+		this.elementId = elementId;
 	}
 	
 	/*public Location getLocation() {

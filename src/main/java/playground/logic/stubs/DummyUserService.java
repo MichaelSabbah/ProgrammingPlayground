@@ -26,6 +26,7 @@ public class DummyUserService implements UserService{
 	public void init()
 	{
 		this.users = Collections.synchronizedList(new ArrayList<>());
+		this.rand =new Random();
 	}
 
 	@Override
