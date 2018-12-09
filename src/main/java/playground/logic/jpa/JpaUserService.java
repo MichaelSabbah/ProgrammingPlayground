@@ -12,7 +12,8 @@ import playground.logic.UserExistsException;
 import playground.logic.UserNotExists;
 import playground.logic.UserService;
 
-//@Service
+//For Assaf
+//@Service 
 public class JpaUserService implements UserService{
 	private UserDao users;
 	private Random rnd;

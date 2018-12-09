@@ -100,20 +100,21 @@ public class JpaElementService implements ElementService{
 	}
 
 	@Override
-	public List<ElementEntity> getAllElements() {
+	public List<ElementEntity> getAllElements(int size, int page) {
 		
-		return elements
-				.findAll();
+		return null;
+		//return elements
+		//		.findAll();
 	}
 
 	@Override
-	public List<ElementEntity> getElementsByDistance(int x, int y, int distance) throws ElementNotFoundException {
+	public List<ElementEntity> getElementsByDistance(int x, int y, int distance,int size,int page) throws ElementNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<ElementEntity> getElementsByAttribute(String attributeName, String value) {
+	public List<ElementEntity> getElementsByAttribute(String attributeName, String value,int size, int page) {
 		// TODO Auto-generated method stub
 		return null;
 	}

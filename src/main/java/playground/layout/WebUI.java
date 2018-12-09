@@ -141,7 +141,7 @@ public class WebUI {
 											  @PathVariable("userPlayground") String userPlayground,
 											  @PathVariable("email") String email) {
 		return 
-			this.elementService.getAllElements() 
+			this.elementService.getAllElements(size,page) 
 				.stream() 
 				.map(ElementTO::new) 
 				.collect(Collectors.toList()) 
@@ -152,11 +152,14 @@ public class WebUI {
 			method = RequestMethod.GET,
 			path = "/playground/elements/{userPlayground}/{email}/near/{x}/{y}/{distance}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
-	public ElementTO[] getNearByElementsByLocation(@PathVariable("userPlayground")String userPlayground,
+	public ElementTO[] getNearElementsByLocation(
+			@RequestParam(name="size", required=false, defaultValue="10") int size, 
+			@RequestParam(name="page", required=false, defaultValue="0") int page,
+			@PathVariable("userPlayground")String userPlayground,
 			@PathVariable("email")String email,@PathVariable("x")Integer x,
 			@PathVariable("y")Integer y,@PathVariable("distance")Integer distance) throws NumberFormatException, ElementNotFoundException{
 		return 
-		this.elementService.getElementsByDistance(x, y, distance) // MessageEntity List
+		this.elementService.getElementsByDistance(x, y, distance,size,page) // MessageEntity List
 			.stream() 
 			.map(ElementTO::new) 
 			.collect(Collectors.toList()) 
@@ -167,11 +170,14 @@ public class WebUI {
 			method = RequestMethod.GET,
 			path = "/playground/elements/{userPlayground}/{email}/search/{attributeName}/{value}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
-	public ElementTO[] getElementsByAttribute(@PathVariable("userPlayground")String userPlayground,
+	public ElementTO[] getElementsByAttribute(
+			@RequestParam(name="size", required=false, defaultValue="10") int size, 
+			@RequestParam(name="page", required=false, defaultValue="0") int page,
+			@PathVariable("userPlayground")String userPlayground,
 			@PathVariable("email")String email,@PathVariable("attributeName")String attributeName,
 			@PathVariable("value")String value){
 		
-		return elementService.getElementsByAttribute(attributeName, value)
+		return elementService.getElementsByAttribute(attributeName, value, size, page)
 				.stream()
 				.map(ElementTO::new)
 				.collect(Collectors.toList())

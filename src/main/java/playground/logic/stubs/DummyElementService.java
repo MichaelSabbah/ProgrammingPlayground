@@ -124,12 +124,12 @@ public class DummyElementService implements ElementService{
 	}
 
 	@Override
-	public List<ElementEntity> getAllElements() {
+	public List<ElementEntity> getAllElements(int size, int page) {
 		return elements;
 	}
 
 	@Override
-	public List<ElementEntity> getElementsByDistance(int x, int y, int distance) throws ElementNotFoundException {
+	public List<ElementEntity> getElementsByDistance(int x, int y, int distance,int size, int page) throws ElementNotFoundException {
 		if(distance < 0)
 			throw new ElementNotFoundException();
 		List<ElementEntity> elementsByDistance = new ArrayList<>();
@@ -142,7 +142,7 @@ public class DummyElementService implements ElementService{
 	}
 
 	@Override
-	public List<ElementEntity> getElementsByAttribute(String attributeName, String value) {
+	public List<ElementEntity> getElementsByAttribute(String attributeName, String value,int size, int page) {
 		List<ElementEntity> elementsByAttribute = new ArrayList<>();
 		for(ElementEntity element : elements){
 			if(element.getAttributes().get(attributeName).equals(value)) {
