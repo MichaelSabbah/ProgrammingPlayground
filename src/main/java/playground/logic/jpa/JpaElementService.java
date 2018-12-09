@@ -3,6 +3,8 @@ package playground.logic.jpa;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +14,7 @@ import playground.logic.ElementEntity;
 import playground.logic.ElementNotFoundException;
 import playground.logic.ElementService;
 
-//@Service
+@Service
 public class JpaElementService implements ElementService{
 	
 	private ElementDao elements;
@@ -88,7 +90,7 @@ public class JpaElementService implements ElementService{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public ElementEntity getElementById(String playground, String id) throws ElementNotFoundException {
 		String elementId = playground + "@" + id;
 		
@@ -100,29 +102,47 @@ public class JpaElementService implements ElementService{
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<ElementEntity> getAllElements(int size, int page) {
-		
-		return null;
-		//return elements
-		//		.findAll();
+		return
+			this.elements.findAll(
+				 PageRequest.of(page, size, Direction.DESC, "createDate"))
+				.getContent();
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<ElementEntity> getElementsByDistance(int x, int y, int distance,int size,int page) throws ElementNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		List<ElementEntity> elements = this.elements.findAll(
+				 PageRequest.of(page, size))
+				.getContent();
+		
+		for(int i = 0 ; i < elements.size() ; i++) {
+			if(!isInDistance(x, y, elements.get(i).getX(), elements.get(i).getY(), distance)) {
+				elements.remove(i);
+			}
+		}
+		
+		return elements;
 	}
 
 	@Override
-	public List<ElementEntity> getElementsByAttribute(String attributeName, String value,int size, int page) {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional(readOnly=true)
+	public List<ElementEntity> getElementsByAttribute(String attributeName, String value,int size, int page) {		
+		String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
+		return this.elements.findAllByJsonAttributesContaining(jsonAttribute,PageRequest.of(page, size));
+		
 	}
 
 	@Override
+	@Transactional
 	public void cleanup() {
 		elements.deleteAll();
 		
+	}
+	
+	private boolean isInDistance(double x1, double y1, double x2, double y2, double distance){
+		return Math.sqrt(Math.pow((x2-x1),2) + Math.pow((y2-y1),2)) <= distance;
 	}
 
 }

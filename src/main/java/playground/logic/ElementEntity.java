@@ -18,7 +18,6 @@ public class ElementEntity {
 	
 	private String playground;
 	private String id;
-	// private Location location;
 	private Double x;
 	private Double y;
 	private String name;
@@ -70,7 +69,7 @@ public class ElementEntity {
 		this.y = y;
 	}
 	
-	@Transient
+	//@Transient
 	public String getPlayground() {
 		return playground;
 	}
@@ -79,7 +78,7 @@ public class ElementEntity {
 		this.playground = playground;
 	}
 	
-	@Transient
+	//@Transient
 	public String getId() {
 		return id;
 	}
@@ -90,7 +89,7 @@ public class ElementEntity {
 	
 	@Id
 	public String getElementId(){
-		return playground + "@" + id;
+		return elementId;
 	}
 	
 	public void setElementId(String elementId) {

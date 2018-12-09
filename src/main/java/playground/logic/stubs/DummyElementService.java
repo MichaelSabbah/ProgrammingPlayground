@@ -12,7 +12,7 @@ import playground.logic.ElementEntity;
 import playground.logic.ElementNotFoundException;
 import playground.logic.ElementService;
 
-@Service
+//@Service
 public class DummyElementService implements ElementService{
 
 	private List<ElementEntity> elements;

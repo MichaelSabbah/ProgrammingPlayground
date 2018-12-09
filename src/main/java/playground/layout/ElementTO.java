@@ -147,9 +147,10 @@ public class ElementTO {
 		//elementEntity.setLocation(new Location(elementEntity.getX(),elementEntity.getY()));
 		elementEntity.setX(this.getLocation().getX());
 		elementEntity.setY(this.getLocation().getY());
-		elementEntity.setName(elementEntity.getName());
-		elementEntity.setPlayground(elementEntity.getPlayground());
-		elementEntity.setType(elementEntity.getType());
+		elementEntity.setName(this.getName());
+		elementEntity.setPlayground(this.getPlayground());
+		elementEntity.setType(this.getType());
+		elementEntity.setElementId(this.playground + "@" + this.id);
 		return elementEntity;
 	}
 }

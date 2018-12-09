@@ -155,6 +155,7 @@ public class WebUIElementsTests {
 		elementEntity.setPlayground("playground");
 		elementEntity.setCreatorPlayground("playground");
 		elementEntity.setCreatorEmail("test@user.com");
+		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 		
 		elementService.addNewElement(elementEntity);
 		/*When I PUT /playground/elements/playground/test@user.com/playground/1
@@ -211,6 +212,7 @@ public class WebUIElementsTests {
 		elementEntity.setPlayground("playground");
 		elementEntity.setCreatorPlayground("playground");
 		elementEntity.setCreatorEmail("test@user.com");
+		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 		
 		elementService.addNewElement(elementEntity);
 		
@@ -272,6 +274,7 @@ public class WebUIElementsTests {
 		elementEntity.setPlayground("playground");
 		elementEntity.setCreatorPlayground("playground");
 		elementEntity.setCreatorEmail("test@user.com");
+		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 		
 		elementService.addNewElement(elementEntity);
 		
@@ -335,6 +338,7 @@ public class WebUIElementsTests {
 		elementEntity.setPlayground("playground");
 		elementEntity.setCreatorPlayground("playground");
 		elementEntity.setCreatorEmail("test@user.com");
+		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 		
 		elementService.addNewElement(elementEntity);
 		
@@ -355,9 +359,8 @@ public class WebUIElementsTests {
 		“creatorPlayground”:”playground”,
 		“creatorEmail”:”test@user.com”}*/
 		assertThat(actuallyReturned)
-		.isNotNull();
-//		.extracting("name","type","name","id","playground","creatorPlayground","creatorEmail","location.x","location.y")
-//		.containsExactly("element1","Ad Board",1,"playground","playground","test@user.com",1,1);
+		.isNotNull()
+		.hasSize(1);
 	}
 	
 	@Test(expected=Exception.class)
@@ -383,6 +386,7 @@ public class WebUIElementsTests {
 		elementEntity.setPlayground("playground");
 		elementEntity.setCreatorPlayground("playground");
 		elementEntity.setCreatorEmail("test@user.com");
+		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 		
 		elementService.addNewElement(elementEntity);
 		
@@ -419,6 +423,9 @@ public class WebUIElementsTests {
 		HashMap<String,Object> attributesMap = new HashMap<>();
 		attributesMap.put("quizTime", "60");
 		elementEntity.setAttributes(attributesMap);
+		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
+		this.elementService.addNewElement(elementEntity);
+		
 		
 		/*When I GET /playground/elements/playground/test@user.com/search/quizTime/60
 		With headers:
@@ -437,9 +444,8 @@ public class WebUIElementsTests {
 		“creatorEmail”:”test@user.com”,
 		“attributes”:{“quizTime”:”60”}}]*/
 		assertThat(actuallyReturned)
-		.isNotNull();
-//		.extracting("name","type","id","playground","creatorPlayground","creatorEmail","attributes.quizTime")
-//		.containsExactly("element1","Quiz",1,"playground","playground","test@user.com","60");
+		.isNotNull()
+		.hasSize(1);
 	}
 	
 	@Test(expected=Exception.class)

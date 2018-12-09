@@ -3,6 +3,7 @@ package playground.logic.jpa;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import playground.dal.UserDao;
@@ -12,8 +13,7 @@ import playground.logic.UserExistsException;
 import playground.logic.UserNotExists;
 import playground.logic.UserService;
 
-//For Assaf
-//@Service 
+@Service 
 public class JpaUserService implements UserService{
 	private UserDao users;
 	private Random rnd;
