@@ -8,11 +8,11 @@ public class ErrorMessage {
 		super();
 		this.message = message;
 	}
-	
+
 	public ErrorMessage() {
 		super();
 	}
-	
+
 	public String getMessage() {
 		return message;
 	}
@@ -20,8 +20,8 @@ public class ErrorMessage {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	
-	
-	
+
+
+
+
 }

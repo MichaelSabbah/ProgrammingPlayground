@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
 import javax.annotation.PostConstruct;
 
-import org.springframework.stereotype.Service;
-
-import playground.logic.InvalidConfirmCodeException;
 import playground.logic.UserEntity;
-import playground.logic.UserExistsException;
-import playground.logic.UserNotExists;
 import playground.logic.UserService;
+import playground.logic.Exceptions.InvalidConfirmCodeException;
+import playground.logic.Exceptions.UserExistsException;
+import playground.logic.Exceptions.UserNotExistsException;
 
 //@Service
 public class DummyUserService implements UserService{
@@ -39,7 +36,7 @@ public class DummyUserService implements UserService{
 			user.setConfirmCode(code);
 			return user;
 		}
-		throw new UserExistsException();
+		throw new UserExistsException("User Already Exists");
 	}
 
 	@Override
@@ -58,7 +55,7 @@ public class DummyUserService implements UserService{
 				throw new InvalidConfirmCodeException();
 			}
 		}
-		throw new UserNotExists();
+		throw new UserNotExistsException("User Not Exists");
 	}
 
 	@Override
@@ -66,19 +63,19 @@ public class DummyUserService implements UserService{
 		int index = this.users.indexOf(user);
 		if(index == -1)
 		{
-			throw new UserNotExists();
+			throw new UserNotExistsException("User Not Exists");
 		}
 		return this.users.get(index);
 	}
 
 	@Override
 	public void updateUser(UserEntity user) throws Exception {
-		
+
 		synchronized (this.users) {
 			int index = this.users.indexOf(user);
 			if(index == -1)
 			{
-				throw new UserNotExists();
+				throw new UserNotExistsException("User Not Exists");
 			}
 			UserEntity localUser = this.users.get(index);
 			if(user.getPlayground()!= null && user.getPlayground() != localUser.getPlayground())
@@ -112,7 +109,7 @@ public class DummyUserService implements UserService{
 	@Override
 	public void cleanAll() {
 		this.users.clear();
-		
+
 	}
 
 }

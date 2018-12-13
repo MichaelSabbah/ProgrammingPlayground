@@ -13,23 +13,19 @@ public class UserEntity {
 	private String role;
 	private long points;
 	private int confirmCode;
-	
-	
+
+
 
 	public UserEntity() {
 		super();
 	}
-	
-	
-	
-	
+
+
 	public UserEntity(String email, String playground) {
 		super();
 		this.email = email;
 		this.playground = playground;
 	}
-
-
 
 
 	public UserEntity(String email, String playground, int confirmCode) {
@@ -38,8 +34,6 @@ public class UserEntity {
 		this.playground = playground;
 		this.confirmCode = confirmCode;
 	}
-
-
 
 
 	public UserEntity(String email, String playground, String username, String avatar, String role, long points) {
@@ -51,7 +45,7 @@ public class UserEntity {
 		this.role = role;
 		this.points = points;
 	}
-	
+
 	public UserEntity(String email, String username, String avatar, String role) {
 		super();
 		this.email = email;
@@ -69,7 +63,7 @@ public class UserEntity {
 	public void setConfirmCode(int confirmCode) {
 		this.confirmCode = confirmCode;
 	}
-	
+
 	@Id
 	public String getEmail() {
 		return email;
@@ -128,7 +122,7 @@ public class UserEntity {
 		}
 		return false;
 	}
-	
-	
-	
+
+
+
 }

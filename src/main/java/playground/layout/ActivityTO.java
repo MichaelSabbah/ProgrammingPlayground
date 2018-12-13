@@ -3,7 +3,7 @@ package playground.layout;
 import java.util.Map;
 
 public class ActivityTO {
-	
+
 	private String playground;
 	private String id;
 	private String elementPlayground;
@@ -12,10 +12,10 @@ public class ActivityTO {
 	private String playerPlayground;
 	private String playerEmail;
 	private Map<String,Object> attributes;
-	
+
 	public ActivityTO() {
 	}
-	
+
 	public ActivityTO(String playground, String id, String elementPlayground, String elementId, String type,
 			String playerPlayground, String playerEmail, Map<String, Object> attributes) {
 		super();
@@ -80,7 +80,7 @@ public class ActivityTO {
 	public String getPlayerEmail() {
 		return playerEmail;
 	}
-	
+
 	public void setPlayerEmail(String playerEmail) {
 		this.playerEmail = playerEmail;
 	}

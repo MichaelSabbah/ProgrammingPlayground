@@ -32,7 +32,7 @@ public class UserTO {
 		this.role = role;
 		this.points = points;
 	}
-	
+
 	public UserEntity toUserEntity()
 	{
 		UserEntity userEntity = new UserEntity(this.getEmail(), this.getPlayground(), 

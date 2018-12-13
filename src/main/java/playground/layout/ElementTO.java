@@ -19,21 +19,21 @@ public class ElementTO {
 	private Map<String,Object> attributes;
 	private String creatorPlayground;
 	private String creatorEmail;
-	
+
 	public ElementTO(String playground, String id, String name, Date createDate, Date expirationDate,
 			String type, String creatorPlayground, String creatorEmail) {
 		this.playground = playground;
 		this.id = id;
-		this.location = new Location(40, 90);
+		this.location = new Location();
 		this.name = name;
 		this.createDate = createDate;
 		this.expirationDate = expirationDate;
 		this.type = type;
 		this.creatorPlayground = creatorPlayground;
 		this.creatorEmail = creatorEmail;
-		this.attributes = new HashMap();
+		this.attributes = new HashMap<String, Object>();
 	}
-	
+
 	public ElementTO(ElementEntity elementEntity){
 		this();
 		if(elementEntity != null) {
@@ -49,11 +49,11 @@ public class ElementTO {
 			this.attributes = elementEntity.getAttributes();
 		}
 	}
-	
+
 	public ElementTO()
 	{
-		this.attributes = new HashMap();
-		this.location = new Location(40, 50);
+		this.attributes = new HashMap<String, Object>();
+		this.location = new Location();
 	}
 
 	public String getPlayground() {
@@ -135,7 +135,7 @@ public class ElementTO {
 	public void setCreatorEmail(String creatorEmail) {
 		this.creatorEmail = creatorEmail;
 	}
-	
+
 	public ElementEntity toEntity(){
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setAttributes(this.attributes);
@@ -144,7 +144,6 @@ public class ElementTO {
 		elementEntity.setCreatorPlayground(this.creatorPlayground);
 		elementEntity.setExpirationDate(this.expirationDate);
 		elementEntity.setId(this.id);
-		//elementEntity.setLocation(new Location(elementEntity.getX(),elementEntity.getY()));
 		elementEntity.setX(this.getLocation().getX());
 		elementEntity.setY(this.getLocation().getY());
 		elementEntity.setName(this.getName());

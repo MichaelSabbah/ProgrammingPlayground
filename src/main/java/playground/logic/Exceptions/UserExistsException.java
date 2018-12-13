@@ -1,12 +1,14 @@
-package playground.logic;
+package playground.logic.Exceptions;
 
 public class UserExistsException extends Exception {
 
 	private static final long serialVersionUID = 1L;
-	
-	public UserExistsException()
-	{
-		super("user already exists");
+
+	public UserExistsException(String message) {
+		super(message);
+
 	}
- 
+
+
+
 }

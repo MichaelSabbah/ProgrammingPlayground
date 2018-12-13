@@ -9,21 +9,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import playground.dal.ElementDao;
-import playground.logic.ElementAlreadyExistsException;
 import playground.logic.ElementEntity;
-import playground.logic.ElementNotFoundException;
 import playground.logic.ElementService;
+import playground.logic.Exceptions.ElementAlreadyExistsException;
+import playground.logic.Exceptions.ElementNotFoundException;
 
 @Service
 public class JpaElementService implements ElementService{
-	
+
 	private ElementDao elements;
-	
+
 	@Autowired
 	public void setElementService(ElementDao elements) {
 		this.elements = elements;
 	}
-	
+
 	@Override
 	@Transactional
 	public ElementEntity addNewElement(ElementEntity element) throws ElementAlreadyExistsException {
@@ -37,53 +37,53 @@ public class JpaElementService implements ElementService{
 	@Transactional
 	public ElementEntity updateElement(String playground, String id, ElementEntity entityUpdates)
 			throws ElementNotFoundException {
-		
+
 		ElementEntity existing = null;
 		ElementEntity tempElement = new ElementEntity();
 		tempElement.setPlayground(playground);
 		tempElement.setId(id);
-		
+
 		String elementId = playground + "@" + id;
 		if(elements.existsById(elementId)){
 			existing = this.elements.findById(elementId)
-					   .orElseThrow(()->
-					   new ElementNotFoundException("no element with id: " + elementId));
+					.orElseThrow(()->
+					new ElementNotFoundException("no element with id: " + elementId));
 		}else {
 			throw new ElementNotFoundException("no element with id: " + elementId);
 		}
-		
+
 		if(entityUpdates.getAttributes() != null && !entityUpdates.getAttributes().isEmpty()) {
 			existing.setAttributes(entityUpdates.getAttributes());
 		}
-		
+
 		if(entityUpdates.getCreateDate() != null &&
-		   !entityUpdates.getCreateDate().equals(existing.getCreateDate())) {
+				!entityUpdates.getCreateDate().equals(existing.getCreateDate())) {
 			existing.setCreateDate(entityUpdates.getCreateDate());
 		}
-		
+
 		if(entityUpdates.getCreatorEmail() != null &&
-		   !entityUpdates.getCreatorEmail().equals(existing.getCreatorEmail())) {	
+				!entityUpdates.getCreatorEmail().equals(existing.getCreatorEmail())) {	
 			existing.setCreatorEmail(entityUpdates.getCreatorEmail());
 		}
-		
+
 		if(entityUpdates.getCreatorPlayground() != null &&
-		   !entityUpdates.getCreatorPlayground().equals(existing.getCreatorPlayground())) {	
-		   existing.setCreatorPlayground(entityUpdates.getCreatorPlayground());
+				!entityUpdates.getCreatorPlayground().equals(existing.getCreatorPlayground())) {	
+			existing.setCreatorPlayground(entityUpdates.getCreatorPlayground());
 		}
-		
+
 		if(entityUpdates.getExpirationDate() != null &&
-		   !entityUpdates.getExpirationDate().equals(existing.getExpirationDate())) {
-		   existing.setExpirationDate(entityUpdates.getExpirationDate());
+				!entityUpdates.getExpirationDate().equals(existing.getExpirationDate())) {
+			existing.setExpirationDate(entityUpdates.getExpirationDate());
 		}
-		
+
 		if(entityUpdates.getName() != null  &&
-		   entityUpdates.equals(existing.getName())) {   
-		   existing.setName(entityUpdates.getName());
+				entityUpdates.equals(existing.getName())) {   
+			existing.setName(entityUpdates.getName());
 		}
-		
+
 		if(entityUpdates.getType() != null &&
-		   !entityUpdates.getType().equals(existing.getType())) { 
-		   existing.setType(entityUpdates.getType());
+				!entityUpdates.getType().equals(existing.getType())) { 
+			existing.setType(entityUpdates.getType());
 		}
 
 		return this.elements.save(existing);
@@ -93,20 +93,20 @@ public class JpaElementService implements ElementService{
 	@Transactional(readOnly=true)
 	public ElementEntity getElementById(String playground, String id) throws ElementNotFoundException {
 		String elementId = playground + "@" + id;
-		
+
 		return 
-			this.elements.findById(elementId)
-			.orElseThrow(()->
+				this.elements.findById(elementId)
+				.orElseThrow(()->
 				new ElementNotFoundException(
-					"no element with id: " + elementId));
+						"no element with id: " + elementId));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public List<ElementEntity> getAllElements(int size, int page) {
 		return
-			this.elements.findAll(
-				 PageRequest.of(page, size, Direction.DESC, "createDate"))
+				this.elements.findAll(
+						PageRequest.of(page, size, Direction.DESC, "createDate"))
 				.getContent();
 	}
 
@@ -114,15 +114,15 @@ public class JpaElementService implements ElementService{
 	@Transactional(readOnly=true)
 	public List<ElementEntity> getElementsByDistance(int x, int y, int distance,int size,int page) throws ElementNotFoundException {
 		List<ElementEntity> elements = this.elements.findAll(
-				 PageRequest.of(page, size))
+				PageRequest.of(page, size))
 				.getContent();
-		
+
 		for(int i = 0 ; i < elements.size() ; i++) {
 			if(!isInDistance(x, y, elements.get(i).getX(), elements.get(i).getY(), distance)) {
 				elements.remove(i);
 			}
 		}
-		
+
 		return elements;
 	}
 
@@ -131,16 +131,16 @@ public class JpaElementService implements ElementService{
 	public List<ElementEntity> getElementsByAttribute(String attributeName, String value,int size, int page) {		
 		String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
 		return this.elements.findAllByJsonAttributesContaining(jsonAttribute,PageRequest.of(page, size));
-		
+
 	}
 
 	@Override
 	@Transactional
 	public void cleanup() {
 		elements.deleteAll();
-		
+
 	}
-	
+
 	private boolean isInDistance(double x1, double y1, double x2, double y2, double distance){
 		return Math.sqrt(Math.pow((x2-x1),2) + Math.pow((y2-y1),2)) <= distance;
 	}

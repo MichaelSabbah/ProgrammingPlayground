@@ -6,5 +6,4 @@ import playground.logic.UserEntity;
 
 
 public interface UserDao extends CrudRepository<UserEntity, String>{
-	
 }
