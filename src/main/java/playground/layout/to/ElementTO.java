@@ -1,11 +1,11 @@
-package playground.layout;
+package playground.layout.to;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import playground.logic.ElementEntity;
-import playground.logic.Location;
+import playground.logic.Entities.ElementEntity;
+import playground.logic.helpers.Location;
 
 public class ElementTO {
 

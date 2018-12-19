@@ -8,11 +8,12 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import playground.aop.BasicAuthentication;
 import playground.dal.ElementDao;
-import playground.logic.ElementEntity;
-import playground.logic.ElementService;
+import playground.logic.Entities.ElementEntity;
 import playground.logic.Exceptions.ElementAlreadyExistsException;
 import playground.logic.Exceptions.ElementNotFoundException;
+import playground.logic.services.ElementService;
 
 @Service
 public class JpaElementService implements ElementService{
@@ -26,7 +27,7 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional
-	public ElementEntity addNewElement(ElementEntity element) throws ElementAlreadyExistsException {
+	public ElementEntity addNewElement(String userEmail,String userPlaygorund,ElementEntity element) throws ElementAlreadyExistsException {
 		if(!elements.existsById(element.getElementId())){
 			return this.elements.save(element);
 		}
@@ -35,7 +36,7 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional
-	public ElementEntity updateElement(String playground, String id, ElementEntity entityUpdates)
+	public ElementEntity updateElement(String userEmail,String userPlaygorund,String playground, String id, ElementEntity entityUpdates)
 			throws ElementNotFoundException {
 
 		ElementEntity existing = null;
@@ -91,7 +92,8 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional(readOnly=true)
-	public ElementEntity getElementById(String playground, String id) throws ElementNotFoundException {
+	@BasicAuthentication
+	public ElementEntity getElementById(String userEmail,String userPlaygorund,String playground, String id) throws ElementNotFoundException {
 		String elementId = playground + "@" + id;
 
 		return 
@@ -103,7 +105,8 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<ElementEntity> getAllElements(int size, int page) {
+	@BasicAuthentication
+	public List<ElementEntity> getAllElements(String userEmail,String userPlaygorund,int size, int page) {
 		return
 				this.elements.findAll(
 						PageRequest.of(page, size, Direction.DESC, "createDate"))
@@ -112,7 +115,8 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<ElementEntity> getElementsByDistance(int x, int y, int distance,int size,int page) throws ElementNotFoundException {
+	@BasicAuthentication
+	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlaygorund,int x, int y, int distance,int size,int page) throws ElementNotFoundException {
 		List<ElementEntity> elements = this.elements.findAll(
 				PageRequest.of(page, size))
 				.getContent();
@@ -128,7 +132,8 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<ElementEntity> getElementsByAttribute(String attributeName, String value,int size, int page) {		
+	@BasicAuthentication
+	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlaygorund,String attributeName, String value,int size, int page) {		
 		String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
 		return this.elements.findAllByJsonAttributesContaining(jsonAttribute,PageRequest.of(page, size));
 

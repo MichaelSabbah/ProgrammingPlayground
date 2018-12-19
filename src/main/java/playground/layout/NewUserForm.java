@@ -1,6 +1,6 @@
 package playground.layout;
 
-import playground.logic.UserEntity;
+import playground.logic.Entities.UserEntity;
 
 public class NewUserForm {
 

@@ -1,4 +1,4 @@
-package playground.logic.stubs;
+/*package playground.logic.stubs;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +11,7 @@ import playground.logic.UserService;
 import playground.logic.Exceptions.InvalidConfirmCodeException;
 import playground.logic.Exceptions.UserExistsException;
 import playground.logic.Exceptions.UserNotExistsException;
-
+/*
 //@Service
 public class DummyUserService implements UserService{
 
@@ -112,4 +112,4 @@ public class DummyUserService implements UserService{
 
 	}
 
-}
+}*/

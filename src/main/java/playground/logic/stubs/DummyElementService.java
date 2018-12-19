@@ -1,4 +1,4 @@
-package playground.logic.stubs;
+/*package playground.logic.stubs;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,8 +8,9 @@ import javax.annotation.PostConstruct;
 import playground.logic.ElementEntity;
 import playground.logic.ElementService;
 import playground.logic.Exceptions.ElementAlreadyExistsException;
-import playground.logic.Exceptions.ElementNotFoundException;
+import playground.logic.Exceptions.ElementNotFoundException;*/
 
+/*
 //@Service
 public class DummyElementService implements ElementService{
 
@@ -152,7 +153,7 @@ public class DummyElementService implements ElementService{
 	public void cleanup() {
 		elements.clear();
 	}
-}
+}*/
 
 
 

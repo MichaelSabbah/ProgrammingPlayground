@@ -14,16 +14,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import playground.layout.ActivityTO;
-import playground.layout.ElementTO;
-import playground.layout.UserTO;
-import playground.logic.ElementEntity;
-import playground.logic.ElementService;
-import playground.logic.UserEntity;
-import playground.logic.UserService;
+import playground.logic.Entities.ElementEntity;
+import playground.logic.Entities.UserEntity;
 import playground.logic.Exceptions.ElementAlreadyExistsException;
 import playground.logic.Exceptions.ElementNotFoundException;
+import playground.logic.Exceptions.NotAuthorizeUserException;
+import playground.logic.services.ElementService;
+import playground.logic.services.UserService;
 import playground.layout.NewUserForm;
+import playground.layout.to.ActivityTO;
+import playground.layout.to.ElementTO;
+import playground.layout.to.UserTO;
 
 @RestController
 public class WebUI {
@@ -81,7 +82,7 @@ public class WebUI {
 		UserEntity userEntity = userTo.toUserEntity();
 		userEntity.setEmail(email);
 		userEntity.setPlayground(playground);
-		this.userService.updateUser(userEntity);
+		this.userService.updateUser(email,playground,userEntity);
 
 	}
 
@@ -93,7 +94,7 @@ public class WebUI {
 	public ElementTO addNewElement(@PathVariable("userPlayground") String userPlayground,
 			@PathVariable("email") String email,
 			@RequestBody ElementTO elementTo) throws ElementAlreadyExistsException {
-		ElementEntity elementEntity = elementService.addNewElement(elementTo.toEntity());		
+		ElementEntity elementEntity = elementService.addNewElement(email,userPlayground,elementTo.toEntity());		
 		return new ElementTO(elementEntity);
 	}
 
@@ -107,7 +108,7 @@ public class WebUI {
 			@PathVariable("id") String id,
 			@RequestBody ElementTO elementTo) throws ElementNotFoundException{
 
-		elementService.updateElement(playground, id, elementTo.toEntity());
+		elementService.updateElement(email,userPlayground,playground, id, elementTo.toEntity());
 	}
 
 	@RequestMapping(
@@ -119,7 +120,7 @@ public class WebUI {
 			@PathVariable("playground") String playground,
 			@PathVariable("id") String id) throws ElementNotFoundException {
 
-		return new ElementTO(elementService.getElementById(playground, id));
+		return new ElementTO(elementService.getElementById(email,userPlayground,playground, id));
 	}
 
 	@RequestMapping(
@@ -131,7 +132,7 @@ public class WebUI {
 			@PathVariable("userPlayground") String userPlayground,
 			@PathVariable("email") String email) {
 		return 
-				this.elementService.getAllElements(size,page) 
+				this.elementService.getAllElements(email,userPlayground,size,page) 
 				.stream() 
 				.map(ElementTO::new) 
 				.collect(Collectors.toList()) 
@@ -149,7 +150,7 @@ public class WebUI {
 			@PathVariable("email")String email,@PathVariable("x")Integer x,
 			@PathVariable("y")Integer y,@PathVariable("distance")Integer distance) throws NumberFormatException, ElementNotFoundException{
 		return 
-				this.elementService.getElementsByDistance(x, y, distance,size,page) // MessageEntity List
+				this.elementService.getElementsByDistance(email,userPlayground,x, y, distance,size,page) // MessageEntity List
 				.stream() 
 				.map(ElementTO::new) 
 				.collect(Collectors.toList()) 
@@ -167,7 +168,7 @@ public class WebUI {
 			@PathVariable("email")String email,@PathVariable("attributeName")String attributeName,
 			@PathVariable("value")String value){
 
-		return elementService.getElementsByAttribute(attributeName, value, size, page)
+		return elementService.getElementsByAttribute(email,userPlayground,attributeName, value, size, page)
 				.stream()
 				.map(ElementTO::new)
 				.collect(Collectors.toList())
@@ -184,16 +185,28 @@ public class WebUI {
 			@PathVariable("email")String email) {
 		return new ActivityTO();
 	}
-
+	
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ErrorMessage handleException (Exception e) {
+	public ErrorMessage ExceptionHandler (Exception e) {
 		String message = e.getMessage();
 		if (message == null) {
 			message = "There is no relevant message";
 		}
 		return new ErrorMessage(message);
 	}
+
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ErrorMessage NotAuthorizeUserExceptionHandler (NotAuthorizeUserException e) {
+		String message = e.getMessage();
+		if (message == null) {
+			message = "Not Authorize User";
+		}
+		return new ErrorMessage(message);
+	}
+	
+	
 
 
 }

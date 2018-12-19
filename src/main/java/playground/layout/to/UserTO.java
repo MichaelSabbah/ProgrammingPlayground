@@ -1,6 +1,6 @@
-package playground.layout;
+package playground.layout.to;
 
-import playground.logic.UserEntity;
+import playground.logic.Entities.UserEntity;
 
 public class UserTO {
 

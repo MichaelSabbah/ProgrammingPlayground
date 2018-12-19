@@ -1,4 +1,4 @@
-package playground.logic;
+package playground.logic.Entities;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

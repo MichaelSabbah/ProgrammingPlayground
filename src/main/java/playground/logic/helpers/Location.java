@@ -1,4 +1,4 @@
-package playground.logic;
+package playground.logic.helpers;
 
 public class Location {
 	private double x;

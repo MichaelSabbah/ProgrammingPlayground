@@ -14,11 +14,13 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import playground.logic.ElementEntity;
-import playground.logic.ElementService;
-import playground.logic.UserEntity;
-import playground.logic.UserService;
+import playground.layout.to.ElementTO;
+import playground.layout.to.UserTO;
+import playground.logic.Entities.ElementEntity;
+import playground.logic.Entities.UserEntity;
 import playground.logic.Exceptions.ElementAlreadyExistsException;
+import playground.logic.services.ElementService;
+import playground.logic.services.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
@@ -92,7 +94,7 @@ public class WebUIElementsTests {
 		elementEntity.setCreatorPlayground("playground");
 		elementEntity.setCreatorEmail("test@user.com");
 
-		elementService.addNewElement(elementEntity);
+		elementService.addNewElement("bla","bla",elementEntity);
 
 		//When
 		ElementTO elementTo = new ElementTO();
@@ -116,7 +118,7 @@ public class WebUIElementsTests {
 		elementEntity.setCreatorEmail("test@user.com");
 		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 
-		elementService.addNewElement(elementEntity);
+		elementService.addNewElement("bla","bla",elementEntity);
 		//When
 		ElementTO elementTORequest = new ElementTO();
 		elementEntity.setType("Quiz");
@@ -151,7 +153,7 @@ public class WebUIElementsTests {
 		elementEntity.setCreatorEmail("test@user.com");
 		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 
-		elementService.addNewElement(elementEntity);
+		elementService.addNewElement("bla","bla",elementEntity);
 
 		//When
 		ElementTO actuallyReturned = restTemplate.getForObject(url + "/{userPlayground}/{email}/{playground}/{id}",
@@ -177,7 +179,7 @@ public class WebUIElementsTests {
 	}
 
 	@Test
-	public void testGetAllElementsSuccessfully() throws ElementAlreadyExistsException{
+	public void testGetAllElementsSuccessfully() throws Exception{
 		// Given
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
@@ -187,8 +189,12 @@ public class WebUIElementsTests {
 		elementEntity.setCreatorPlayground("playground");
 		elementEntity.setCreatorEmail("test@user.com");
 		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
+		
+		UserEntity user = new UserEntity("test@user.com","playground");
+		userService.addUser(user);
+		userService.confirmUser(user);
 
-		elementService.addNewElement(elementEntity);
+		elementService.addNewElement("bla","bla",elementEntity);
 
 		//When
 		ElementTO[] actuallyReturned = this.restTemplate.getForObject(this.url + "/{userPlayground}/{email}/all",
@@ -225,7 +231,7 @@ public class WebUIElementsTests {
 		elementEntity.setCreatorEmail("test@user.com");
 		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 
-		elementService.addNewElement(elementEntity);
+		elementService.addNewElement("bla","bla",elementEntity);
 
 		//When
 		ElementTO[] actuallyReturned = this.restTemplate.getForObject(this.url + "/{userPlayground}/{email}/near/{x}/{y}/{distance}", 
@@ -252,7 +258,7 @@ public class WebUIElementsTests {
 		elementEntity.setCreatorEmail("test@user.com");
 		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 
-		elementService.addNewElement(elementEntity);
+		elementService.addNewElement("bla","bla",elementEntity);
 
 		//When
 		restTemplate.getForObject(url + "{playground}/{email}/near/{x}/{y}{distance}", 
@@ -277,7 +283,7 @@ public class WebUIElementsTests {
 		attributesMap.put("quizTime", "60");
 		elementEntity.setAttributes(attributesMap);
 		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
-		this.elementService.addNewElement(elementEntity);
+		this.elementService.addNewElement("bla","bla",elementEntity);
 
 
 		//When
