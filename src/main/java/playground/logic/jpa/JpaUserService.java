@@ -46,7 +46,7 @@ public class JpaUserService implements UserService{
 			userToVerify.setConfirmCode(-1);	
 		}
 		else {
-			throw new InvalidConfirmCodeException();
+			throw new InvalidConfirmCodeException("not valid code");
 		}
 		
 		this.userDao.save(userToVerify);

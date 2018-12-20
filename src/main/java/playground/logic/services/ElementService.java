@@ -14,6 +14,6 @@ public interface ElementService {
 	public List<ElementEntity> getAllElements(String userEmail,String userPlaygorund,int size, int page);//Normal User
 	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlaygorund,int x, int y, int distance,int size,int page) throws ElementNotFoundException;//Normal User
 	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlaygorund,String attributeName, String value,int size, int page);////Normal User
-	public void cleanup();//No need
+	public void cleanAll();//No need
 
 }

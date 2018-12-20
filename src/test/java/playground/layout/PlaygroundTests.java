@@ -24,7 +24,7 @@ import playground.logic.services.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
-public class WebUIElementsTests {
+public class PlaygroundTests {
 	@LocalServerPort
 	private int port;
 
@@ -46,14 +46,16 @@ public class WebUIElementsTests {
 		this.usersUrl = "http://localhost:" + this.port + "/playground/users";
 	}
 
-	@Before
-	public void setup() {
-
-	}
-
 	@After
-	public void teardown() {
-		this.elementService.cleanup();
+	public void after() {
+		this.elementService.cleanAll();
+		this.userService.cleanAll();
+	}
+	
+	@Before
+	public void before()
+	{
+		this.elementService.cleanAll();
 		this.userService.cleanAll();
 	}
 

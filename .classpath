@@ -4,9 +4,10 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/assaftayouri/Desktop/HW/web.db.lib/activemq-openwire-legacy-5.15.6.jar"/>
+	<classpathentry kind="lib" path="/Users/assaftayouri/Desktop/HW/web.db.lib/mysql-connector-java-5.1.47.jar"/>
 	<classpathentry kind="lib" path="/Users/assaftayouri/Desktop/HW/web.db.lib/activemq-broker-5.15.6.jar"/>
 	<classpathentry kind="lib" path="/Users/assaftayouri/Desktop/HW/web.db.lib/activemq-client-5.15.6.jar"/>
+	<classpathentry kind="lib" path="/Users/assaftayouri/Desktop/HW/web.db.lib/activemq-openwire-legacy-5.15.6.jar"/>
 	<classpathentry kind="lib" path="/Users/assaftayouri/Desktop/HW/web.db.lib/geronimo-j2ee-management_1.1_spec-1.0.1.jar"/>
 	<classpathentry kind="lib" path="/Users/assaftayouri/Desktop/HW/web.db.lib/guava-18.0.jar"/>
 	<classpathentry kind="lib" path="/Users/assaftayouri/Desktop/HW/web.db.lib/hawtbuf-1.11.jar"/>

@@ -42,7 +42,7 @@ public class WebUI {
 		this.userService = userService;
 	}
 
-	@RequestMapping(
+	@RequestMapping(//V
 			method=RequestMethod.POST,
 			path="/playground/users",
 			produces=MediaType.APPLICATION_JSON_VALUE,
@@ -52,7 +52,7 @@ public class WebUI {
 		return new UserTO(this.userService.addUser(userEntity));
 	}
 
-	@RequestMapping(
+	@RequestMapping(//V
 			method=RequestMethod.GET,
 			path="/playground/users/confirm/{playground}/{email}/{code}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
@@ -63,16 +63,17 @@ public class WebUI {
 		return new UserTO(this.userService.confirmUser(userEntity));
 	}
 
-	@RequestMapping(
+	@RequestMapping(//V
 			method=RequestMethod.GET,
 			path="/playground/users/login/{playground}/{email}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
 	public UserTO login(@PathVariable("playground") String playground,
 			@PathVariable("email") String email) throws Exception {
-		return new UserTO(this.userService.loginUser(new UserEntity(email,playground)));
+		UserEntity userEntity = new UserEntity(email,playground);
+		return new UserTO(this.userService.loginUser(userEntity));
 	}
 
-	@RequestMapping(
+	@RequestMapping(//?
 			method=RequestMethod.PUT,
 			path="/playground/users/{playground}/{email}",
 			consumes=MediaType.APPLICATION_JSON_VALUE)

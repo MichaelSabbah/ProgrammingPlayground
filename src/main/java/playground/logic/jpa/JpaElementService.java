@@ -141,7 +141,7 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional
-	public void cleanup() {
+	public void cleanAll() {
 		elements.deleteAll();
 
 	}

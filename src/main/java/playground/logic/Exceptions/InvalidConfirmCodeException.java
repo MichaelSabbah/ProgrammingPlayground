@@ -6,7 +6,14 @@ public class InvalidConfirmCodeException extends Exception {
 
 	public InvalidConfirmCodeException()
 	{
-		super("not valid code");
+		super();
 	}
+	
+	public InvalidConfirmCodeException(String message)
+	{
+		super(message);
+	}
+	
+	
 
 }
