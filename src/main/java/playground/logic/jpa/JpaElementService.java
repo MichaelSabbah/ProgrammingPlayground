@@ -92,8 +92,9 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional(readOnly=true)
-	//@BasicAuthentication
+	@BasicAuthentication
 	public ElementEntity getElementById(String userEmail,String userPlaygorund,String playground, String id) throws ElementNotFoundException {
+		
 		String elementId = playground + "@" + id;
 
 		return 
@@ -105,7 +106,7 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional(readOnly=true)
-	//@BasicAuthentication
+	@BasicAuthentication
 	public List<ElementEntity> getAllElements(String userEmail,String userPlaygorund,int size, int page) {
 		return
 				this.elements.findAll(
@@ -115,7 +116,7 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional(readOnly=true)
-	//@BasicAuthentication
+	@BasicAuthentication
 	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlaygorund,int x, int y, int distance,int size,int page) throws ElementNotFoundException {
 		List<ElementEntity> elements = this.elements.findAll(
 				PageRequest.of(page, size))

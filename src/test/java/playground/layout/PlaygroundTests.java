@@ -19,6 +19,7 @@ import playground.layout.to.UserTO;
 import playground.logic.Entities.ElementEntity;
 import playground.logic.Entities.UserEntity;
 import playground.logic.Exceptions.ElementAlreadyExistsException;
+import playground.logic.helpers.Role;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
 
@@ -145,7 +146,12 @@ public class PlaygroundTests {
 
 	@Test
 	public void testGetElementSuccessfully() throws Exception{
+		
 		//Given
+		UserEntity userEntity= new UserEntity("test@user.com","playground");
+		this.userService.addUser(userEntity);
+		this.userService.confirmUser(userEntity);
+		
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
@@ -156,7 +162,7 @@ public class PlaygroundTests {
 		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 
 		elementService.addNewElement("bla","bla",elementEntity);
-
+		
 		//When
 		ElementTO actuallyReturned = restTemplate.getForObject(url + "/{userPlayground}/{email}/{playground}/{id}",
 				ElementTO.class, "playground","test@user.com","playground",1);
@@ -171,8 +177,19 @@ public class PlaygroundTests {
 
 	@Test(expected=Exception.class)
 	public void testGetNotExistsElement() throws Exception{
-		//Given - Database is empty
-
+		//Given - 
+		//No elements exist
+		//Confirmed user exist
+		UserEntity userEntity= new UserEntity();
+		userEntity.setEmail("test@user.com");
+		userEntity.setUsername("test");
+		userEntity.setRole(Role.PLAYER);
+		userEntity.setPlayground("playground");
+		userEntity.setAvatar("smiley.jpg");
+		this.userService.addUser(userEntity);
+		this.userService.confirmUser(userEntity);
+		
+		
 		//When
 		restTemplate.getForObject(url + "/{playground}/{email}/{playground}/{id}",
 				ElementTO.class, "playground","test@user.com","playground",1);
@@ -182,7 +199,13 @@ public class PlaygroundTests {
 
 	@Test
 	public void testGetAllElementsSuccessfully() throws Exception{
+		
 		// Given
+		UserEntity userEntity= new UserEntity("test@user.com","playground");
+		
+		this.userService.addUser(userEntity);
+		this.userService.confirmUser(userEntity);
+		
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
@@ -192,10 +215,6 @@ public class PlaygroundTests {
 		elementEntity.setCreatorEmail("test@user.com");
 		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 		
-		UserEntity user = new UserEntity("test@user.com","playground");
-		userService.addUser(user);
-		userService.confirmUser(user);
-
 		elementService.addNewElement("bla","bla",elementEntity);
 
 		//When
@@ -210,7 +229,13 @@ public class PlaygroundTests {
 
 	@Test(expected=Exception.class)
 	public void testGetAllElementsWithInvalidEmail() throws Exception{
-		//Given - Database is empty
+		
+		//Given - 
+		//No elements exist
+		//Confirmed user exist
+		UserEntity userEntity= new UserEntity("test@user.com","playground");
+		this.userService.addUser(userEntity);
+		this.userService.confirmUser(userEntity);
 
 		//When
 		restTemplate.getForObject(url + "/{playground}/{email}/all",
@@ -222,6 +247,10 @@ public class PlaygroundTests {
 	@Test
 	public void testGetAllElementsByLocationAndDistanceSuccessfully() throws Exception{
 		//Given
+		UserEntity userEntity= new UserEntity("test@user.com","playground");
+		this.userService.addUser(userEntity);
+		this.userService.confirmUser(userEntity);
+		
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
@@ -248,7 +277,13 @@ public class PlaygroundTests {
 
 	@Test(expected=Exception.class)
 	public void testGetAllElementsByLocationAndNegativeDistance() throws Exception{
-		//Given
+		//Given - 
+		//No elements exist
+		//Confirmed user exist
+		UserEntity userEntity= new UserEntity("test@user.com","playground");
+		this.userService.addUser(userEntity);
+		this.userService.confirmUser(userEntity);
+		
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
@@ -319,7 +354,7 @@ public class PlaygroundTests {
 		NewUserForm newUserForm = new NewUserForm();
 		newUserForm.setEmail("test@user.com");
 		newUserForm.setUsername("test");
-		newUserForm.setRole("admin");
+		newUserForm.setRole(Role.MANAGER.name());
 		newUserForm.setAvatar("smiley.jpg");
 		UserTO userToResponse = this.restTemplate.postForObject(this.usersUrl, newUserForm, UserTO.class);
 
@@ -338,7 +373,7 @@ public class PlaygroundTests {
 		UserEntity userEntity= new UserEntity();
 		userEntity.setEmail("test@user.com");
 		userEntity.setUsername("test");
-		userEntity.setRole("admin");
+		userEntity.setRole(Role.MANAGER);
 		this.userService.addUser(userEntity);
 
 		//When
@@ -359,7 +394,7 @@ public class PlaygroundTests {
 		UserEntity userEntity= new UserEntity();
 		userEntity.setEmail("test@user.com");
 		userEntity.setUsername("test");
-		userEntity.setRole("admin");
+		userEntity.setRole(Role.MANAGER);
 		userEntity.setPlayground("playground");
 		userEntity.setAvatar("smiley.jpg");
 		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
@@ -371,7 +406,7 @@ public class PlaygroundTests {
 		assertThat(userTO)
 		.isNotNull()
 		.extracting("email", "username","playground", "role","avatar")
-		.containsExactly(userEntity.getEmail(), userEntity.getUsername(),userEntity.getPlayground(),userEntity.getRole(),userEntity.getAvatar());
+		.containsExactly(userEntity.getEmail(), userEntity.getUsername(),userEntity.getPlayground(),userEntity.getRole().name(),userEntity.getAvatar());
 	}
 
 	@Test(expected=Exception.class)
@@ -381,7 +416,7 @@ public class PlaygroundTests {
 		UserEntity userEntity= new UserEntity();
 		userEntity.setEmail("test@user.com");
 		userEntity.setUsername("test");
-		userEntity.setRole("admin");
+		userEntity.setRole(Role.MANAGER);
 		userEntity.setPlayground("playground");
 		userEntity.setConfirmCode(777);
 		this.userService.addUser(userEntity);
@@ -400,7 +435,7 @@ public class PlaygroundTests {
 		UserEntity userEntity= new UserEntity();
 		userEntity.setEmail("test@user.com");
 		userEntity.setUsername("test");
-		userEntity.setRole("admin");
+		userEntity.setRole(Role.MANAGER);
 		userEntity.setPlayground("playground");
 		this.userService.addUser(userEntity);
 
@@ -411,7 +446,7 @@ public class PlaygroundTests {
 		assertThat(userTO)
 		.isNotNull()
 		.extracting("email", "username","playground","role")
-		.containsExactly(userEntity.getEmail(), userEntity.getUsername(),userEntity.getPlayground(),userEntity.getRole());
+		.containsExactly(userEntity.getEmail(), userEntity.getUsername(),userEntity.getPlayground(),userEntity.getRole().name());
 
 	}
 
@@ -434,7 +469,7 @@ public class PlaygroundTests {
 		UserEntity userEntity= new UserEntity();
 		userEntity.setEmail("test@user.com");
 		userEntity.setUsername("test");
-		userEntity.setRole("admin");
+		userEntity.setRole(Role.MANAGER);
 		userEntity.setPlayground("playground");
 		userEntity.setAvatar("smiley.jpg");
 		this.userService.addUser(userEntity);
@@ -453,7 +488,7 @@ public class PlaygroundTests {
 	public void testUpdateUserDetailsWithNonExistingUser() throws Exception
 	{
 		//Given - Database is empty
-
+		
 		//When
 		UserTO userTO= new UserTO();
 		userTO.setEmail("test@user.com");
