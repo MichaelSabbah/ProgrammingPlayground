@@ -1,6 +1,7 @@
 package playground.layout.to;
 
 import playground.logic.Entities.UserEntity;
+import playground.logic.helpers.Role;
 
 public class UserTO {
 
@@ -19,7 +20,7 @@ public class UserTO {
 		this.playground = userEntity.getPlayground();
 		this.username = userEntity.getUsername();
 		this.avatar= userEntity.getAvatar();
-		this.role= userEntity.getRole();
+		this.role= userEntity.getRole().name();
 		this.points= userEntity.getPoints();
 	}
 
@@ -36,11 +37,9 @@ public class UserTO {
 	public UserEntity toUserEntity()
 	{
 		UserEntity userEntity = new UserEntity(this.getEmail(), this.getPlayground(), 
-				this.getUsername(), this.getAvatar(), this.getRole(), this.getPoints());
+				this.getUsername(), this.getAvatar(), Enum.valueOf(Role.class,this.getRole()), this.getPoints());
 		return userEntity;
 	}
-
-
 
 	public UserTO(String email) {
 		this.email = email;

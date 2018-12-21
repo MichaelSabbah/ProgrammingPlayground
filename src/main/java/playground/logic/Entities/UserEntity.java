@@ -1,7 +1,11 @@
 package playground.logic.Entities;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
+
+import playground.logic.helpers.Role;
 
 @Entity
 public class UserEntity {
@@ -10,11 +14,9 @@ public class UserEntity {
 	private String playground;
 	private String username;
 	private String avatar;
-	private String role;
+	private Role role;
 	private long points;
 	private int confirmCode;
-
-
 
 	public UserEntity() {
 		super();
@@ -36,7 +38,7 @@ public class UserEntity {
 	}
 
 
-	public UserEntity(String email, String playground, String username, String avatar, String role, long points) {
+	public UserEntity(String email, String playground, String username, String avatar, Role role, long points) {
 		super();
 		this.email = email;
 		this.playground = playground;
@@ -46,15 +48,13 @@ public class UserEntity {
 		this.points = points;
 	}
 
-	public UserEntity(String email, String username, String avatar, String role) {
+	public UserEntity(String email, String username, String avatar, Role role) {
 		super();
 		this.email = email;
 		this.username = username;
 		this.avatar = avatar;
 		this.role = role;
 	}
-
-
 
 	public int getConfirmCode() {
 		return confirmCode;
@@ -96,12 +96,13 @@ public class UserEntity {
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
 	}
-
-	public String getRole() {
+	
+	@Enumerated(EnumType.STRING)
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 

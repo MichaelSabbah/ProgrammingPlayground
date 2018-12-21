@@ -87,7 +87,7 @@ public class JpaUserService implements UserService{
 			localUser.setAvatar(updateUser.getAvatar());
 		}
 
-		if(updateUser.getRole()!= null && updateUser.getRole() != localUser.getRole())
+		if(updateUser.getRole()!= null && !updateUser.getRole().name().equals(localUser.getRole().name()))
 		{
 			localUser.setRole(updateUser.getRole());
 		}

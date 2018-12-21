@@ -1,6 +1,7 @@
 package playground.layout;
 
 import playground.logic.Entities.UserEntity;
+import playground.logic.helpers.Role;
 
 public class NewUserForm {
 
@@ -18,13 +19,13 @@ public class NewUserForm {
 		this.email = email;
 		this.username = username;
 		this.avatar = avatar;
-		this.role = role;
+		this.role = role.toUpperCase();
 	}
 
 	public UserEntity toUserEntity()
 	{
 		UserEntity userEntity = new UserEntity(this.getEmail(), 
-				this.getUsername(), this.getAvatar(), this.getRole());
+				this.getUsername(), this.getAvatar(), Enum.valueOf(Role.class, this.getRole()));
 		return userEntity;
 	}
 

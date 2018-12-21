@@ -9,5 +9,6 @@ import playground.logic.Entities.UserEntity;
 
 public interface UserDao extends CrudRepository<UserEntity, String>{
 	
-	List<UserEntity> findByEmailAndPlaygroundAndConfirmCode(String email, String lastname,int confirmCode);
+	List<UserEntity> findByEmailAndPlaygroundAndConfirmCode(String email, String playground,int confirmCode);
+	//List<UserEntity> findByEmailAndPlaygroundAndConfirmCodeAndRole()
 }
