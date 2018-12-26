@@ -1,5 +1,6 @@
 package playground.logic.jpa;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,68 +10,101 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import playground.aop.BasicAuthentication;
+import playground.aop.ManagerAuthentication;
 import playground.dal.ElementDao;
+import playground.dal.ElementIdGeneratorDao;
 import playground.logic.Entities.ElementEntity;
-import playground.logic.Exceptions.ElementAlreadyExistsException;
 import playground.logic.Exceptions.ElementNotFoundException;
+import playground.logic.helpers.ElementId;
+import playground.logic.helpers.ElementIdGenerator;
 import playground.logic.services.ElementService;
 
 @Service
 public class JpaElementService implements ElementService{
 
 	private ElementDao elements;
+	private ElementIdGeneratorDao elementIdGeneratorDao;
 
 	@Autowired
 	public void setElementService(ElementDao elements) {
 		this.elements = elements;
 	}
-
-	@Override
-	@Transactional
-	public ElementEntity addNewElement(String userEmail,String userPlaygorund,ElementEntity element) throws ElementAlreadyExistsException {
-		if(!elements.existsById(element.getElementId())){
-			return this.elements.save(element);
-		}
-		throw new ElementAlreadyExistsException();
+	
+	@Autowired
+	public void setElementIdGeneratorDao(ElementIdGeneratorDao elementIdGeneratorDao) {
+		this.elementIdGeneratorDao = elementIdGeneratorDao;
 	}
 
 	@Override
 	@Transactional
+	@BasicAuthentication
+	public ElementEntity addNewElement(String userEmail,String userPlayground,ElementEntity element) {	
+			
+			//Get element id from idGenerator
+			int id = elementIdGeneratorDao.save(new ElementIdGenerator()).getId();
+
+			//Set element id - compose key
+			element.setPlayground(userPlayground);
+			element.setId(id);
+			
+			//Initialize element fields
+			element.setCreatorEmail(userEmail);
+			element.setCreatorPlayground(userPlayground);
+			element.setCreateDate(new Date());
+			
+			return this.elements.save(element);
+	}
+
+	@Override
+	@Transactional
+	//@BasicAuthentication
+	@ManagerAuthentication
 	public ElementEntity updateElement(String userEmail,String userPlaygorund,String playground, String id, ElementEntity entityUpdates)
 			throws ElementNotFoundException {
 
 		ElementEntity existing = null;
-		ElementEntity tempElement = new ElementEntity();
-		tempElement.setPlayground(playground);
-		tempElement.setId(id);
+		//ElementEntity tempElement = new ElementEntity();
+//		tempElement.setPlayground(playground);
+//		tempElement.setId(Integer.parseInt(id));
 
-		String elementId = playground + "@" + id;
-		if(elements.existsById(elementId)){
-			existing = this.elements.findById(elementId)
-					.orElseThrow(()->
-					new ElementNotFoundException("no element with id: " + elementId));
-		}else {
-			throw new ElementNotFoundException("no element with id: " + elementId);
+		//String elementId = playground + "@" + id;
+		ElementId elementId = new ElementId();
+		elementId.setPlayground(playground);
+		elementId.setId(Integer.parseInt(id));
+//		if(elements.existsById(elementId)){
+//			existing = this.elements.findById(elementId)
+//					.orElseThrow(()->
+//					new ElementNotFoundException("no element with id: " + elementId));
+//		}else {
+//			throw new ElementNotFoundException("no element with id: " + elementId);
+//		}
+		
+		
+		existing = this.elements.findByIdAndPlayground(Integer.parseInt(id), playground).get(0);
+		
+		if(existing == null) {
+			throw new ElementNotFoundException("no element with playground: " + playground + 
+												" and id: " + id );
 		}
-
+		
 		if(entityUpdates.getAttributes() != null && !entityUpdates.getAttributes().isEmpty()) {
 			existing.setAttributes(entityUpdates.getAttributes());
 		}
 
-		if(entityUpdates.getCreateDate() != null &&
-				!entityUpdates.getCreateDate().equals(existing.getCreateDate())) {
-			existing.setCreateDate(entityUpdates.getCreateDate());
-		}
-
-		if(entityUpdates.getCreatorEmail() != null &&
-				!entityUpdates.getCreatorEmail().equals(existing.getCreatorEmail())) {	
-			existing.setCreatorEmail(entityUpdates.getCreatorEmail());
-		}
-
-		if(entityUpdates.getCreatorPlayground() != null &&
-				!entityUpdates.getCreatorPlayground().equals(existing.getCreatorPlayground())) {	
-			existing.setCreatorPlayground(entityUpdates.getCreatorPlayground());
-		}
+//		if(entityUpdates.getCreateDate() != null &&
+//				!entityUpdates.getCreateDate().equals(existing.getCreateDate())) {
+//			existing.setCreateDate(entityUpdates.getCreateDate());
+//		}
+//
+//		if(entityUpdates.getCreatorEmail() != null &&
+//				!entityUpdates.getCreatorEmail().equals(existing.getCreatorEmail())) {	
+//			existing.setCreatorEmail(entityUpdates.getCreatorEmail());
+//		}
+//
+//		if(entityUpdates.getCreatorPlayground() != null &&
+//				!entityUpdates.getCreatorPlayground().equals(existing.getCreatorPlayground())) {	
+//			existing.setCreatorPlayground(entityUpdates.getCreatorPlayground());
+//		}
 
 		if(entityUpdates.getExpirationDate() != null &&
 				!entityUpdates.getExpirationDate().equals(existing.getExpirationDate())) {
@@ -95,7 +129,8 @@ public class JpaElementService implements ElementService{
 	@BasicAuthentication
 	public ElementEntity getElementById(String userEmail,String userPlaygorund,String playground, String id) throws ElementNotFoundException {
 		
-		String elementId = playground + "@" + id;
+		//String elementId = playground + "@" + id;
+		ElementId elementId = new ElementId("playground", 1);
 
 		return 
 				this.elements.findById(elementId)
@@ -133,7 +168,7 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional(readOnly=true)
-	//@BasicAuthentication
+	@BasicAuthentication
 	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlaygorund,String attributeName, String value,int size, int page) {		
 		String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
 		return this.elements.findAllByJsonAttributesContaining(jsonAttribute,PageRequest.of(page, size));

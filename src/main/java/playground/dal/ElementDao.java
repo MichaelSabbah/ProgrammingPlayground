@@ -6,10 +6,16 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import playground.logic.Entities.ElementEntity;
+import playground.logic.helpers.ElementId;
 
-public interface ElementDao extends PagingAndSortingRepository<ElementEntity, String>{
+public interface ElementDao extends PagingAndSortingRepository<ElementEntity, ElementId>{
 
 	public List<ElementEntity> findAllByJsonAttributesContaining(
 			@Param("jsonAttribute") String jsonAttribute, 
 			Pageable pageable);
+	
+	public List<ElementEntity> findByIdAndPlayground(
+			@Param("id") int id,
+			@Param("playground") String playground);
+
 }

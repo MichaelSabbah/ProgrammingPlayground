@@ -20,7 +20,7 @@ public class UserTO {
 		this.playground = userEntity.getPlayground();
 		this.username = userEntity.getUsername();
 		this.avatar= userEntity.getAvatar();
-		this.role= userEntity.getRole().name();
+		this.role= userEntity.getRole();
 		this.points= userEntity.getPoints();
 	}
 
@@ -37,7 +37,7 @@ public class UserTO {
 	public UserEntity toUserEntity()
 	{
 		UserEntity userEntity = new UserEntity(this.getEmail(), this.getPlayground(), 
-				this.getUsername(), this.getAvatar(), Enum.valueOf(Role.class,this.getRole()), this.getPoints());
+				this.getUsername(), this.getAvatar(), this.getRole() /*Enum.valueOf(Role.class,this.getRole())*/, this.getPoints());
 		return userEntity;
 	}
 

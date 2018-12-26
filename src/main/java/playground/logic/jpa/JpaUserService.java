@@ -5,6 +5,8 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import playground.aop.BasicAuthentication;
 import playground.dal.UserDao;
 import playground.logic.Entities.UserEntity;
 import playground.logic.Exceptions.InvalidConfirmCodeException;
@@ -68,36 +70,21 @@ public class JpaUserService implements UserService{
 	}
 
 	@Override
+	@BasicAuthentication
 	@Transactional
 	public void updateUser(String userEmail,String userPlayground, UserEntity updateUser)throws Exception {
-		UserEntity localUser = this.userDao.findById(updateUser.getEmail()).orElseThrow(()->new UserNotExistsException("User Not Exists"));
-
-		if(updateUser.getPlayground()!= null && updateUser.getPlayground() != localUser.getPlayground())
+		UserEntity dbUser = this.userDao.findByEmailAndPlayground(userEmail, userPlayground).get(0);
+		if(updateUser.getUsername()!= null && updateUser.getUsername() != dbUser.getUsername())
 		{
-			localUser.setPlayground(updateUser.getPlayground());
+			dbUser.setUsername(updateUser.getUsername());
 		}
 
-		if(updateUser.getUsername()!= null && updateUser.getUsername() != localUser.getUsername())
+		if(updateUser.getAvatar()!= null && updateUser.getAvatar() != dbUser.getAvatar())
 		{
-			localUser.setUsername(updateUser.getUsername());
-		}
-
-		if(updateUser.getAvatar()!= null && updateUser.getAvatar() != localUser.getAvatar())
-		{
-			localUser.setAvatar(updateUser.getAvatar());
-		}
-
-		if(updateUser.getRole()!= null && !updateUser.getRole().name().equals(localUser.getRole().name()))
-		{
-			localUser.setRole(updateUser.getRole());
-		}
-
-		if(updateUser.getPoints() != localUser.getPoints())
-		{
-			localUser.setPoints(updateUser.getPoints());
+			dbUser.setAvatar(updateUser.getAvatar());
 		}
 		
-		this.userDao.save(localUser);
+		this.userDao.save(dbUser);
 	}
 
 	@Override

@@ -19,13 +19,13 @@ public class NewUserForm {
 		this.email = email;
 		this.username = username;
 		this.avatar = avatar;
-		this.role = role.toUpperCase();
+		this.role = role;
 	}
 
 	public UserEntity toUserEntity()
 	{
 		UserEntity userEntity = new UserEntity(this.getEmail(), 
-				this.getUsername(), this.getAvatar(), Enum.valueOf(Role.class, this.getRole()));
+				this.getUsername(), this.getAvatar(), this.getRole()/*Enum.valueOf(Role.class, this.getRole())*/);
 		return userEntity;
 	}
 

@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -13,23 +15,26 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Entity
-public class ElementEntity {
+import playground.logic.helpers.ElementId;
 
-	private String playground;
-	private String id;
+@Entity
+//@Table(name = "elements")
+@IdClass(ElementId.class)
+public class ElementEntity{
+
+	private Map<String,Object> attributes;
 	private Double x;
 	private Double y;
 	private String name;
 	private Date createDate;
 	private Date expirationDate;
 	private String type;
-	private Map<String,Object> attributes;
 	private String creatorPlayground;
 	private String creatorEmail;
-	private String elementId;
-
-	public ElementEntity(String playground, String id, String name, Date createDate, Date expirationDate,
+    private int id;
+	private String playground;
+	
+	public ElementEntity(String playground, int id, String name, Date createDate, Date expirationDate,
 			String type, String creatorPlayground, String creatorEmail){
 		this.playground = playground;
 		this.id = id;
@@ -41,7 +46,6 @@ public class ElementEntity {
 		this.type = type;
 		this.creatorPlayground = creatorPlayground;
 		this.creatorEmail = creatorEmail;
-		this.elementId = playground + "@" + id;
 		this.attributes = new HashMap<String, Object>();
 	}
 
@@ -51,7 +55,27 @@ public class ElementEntity {
 		this.x = 0.0;
 		this.y = 0.0;
 	}
+	
+	@Id
+	@Column(name="id", nullable=false)
+	public int getId() {
+		return id;
+	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	@Id
+	@Column(name="playground", nullable=false)
+	public String getPlayground() {
+		return playground;
+	}
+
+	public void setPlayground(String playground) {
+		this.playground = playground;
+	}
+	
 	public Double getX() {
 		return x;
 	}
@@ -67,32 +91,6 @@ public class ElementEntity {
 	public void setY(Double y) {
 		this.y = y;
 	}
-
-	public String getPlayground() {
-		return playground;
-	}
-
-	public void setPlayground(String playground) {
-		this.playground = playground;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	@Id
-	public String getElementId(){
-		return elementId;
-	}
-
-	public void setElementId(String elementId) {
-		this.elementId = elementId;
-	}
-
 
 	public String getName() {
 		return name;
@@ -119,6 +117,7 @@ public class ElementEntity {
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
+	
 
 	public String getType() {
 		return type;
@@ -127,12 +126,16 @@ public class ElementEntity {
 	public void setType(String type) {
 		this.type = type;
 	}
-
+	
 	@Transient
 	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
-
+	
+	public void setAttributes(Map<String, Object> attributes) {
+		this.attributes = attributes;
+	}
+	
 	@Lob
 	public String getJsonAttributes() {
 		try {
@@ -148,10 +151,6 @@ public class ElementEntity {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public void setAttributes(Map<String, Object> attributes) {
-		this.attributes = attributes;
 	}
 
 	public String getCreatorPlayground() {
@@ -174,6 +173,6 @@ public class ElementEntity {
 	public boolean equals(Object obj) {
 		ElementEntity other = (ElementEntity)obj;
 		return this.getPlayground().equals(other.getPlayground()) && 
-				this.getId().equals(other.getId());
+				this.getId() == (other.getId());
 	}
 }

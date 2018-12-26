@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import playground.logic.Entities.ElementEntity;
 import playground.logic.Entities.UserEntity;
-import playground.logic.Exceptions.ElementAlreadyExistsException;
 import playground.logic.Exceptions.ElementNotFoundException;
 import playground.logic.Exceptions.NotAuthorizeUserException;
 import playground.logic.services.ElementService;
@@ -41,7 +40,7 @@ public class WebUI {
 	private void setUserService(UserService userService){
 		this.userService = userService;
 	}
-
+	
 	@RequestMapping(//V
 			method=RequestMethod.POST,
 			path="/playground/users",
@@ -94,8 +93,9 @@ public class WebUI {
 			consumes=MediaType.APPLICATION_JSON_VALUE)
 	public ElementTO addNewElement(@PathVariable("userPlayground") String userPlayground,
 			@PathVariable("email") String email,
-			@RequestBody ElementTO elementTo) throws ElementAlreadyExistsException {
-		ElementEntity elementEntity = elementService.addNewElement(email,userPlayground,elementTo.toEntity());		
+			@RequestBody ElementTO elementTo) throws NotAuthorizeUserException{
+		ElementEntity elementEntity;
+			elementEntity = elementService.addNewElement(email,userPlayground,elementTo.toEntity());	
 		return new ElementTO(elementEntity);
 	}
 
@@ -108,7 +108,6 @@ public class WebUI {
 			@PathVariable("playground") String playground,
 			@PathVariable("id") String id,
 			@RequestBody ElementTO elementTo) throws ElementNotFoundException{
-
 		elementService.updateElement(email,userPlayground,playground, id, elementTo.toEntity());
 	}
 
@@ -184,18 +183,21 @@ public class WebUI {
 			consumes=MediaType.APPLICATION_JSON_VALUE)
 	public Object postActivity(@RequestBody ActivityTO activityTO,@PathVariable("userPlayground")String userPlayground,
 			@PathVariable("email")String email) {
+		
 		return new ActivityTO();
 	}
+
+
 	
-	@ExceptionHandler
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ErrorMessage ExceptionHandler (Exception e) {
-		String message = e.getMessage();
-		if (message == null) {
-			message = "There is no relevant message";
-		}
-		return new ErrorMessage(message);
-	}
+//	@ExceptionHandler
+//	@ResponseStatus(HttpStatus.NOT_FOUND)
+//	public ErrorMessage ExceptionHandler (Exception e) {
+//		String message = e.getMessage();
+//		if (message == null) {
+//			message = "There is no relevant message";
+//		}
+//		return new ErrorMessage(message);
+//	}
 
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -206,17 +208,4 @@ public class WebUI {
 		}
 		return new ErrorMessage(message);
 	}
-	
-	
-
-
 }
-
-
-
-
-
-
-
-
-

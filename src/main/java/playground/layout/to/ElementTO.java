@@ -38,7 +38,7 @@ public class ElementTO {
 		this();
 		if(elementEntity != null) {
 			this.playground = elementEntity.getPlayground();
-			this.id = elementEntity.getId();
+			this.id = String.valueOf(elementEntity.getId());
 			this.createDate = elementEntity.getCreateDate();
 			this.creatorEmail = elementEntity.getCreatorEmail();
 			this.creatorPlayground = elementEntity.getCreatorPlayground();
@@ -143,13 +143,15 @@ public class ElementTO {
 		elementEntity.setCreatorEmail(this.creatorEmail);
 		elementEntity.setCreatorPlayground(this.creatorPlayground);
 		elementEntity.setExpirationDate(this.expirationDate);
-		elementEntity.setId(this.id);
+		if(this.id != null)
+			elementEntity.setId(Integer.parseInt(this.id));
+		else
+			elementEntity.setId(-1);
 		elementEntity.setX(this.getLocation().getX());
 		elementEntity.setY(this.getLocation().getY());
 		elementEntity.setName(this.getName());
 		elementEntity.setPlayground(this.getPlayground());
 		elementEntity.setType(this.getType());
-		elementEntity.setElementId(this.playground + "@" + this.id);
 		return elementEntity;
 	}
 }
