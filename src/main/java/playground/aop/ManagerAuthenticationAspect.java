@@ -3,16 +3,18 @@ package playground.aop;
 import java.util.List;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import playground.dal.UserDao;
 import playground.logic.Entities.User.UserEntity;
 import playground.logic.exceptions.NotAuthorizeUserException;
 import playground.logic.helpers.Role;
 
-//@Component
-//@Aspect
+@Component
+@Aspect
 public class ManagerAuthenticationAspect {
 
 	private UserDao userDao;

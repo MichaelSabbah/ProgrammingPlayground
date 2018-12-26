@@ -2,15 +2,11 @@ package playground.logic.Entities.Element;
 
 import java.io.Serializable;
 
-//@Embeddable
 public class ElementId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	//@Column(name="playground", nullable=false)
 	protected String playground;
-	
-	//@Column(name="id", nullable=false)
 	protected int id;
 	
 	public ElementId() {}

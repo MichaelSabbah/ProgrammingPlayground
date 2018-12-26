@@ -111,7 +111,8 @@ public class WebUI {
 			method=RequestMethod.PUT,
 			path="/playground/elements/{userPlayground}/{email}/{playground}/{id}",
 			consumes=MediaType.APPLICATION_JSON_VALUE)
-	public void updateElement(@PathVariable("userPlayground") String userPlayground,
+	public void updateElement(
+			@PathVariable("userPlayground") String userPlayground,
 			@PathVariable("email") String email,
 			@PathVariable("playground") String playground,
 			@PathVariable("id") String id,
@@ -123,7 +124,8 @@ public class WebUI {
 			method=RequestMethod.GET,
 			path="/playground/elements/{userPlayground}/{email}/{playground}/{id}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
-	public ElementTO getElement(@PathVariable("userPlayground") String userPlayground,
+	public ElementTO getElement(
+			@PathVariable("userPlayground") String userPlayground,
 			@PathVariable("email") String email,
 			@PathVariable("playground") String playground,
 			@PathVariable("id") String id) throws ElementNotFoundException {

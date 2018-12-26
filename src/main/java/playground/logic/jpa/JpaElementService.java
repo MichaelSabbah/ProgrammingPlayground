@@ -37,7 +37,7 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional
-	@BasicAuthentication
+	@ManagerAuthentication
 	public ElementEntity addNewElement(String userEmail,String userPlayground,ElementEntity element) {	
 			
 			//Get element id from idGenerator
@@ -57,30 +57,15 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional
-	//@BasicAuthentication
 	@ManagerAuthentication
 	public ElementEntity updateElement(String userEmail,String userPlaygorund,String playground, String id, ElementEntity entityUpdates)
 			throws ElementNotFoundException {
 
 		ElementEntity existing = null;
-		//ElementEntity tempElement = new ElementEntity();
-//		tempElement.setPlayground(playground);
-//		tempElement.setId(Integer.parseInt(id));
 
-		//String elementId = playground + "@" + id;
-		ElementId elementId = new ElementId();
-		elementId.setPlayground(playground);
-		elementId.setId(Integer.parseInt(id));
-//		if(elements.existsById(elementId)){
-//			existing = this.elements.findById(elementId)
-//					.orElseThrow(()->
-//					new ElementNotFoundException("no element with id: " + elementId));
-//		}else {
-//			throw new ElementNotFoundException("no element with id: " + elementId);
-//		}
-		
-		
-		existing = this.elements.findByIdAndPlayground(Integer.parseInt(id), playground).get(0);
+		existing = this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
+				.orElseThrow(()->
+				 new ElementNotFoundException("no element with playground: " + playground + " and id: " + id));
 		
 		if(existing == null) {
 			throw new ElementNotFoundException("no element with playground: " + playground + 
@@ -91,28 +76,13 @@ public class JpaElementService implements ElementService{
 			existing.setAttributes(entityUpdates.getAttributes());
 		}
 
-//		if(entityUpdates.getCreateDate() != null &&
-//				!entityUpdates.getCreateDate().equals(existing.getCreateDate())) {
-//			existing.setCreateDate(entityUpdates.getCreateDate());
-//		}
-//
-//		if(entityUpdates.getCreatorEmail() != null &&
-//				!entityUpdates.getCreatorEmail().equals(existing.getCreatorEmail())) {	
-//			existing.setCreatorEmail(entityUpdates.getCreatorEmail());
-//		}
-//
-//		if(entityUpdates.getCreatorPlayground() != null &&
-//				!entityUpdates.getCreatorPlayground().equals(existing.getCreatorPlayground())) {	
-//			existing.setCreatorPlayground(entityUpdates.getCreatorPlayground());
-//		}
-
 		if(entityUpdates.getExpirationDate() != null &&
 				!entityUpdates.getExpirationDate().equals(existing.getExpirationDate())) {
 			existing.setExpirationDate(entityUpdates.getExpirationDate());
 		}
 
 		if(entityUpdates.getName() != null  &&
-				entityUpdates.equals(existing.getName())) {   
+				entityUpdates.getName().equals(existing.getName())) {   
 			existing.setName(entityUpdates.getName());
 		}
 
@@ -129,14 +99,21 @@ public class JpaElementService implements ElementService{
 	@BasicAuthentication
 	public ElementEntity getElementById(String userEmail,String userPlaygorund,String playground, String id) throws ElementNotFoundException {
 		
-		//String elementId = playground + "@" + id;
-		ElementId elementId = new ElementId("playground", 1);
-
-		return 
-				this.elements.findById(elementId)
+		ElementEntity element = this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
 				.orElseThrow(()->
-				new ElementNotFoundException(
-						"no element with id: " + elementId));
+				 new ElementNotFoundException("no element with playground: " + playground + " and id: " + id));
+		
+		if(element == null) {
+			throw new ElementNotFoundException("no element with playground: " + playground + " and id: " + id );
+		}
+		
+		return element;
+		
+		
+//				this.elements.findById(elementId)
+//				.orElseThrow(()->
+//				new ElementNotFoundException(
+//						"no element with id: " + elementId));
 	}
 
 	@Override

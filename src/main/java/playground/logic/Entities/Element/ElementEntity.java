@@ -16,7 +16,6 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
-//@Table(name = "elements")
 @IdClass(ElementId.class)
 public class ElementEntity{
 

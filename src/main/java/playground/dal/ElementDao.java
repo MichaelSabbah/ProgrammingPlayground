@@ -1,6 +1,8 @@
 package playground.dal;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +16,7 @@ public interface ElementDao extends PagingAndSortingRepository<ElementEntity, El
 			@Param("jsonAttribute") String jsonAttribute, 
 			Pageable pageable);
 	
-	public List<ElementEntity> findByIdAndPlayground(
+	public Optional<ElementEntity> findByIdAndPlayground(
 			@Param("id") int id,
 			@Param("playground") String playground);
 
