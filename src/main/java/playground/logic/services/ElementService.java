@@ -2,9 +2,9 @@ package playground.logic.services;
 
 import java.util.List;
 
-import playground.logic.Entities.ElementEntity;
-import playground.logic.Exceptions.ElementAlreadyExistsException;
-import playground.logic.Exceptions.ElementNotFoundException;
+import playground.logic.Entities.Element.ElementEntity;
+import playground.logic.exceptions.ElementAlreadyExistsException;
+import playground.logic.exceptions.ElementNotFoundException;
 
 public interface ElementService {
 

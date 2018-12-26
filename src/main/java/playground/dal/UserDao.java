@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import playground.logic.Entities.UserEntity;
+import playground.logic.Entities.User.UserEntity;
 
 public interface UserDao extends CrudRepository<UserEntity, String>{
 	

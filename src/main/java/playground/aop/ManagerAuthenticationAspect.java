@@ -7,8 +7,8 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import playground.dal.UserDao;
-import playground.logic.Entities.UserEntity;
-import playground.logic.Exceptions.NotAuthorizeUserException;
+import playground.logic.Entities.User.UserEntity;
+import playground.logic.exceptions.NotAuthorizeUserException;
 import playground.logic.helpers.Role;
 
 //@Component

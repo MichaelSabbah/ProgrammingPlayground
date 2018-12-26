@@ -1,4 +1,4 @@
-package playground.logic.helpers;
+package playground.logic.Entities.Element;
 
 import java.io.Serializable;
 
@@ -13,12 +13,9 @@ public class ElementId implements Serializable {
 	//@Column(name="id", nullable=false)
 	protected int id;
 	
-	public ElementId() {
-	
-	}
+	public ElementId() {}
 	
 	public ElementId(String playground, int id) {
-		super();
 		this.playground = playground;
 		this.id = id;
 	}

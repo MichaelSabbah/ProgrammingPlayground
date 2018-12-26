@@ -1,17 +1,22 @@
-package playground.logic.Entities;
+package playground.logic.Entities.Activity;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-//@Entity
+@Entity
+@IdClass(ActivityId.class)
 public class ActivityEntity {
 	private String playground;
-	private String id;
+	private int id;
 	private String elementPlayground;
 	private String elementId;
 	private String type;
@@ -19,7 +24,7 @@ public class ActivityEntity {
 	private String playerEmail;
 	private Map<String,Object> attributes;
 
-	public ActivityEntity(String playground, String id, String elementPlayground, String elementId, String type,
+	public ActivityEntity(String playground, int id, String elementPlayground, String elementId, String type,
 			String playerPlayground, String playerEmail, Map<String, Object> attributes) {
 		this.playground = playground;
 		this.id = id;
@@ -34,8 +39,9 @@ public class ActivityEntity {
 	public ActivityEntity() {
 		this.attributes = new HashMap<String,Object>();	
 	}
-	
-	//@Id
+
+	@Id
+	@Column(name="playground", nullable=false)
 	public String getPlayground() {
 		return playground;
 	}
@@ -44,12 +50,13 @@ public class ActivityEntity {
 		this.playground = playground;
 	}
 
-	//@Id
-	public String getId() {
+	@Id
+	@Column(name="id", nullable=false)
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -118,11 +125,11 @@ public class ActivityEntity {
 			throw new RuntimeException(e);
 		}
 	}
-
-
-
-
-
-
-
+	
+	@Override
+	public boolean equals(Object obj) {
+		ActivityEntity other = (ActivityEntity)obj;
+		return this.getPlayground().equals(other.getPlayground()) && 
+				this.getId() == (other.getId());
+	}
 }

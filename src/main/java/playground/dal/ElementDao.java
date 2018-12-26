@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import playground.logic.Entities.ElementEntity;
-import playground.logic.helpers.ElementId;
+import playground.logic.Entities.Element.ElementEntity;
+import playground.logic.Entities.Element.ElementId;
 
 public interface ElementDao extends PagingAndSortingRepository<ElementEntity, ElementId>{
 

@@ -1,6 +1,6 @@
 package playground.logic.services;
 
-import playground.logic.Entities.UserEntity;
+import playground.logic.Entities.User.UserEntity;
 
 public interface UserService {
 

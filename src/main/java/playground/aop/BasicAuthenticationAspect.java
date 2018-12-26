@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import playground.dal.UserDao;
-import playground.logic.Entities.UserEntity;
-import playground.logic.Exceptions.NotAuthorizeUserException;
+import playground.logic.Entities.User.UserEntity;
+import playground.logic.exceptions.NotAuthorizeUserException;
 
 
 @Component

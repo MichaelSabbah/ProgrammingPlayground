@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import playground.logic.Entities.ElementEntity;
-import playground.logic.Entities.UserEntity;
-import playground.logic.Exceptions.ElementNotFoundException;
-import playground.logic.Exceptions.NotAuthorizeUserException;
+import playground.logic.Entities.Activity.ActivityEntity;
+import playground.logic.Entities.Element.ElementEntity;
+import playground.logic.Entities.User.UserEntity;
+import playground.logic.exceptions.ElementNotFoundException;
+import playground.logic.exceptions.NotAuthorizeUserException;
+import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
 import playground.layout.NewUserForm;
@@ -30,6 +32,12 @@ public class WebUI {
 
 	private ElementService elementService;
 	private UserService userService;
+	private ActivityService activityService;
+	
+	@Autowired
+	public void setActivityService(ActivityService activityService) {
+		this.activityService = activityService;
+	}
 
 	@Autowired
 	public void setElementService(ElementService elementService) {
@@ -182,9 +190,15 @@ public class WebUI {
 			produces=MediaType.APPLICATION_JSON_VALUE,
 			consumes=MediaType.APPLICATION_JSON_VALUE)
 	public Object postActivity(@RequestBody ActivityTO activityTO,@PathVariable("userPlayground")String userPlayground,
-			@PathVariable("email")String email) {
+			@PathVariable("email")String email) throws Exception {
+		ActivityEntity activityEntity = activityTO.toEntity();
+		activityEntity.setPlayerEmail(email);
+		activityEntity.setPlayerPlayground(userPlayground);
+		activityEntity.setPlayground(userPlayground);
+		Object returnValue = this.activityService.invokeActivity(email, userPlayground, 
+				activityEntity.getElementId(), activityEntity.getElementPlayground(), activityEntity);
 		
-		return new ActivityTO();
+		return returnValue;
 	}
 
 

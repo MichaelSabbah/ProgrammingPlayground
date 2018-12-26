@@ -13,10 +13,10 @@ import playground.aop.BasicAuthentication;
 import playground.aop.ManagerAuthentication;
 import playground.dal.ElementDao;
 import playground.dal.ElementIdGeneratorDao;
-import playground.logic.Entities.ElementEntity;
-import playground.logic.Exceptions.ElementNotFoundException;
-import playground.logic.helpers.ElementId;
-import playground.logic.helpers.ElementIdGenerator;
+import playground.logic.Entities.Element.ElementEntity;
+import playground.logic.Entities.Element.ElementId;
+import playground.logic.Entities.Element.ElementIdGenerator;
+import playground.logic.exceptions.ElementNotFoundException;
 import playground.logic.services.ElementService;
 
 @Service

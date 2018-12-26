@@ -2,6 +2,8 @@ package playground.layout.to;
 
 import java.util.Map;
 
+import playground.logic.Entities.Activity.ActivityEntity;
+
 public class ActivityTO {
 
 	private String playground;
@@ -13,12 +15,10 @@ public class ActivityTO {
 	private String playerEmail;
 	private Map<String,Object> attributes;
 
-	public ActivityTO() {
-	}
+	public ActivityTO() {}
 
 	public ActivityTO(String playground, String id, String elementPlayground, String elementId, String type,
 			String playerPlayground, String playerEmail, Map<String, Object> attributes) {
-		super();
 		this.playground = playground;
 		this.id = id;
 		this.elementPlayground = elementPlayground;
@@ -27,6 +27,25 @@ public class ActivityTO {
 		this.playerPlayground = playerPlayground;
 		this.playerEmail = playerEmail;
 		this.attributes = attributes;
+	}
+
+	public ActivityTO(ActivityEntity activityEntity)
+	{
+		this.playground = activityEntity.getPlayground();
+		this.id = activityEntity.getId()+"";
+		this.elementPlayground = activityEntity.getElementPlayground();
+		this.elementId = activityEntity.getElementId();
+		this.type = activityEntity.getType();
+		this.playerPlayground = activityEntity.getPlayerPlayground();
+		this.playerEmail = activityEntity.getPlayerEmail();
+		this.attributes = activityEntity.getAttributes();
+	}
+
+	public ActivityEntity toEntity()
+	{
+		ActivityEntity activityEntity = new ActivityEntity(this.playground, Integer.parseInt(this.id), this.elementPlayground, this.elementId, this.type, 
+				this.playerPlayground, this.playerEmail, this.attributes);
+		return activityEntity;
 	}
 
 	public String getPlayground() {

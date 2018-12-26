@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import playground.logic.Entities.ElementEntity;
+import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.helpers.Location;
 
 public class ElementTO {
@@ -35,7 +35,6 @@ public class ElementTO {
 	}
 
 	public ElementTO(ElementEntity elementEntity){
-		this();
 		if(elementEntity != null) {
 			this.playground = elementEntity.getPlayground();
 			this.id = String.valueOf(elementEntity.getId());

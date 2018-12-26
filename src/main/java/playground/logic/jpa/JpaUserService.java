@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import playground.aop.BasicAuthentication;
 import playground.dal.UserDao;
-import playground.logic.Entities.UserEntity;
-import playground.logic.Exceptions.InvalidConfirmCodeException;
-import playground.logic.Exceptions.UserExistsException;
-import playground.logic.Exceptions.UserNotExistsException;
+import playground.logic.Entities.User.UserEntity;
+import playground.logic.exceptions.InvalidConfirmCodeException;
+import playground.logic.exceptions.UserExistsException;
+import playground.logic.exceptions.UserNotExistsException;
 import playground.logic.services.UserService;
 
 @Service 

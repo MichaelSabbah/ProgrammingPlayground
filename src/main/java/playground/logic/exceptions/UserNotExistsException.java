@@ -1,4 +1,4 @@
-package playground.logic.Exceptions;
+package playground.logic.exceptions;
 
 public class UserNotExistsException extends Exception {
 

@@ -1,4 +1,4 @@
-package playground.logic.Entities;
+package playground.logic.Entities.Element;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -14,8 +14,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import playground.logic.helpers.ElementId;
 
 @Entity
 //@Table(name = "elements")

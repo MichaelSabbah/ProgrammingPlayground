@@ -1,4 +1,4 @@
-package playground.logic.helpers;
+package playground.logic.Entities.Element;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +10,7 @@ public class ElementIdGenerator {
 
 	private int id;
 	
-	public ElementIdGenerator() {
-		
-	}
+	public ElementIdGenerator() {}
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -23,7 +21,4 @@ public class ElementIdGenerator {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
-	
-	
 }

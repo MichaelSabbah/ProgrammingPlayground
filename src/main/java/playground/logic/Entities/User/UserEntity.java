@@ -1,4 +1,4 @@
-package playground.logic.Entities;
+package playground.logic.Entities.User;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
