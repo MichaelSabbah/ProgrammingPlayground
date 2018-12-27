@@ -31,27 +31,5 @@ public class BasicAuthenticationAspect {
 		{
 			throw new UnauthorizedUserException();
 		}
-//		String className = joinPoint.getTarget().getClass().getSimpleName();
-//		String methodName = joinPoint.getSignature().getName();
-//		System.err.println("*****************" + className + "." + methodName + "()");
 	}
-	
-//	@Around("@annotation(playground.aop.BasicAuthentication) && args(userEmail,userPlayground,..)")
-//	public Object validateAuthorizedUserTest(
-//			ProceedingJoinPoint joinPoint,
-//			String userEmail,
-//			String userPlayground) throws Throwable {
-//			
-//		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCode(userEmail,userPlayground,-1);
-//		if(user.size() == 0) {
-//			
-//		}
-//		try {
-//			
-//			return joinPoint.proceed();
-//		}catch(HttpServerErrorException e) {
-//			throw new NotAuthorizeUserException();
-//		}
-//	}
-
 }
