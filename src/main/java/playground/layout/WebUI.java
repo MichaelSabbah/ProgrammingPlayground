@@ -14,11 +14,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javassist.NotFoundException;
 import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.User.UserEntity;
-import playground.logic.exceptions.ElementNotFoundException;
-import playground.logic.exceptions.NotAuthorizeUserException;
+import playground.logic.exceptions.conflict.ConflictException;
+import playground.logic.exceptions.internal.InternalErrorException;
+import playground.logic.exceptions.notacceptable.NotAcceptableException;
+import playground.logic.exceptions.notfound.ElementNotFoundException;
+import playground.logic.exceptions.unauthorized.UnauthorizedException;
+import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
 import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
@@ -33,7 +38,7 @@ public class WebUI {
 	private ElementService elementService;
 	private UserService userService;
 	private ActivityService activityService;
-	
+
 	@Autowired
 	public void setActivityService(ActivityService activityService) {
 		this.activityService = activityService;
@@ -48,7 +53,7 @@ public class WebUI {
 	private void setUserService(UserService userService){
 		this.userService = userService;
 	}
-	
+
 	@RequestMapping(//V
 			method=RequestMethod.POST,
 			path="/playground/users",
@@ -101,9 +106,9 @@ public class WebUI {
 			consumes=MediaType.APPLICATION_JSON_VALUE)
 	public ElementTO addNewElement(@PathVariable("userPlayground") String userPlayground,
 			@PathVariable("email") String email,
-			@RequestBody ElementTO elementTo) throws NotAuthorizeUserException{
+			@RequestBody ElementTO elementTo) throws UnauthorizedUserException{
 		ElementEntity elementEntity;
-			elementEntity = elementService.addNewElement(email,userPlayground,elementTo.toEntity());	
+		elementEntity = elementService.addNewElement(email,userPlayground,elementTo.toEntity());	
 		return new ElementTO(elementEntity);
 	}
 
@@ -197,28 +202,56 @@ public class WebUI {
 		activityEntity.setPlayground(userPlayground);
 		Object returnValue = this.activityService.invokeActivity(email, userPlayground, 
 				activityEntity.getElementId(), activityEntity.getElementPlayground(), activityEntity);
-		
+
 		return returnValue;
 	}
 
-
-	
-//	@ExceptionHandler
-//	@ResponseStatus(HttpStatus.NOT_FOUND)
-//	public ErrorMessage ExceptionHandler (Exception e) {
-//		String message = e.getMessage();
-//		if (message == null) {
-//			message = "There is no relevant message";
-//		}
-//		return new ErrorMessage(message);
-//	}
-
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	public ErrorMessage NotAuthorizeUserExceptionHandler (NotAuthorizeUserException e) {
-		String message = e.getMessage();
+	public ErrorMessage UnauthorizedExceptionHandler (UnauthorizedException ex) {
+		String message = ex.getMessage();
 		if (message == null) {
-			message = "Not Authorize User";
+			message = "Not Authorize";
+		}
+		return new ErrorMessage(message);
+	}
+
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.CONFLICT)
+	public ErrorMessage ConflictExceptionHandler (ConflictException ex) {
+		String message = ex.getMessage();
+		if (message == null) {
+			message = "Conflict value";
+		}
+		return new ErrorMessage(message);
+	}
+
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ErrorMessage InternalErrorExceptionHandler (InternalErrorException ex) {
+		String message = ex.getMessage();
+		if (message == null) {
+			message = "Internal Error";
+		}
+		return new ErrorMessage(message);
+	}
+
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	public ErrorMessage NotAcceptableExceptionHandler (NotAcceptableException ex) {
+		String message = ex.getMessage();
+		if (message == null) {
+			message = "Not Acceptable";
+		}
+		return new ErrorMessage(message);
+	}
+
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ErrorMessage NotFoundExceptionHandler (NotFoundException ex) {
+		String message = ex.getMessage();
+		if (message == null) {
+			message = "Not Found";
 		}
 		return new ErrorMessage(message);
 	}

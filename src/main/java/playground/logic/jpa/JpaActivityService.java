@@ -9,7 +9,7 @@ import playground.dal.ActivityDao;
 import playground.dal.ActivityIdGeneratorDao;
 import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Activity.ActivityIdGenerator;
-import playground.logic.exceptions.NoActivityTypeException;
+import playground.logic.exceptions.notfound.ActivityTypeNotFoundException;
 import playground.logic.services.ActivityService;
 import playground.plugins.ActivityPlugable;
 
@@ -35,7 +35,7 @@ public class JpaActivityService implements ActivityService {
 		String activityType = activityEntity.getType();
 		if(activityType == null || activityType.isEmpty())
 		{
-			throw new NoActivityTypeException("NO_ACTIVITY_TYPE_SPECIFIED");
+			throw new ActivityTypeNotFoundException("NO_ACTIVITY_TYPE_SPECIFIED");
 		}
 		try
 		{
@@ -50,7 +50,7 @@ public class JpaActivityService implements ActivityService {
 			return activityPlugin.ActivateActivity(activityEntity);
 		}
 		catch (ClassNotFoundException e) {
-			throw new NoActivityTypeException("NO_SUCH_ACTIVITY_TYPE");
+			throw new ActivityTypeNotFoundException("NO_SUCH_ACTIVITY_TYPE");
 		}
 	}
 

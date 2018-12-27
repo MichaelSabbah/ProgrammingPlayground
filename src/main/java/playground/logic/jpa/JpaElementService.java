@@ -16,7 +16,7 @@ import playground.dal.ElementIdGeneratorDao;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
 import playground.logic.Entities.Element.ElementIdGenerator;
-import playground.logic.exceptions.ElementNotFoundException;
+import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.services.ElementService;
 
 @Service

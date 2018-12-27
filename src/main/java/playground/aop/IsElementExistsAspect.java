@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import playground.dal.ElementDao;
 import playground.logic.Entities.Element.ElementId;
-import playground.logic.exceptions.ElementNotFoundException;
+import playground.logic.exceptions.notfound.ElementNotFoundException;
 
 @Component
 @Aspect

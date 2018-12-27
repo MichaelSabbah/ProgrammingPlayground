@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import playground.dal.UserDao;
 import playground.logic.Entities.User.UserEntity;
-import playground.logic.exceptions.NotAuthorizeUserException;
+import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
 import playground.logic.helpers.Role;
 
 //@Component
@@ -27,7 +27,7 @@ public class ManagerAuthenticationAspect {
 		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCodeAndRole(email,playground,-1,Role.MANAGER.name());
 		
 		if(user.size() == 0) {
-			throw new NotAuthorizeUserException("The user is not a manager");
+			throw new UnauthorizedUserException("The user is not a manager");
 		}
 	}
 	

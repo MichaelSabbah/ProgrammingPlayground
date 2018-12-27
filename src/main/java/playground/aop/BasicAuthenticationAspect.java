@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import playground.dal.UserDao;
 import playground.logic.Entities.User.UserEntity;
-import playground.logic.exceptions.NotAuthorizeUserException;
+import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
 
 
 @Component
@@ -29,7 +29,7 @@ public class BasicAuthenticationAspect {
 		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCode(userEmail,userPlayground,-1);
 		if(user.size() == 0)
 		{
-			throw new NotAuthorizeUserException();
+			throw new UnauthorizedUserException();
 		}
 //		String className = joinPoint.getTarget().getClass().getSimpleName();
 //		String methodName = joinPoint.getSignature().getName();
