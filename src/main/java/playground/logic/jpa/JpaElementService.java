@@ -62,15 +62,14 @@ public class JpaElementService implements ElementService{
 			throws ElementNotFoundException {
 
 		ElementEntity existing = null;
-
-		existing = this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
+		
+		ElementId elementId = new ElementId();
+		elementId.setId(Integer.parseInt(id));
+		elementId.setPlayground(playground);
+		
+		existing = this.elements.findById(elementId)//this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
 				.orElseThrow(()->
 				 new ElementNotFoundException("no element with playground: " + playground + " and id: " + id));
-		
-		if(existing == null) {
-			throw new ElementNotFoundException("no element with playground: " + playground + 
-												" and id: " + id );
-		}
 		
 		if(entityUpdates.getAttributes() != null && !entityUpdates.getAttributes().isEmpty()) {
 			existing.setAttributes(entityUpdates.getAttributes());
@@ -99,7 +98,11 @@ public class JpaElementService implements ElementService{
 	@BasicAuthentication
 	public ElementEntity getElementById(String userEmail,String userPlaygorund,String playground, String id) throws ElementNotFoundException {
 		
-		ElementEntity element = this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
+		ElementId elementId = new ElementId();
+		elementId.setId(Integer.parseInt(id));
+		elementId.setPlayground(playground);
+		
+		ElementEntity element = this.elements.findById(elementId)//this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
 				.orElseThrow(()->
 				 new ElementNotFoundException("no element with playground: " + playground + " and id: " + id));
 		

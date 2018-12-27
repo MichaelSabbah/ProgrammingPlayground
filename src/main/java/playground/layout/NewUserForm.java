@@ -24,8 +24,12 @@ public class NewUserForm {
 
 	public UserEntity toUserEntity()
 	{
-		UserEntity userEntity = new UserEntity(this.getEmail(), 
-				this.getUsername(), this.getAvatar(), this.getRole()/*Enum.valueOf(Role.class, this.getRole())*/);
+		UserEntity userEntity = new UserEntity(
+				this.getEmail(), 
+				this.getUsername(), 
+				this.getAvatar(), 
+				this.getRole());
+		
 		return userEntity;
 	}
 

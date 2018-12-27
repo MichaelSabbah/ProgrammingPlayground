@@ -1,8 +1,6 @@
 package playground.logic.Entities.User;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
 @Entity
@@ -36,7 +34,7 @@ public class UserEntity {
 	}
 
 
-	public UserEntity(String email, String playground, String username, String avatar, String String, long points) {
+	public UserEntity(String email, String playground, String username, String avatar, String role, long points) {
 		super();
 		this.email = email;
 		this.playground = playground;
@@ -46,7 +44,7 @@ public class UserEntity {
 		this.points = points;
 	}
 
-	public UserEntity(String email, String username, String avatar, String String) {
+	public UserEntity(String email, String username, String avatar, String role) {
 		super();
 		this.email = email;
 		this.username = username;

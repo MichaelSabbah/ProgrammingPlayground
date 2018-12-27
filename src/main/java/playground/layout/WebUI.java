@@ -63,7 +63,8 @@ public class WebUI {
 			method=RequestMethod.GET,
 			path="/playground/users/confirm/{playground}/{email}/{code}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
-	public UserTO verifyRegistration(@PathVariable("playground") String playground,
+	public UserTO verifyRegistration(
+			@PathVariable("playground") String playground,
 			@PathVariable("email") String email,
 			@PathVariable("code") String code) throws Exception {
 		UserEntity userEntity = new UserEntity(email,playground,Integer.parseInt(code));
@@ -74,7 +75,8 @@ public class WebUI {
 			method=RequestMethod.GET,
 			path="/playground/users/login/{playground}/{email}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
-	public UserTO login(@PathVariable("playground") String playground,
+	public UserTO login(
+			@PathVariable("playground") String playground,
 			@PathVariable("email") String email) throws Exception {
 		UserEntity userEntity = new UserEntity(email,playground);
 		return new UserTO(this.userService.loginUser(userEntity));

@@ -21,8 +21,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import playground.dal.ElementIdGeneratorDao;
 import playground.layout.to.ElementTO;
+import playground.layout.to.UserTO;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.User.UserEntity;
 import playground.logic.helpers.Role;
@@ -99,6 +99,7 @@ public class PlaygroundTests {
 
 	}
 
+	//Elements tests
 	
 	@Test
 	public void testPostElementSuccessfully() throws Exception{
@@ -294,58 +295,49 @@ public class PlaygroundTests {
 		//Then The response is status <> 2xx
 	}
 
-	/*@Test
+	@Test
 	public void testGetAllElementsByLocationAndDistanceSuccessfully() throws Exception{
-		//Given
-		UserEntity userEntity= new UserEntity("test@user.com","playground");
-		this.userService.addUser(userEntity);
-		this.userService.confirmUser(userEntity);
-		
+
+		//Given - 
+		//Database contains user
+		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
+		//And database contains element
+		createAuthroizedUser(Role.MANAGER,authManagerEmail);
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
 		elementEntity.setX(1.0);
 		elementEntity.setY(1.0);
-		//elementEntity.setId("1");
-		elementEntity.setPlayground("playground");
-		elementEntity.setCreatorPlayground("playground");
-		elementEntity.setCreatorEmail("test@user.com");
-		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
-
-		elementService.addNewElement("bla","bla",elementEntity);
+		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		//When
 		ElementTO[] actuallyReturned = this.restTemplate.getForObject(this.url + "/{userPlayground}/{email}/near/{x}/{y}/{distance}", 
 				ElementTO[].class, 
-				"playground","test@user.com",2,2,3);
+				authUserPlayground,authPlayerEmail,2,2,3);
 
 		//Then
 		assertThat(actuallyReturned)
 		.isNotNull()
 		.hasSize(1);
+		
+		//TODO - Michael - Add test for the elements array that return
 	}
 
 	@Test(expected=Exception.class)
 	public void testGetAllElementsByLocationAndNegativeDistance() throws Exception{
-		//Given - 
-		//No elements exist
-		//Confirmed user exist
-		UserEntity userEntity= new UserEntity("test@user.com","playground");
-		this.userService.addUser(userEntity);
-		this.userService.confirmUser(userEntity);
 		
+		//Given - 
+		//Database contains user
+		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
+		//And database contains element
+		createAuthroizedUser(Role.MANAGER,authManagerEmail);
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
 		elementEntity.setX(1.0);
 		elementEntity.setY(1.0);
-		elementEntity.setId("1");
-		elementEntity.setPlayground("playground");
-		elementEntity.setCreatorPlayground("playground");
-		elementEntity.setCreatorEmail("test@user.com");
-		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
 
-		elementService.addNewElement("bla","bla",elementEntity);
+		elementService.addNewElement(authPlayerEmail,authUserPlayground,elementEntity);
 
 		//When
 		restTemplate.getForObject(url + "{playground}/{email}/near/{x}/{y}{distance}", 
@@ -358,29 +350,25 @@ public class PlaygroundTests {
 
 	@Test
 	public void testGetAllElementsByAttributeSuccessfully() throws Exception{
-		//Given
-		UserEntity userEntity= new UserEntity("test@user.com","playground");
-		this.userService.addUser(userEntity);
-		this.userService.confirmUser(userEntity);
-		
+		//Given - 
+		//Database contains user
+		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
+		//And database contains element
+		createAuthroizedUser(Role.MANAGER,authManagerEmail);
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
-		elementEntity.setType("Quiz1");
-		elementEntity.setId("1");
-		elementEntity.setPlayground("playground");
-		elementEntity.setCreatorPlayground("playground");
-		elementEntity.setCreatorEmail("test@user.com");
-		HashMap<String,Object> attributesMap = new HashMap<>();
-		attributesMap.put("quizTime", "60");
-		elementEntity.setAttributes(attributesMap);
-		elementEntity.setElementId(elementEntity.getPlayground() + "@" + elementEntity.getId());
-		this.elementService.addNewElement("bla","bla",elementEntity);
-
+		elementEntity.setType("Ad Board");
+		elementEntity.setX(1.0);
+		elementEntity.setY(1.0);
+		Map<String,Object> moreAttributes = new HashMap<String,Object>();
+		moreAttributes.put("quizTime", "60");
+		elementEntity.setAttributes(moreAttributes);
+		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		//When
 		ElementTO[] actuallyReturned = restTemplate.getForObject(url + "/{userPlayground}/{email}/search/{attributeName}/{value}", 
 				ElementTO[].class, 
-				"playground","test@user.com","quizTime","60");
+				authUserPlayground,authPlayerEmail,"quizTime","60");
 
 		//Then
 		assertThat(actuallyReturned)
@@ -391,29 +379,39 @@ public class PlaygroundTests {
 	@Test(expected=Exception.class)
 	public void  testGetAllElementsWithNonExistingElementValue() throws Exception{
 		//Given - 
-		//No elements exist
-		//Confirmed user exist
-		UserEntity userEntity= new UserEntity("test@user.com","playground");
-		this.userService.addUser(userEntity);
-		this.userService.confirmUser(userEntity);
+		//Database contains user
+		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
+		//And database contains element
+		createAuthroizedUser(Role.MANAGER,authManagerEmail);
+		ElementEntity elementEntity = new ElementEntity();
+		elementEntity.setName("element1");
+		elementEntity.setType("Quiz");
+		elementEntity.setX(1.0);
+		elementEntity.setY(1.0);
+		Map<String,Object> moreAttributes = new HashMap<String,Object>();
+		moreAttributes.put("quizTime", "60");
+		elementEntity.setAttributes(moreAttributes);
+		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		//When
 		restTemplate.getForObject(url + "{playground}/{email}/search/{attributeName}/{value}", 
 				ElementTO.class, 
-				"playground","test@user.com","quizTime","60");
+				"playground","test@user.com","color","blue");
 
 		//Then The response is status <> 2xx		
 	}
 
+	//Users tests
+	
 	@Test
 	public void testPostUserSuccessfully() {
 		//Given - Database is empty
 
 		//When
 		NewUserForm newUserForm = new NewUserForm();
-		newUserForm.setEmail("test@user.com");
-		newUserForm.setUsername("test");
-		newUserForm.setRole(Role.MANAGER.name());
+		newUserForm.setEmail(authPlayerEmail);
+		newUserForm.setUsername("player");
+		newUserForm.setRole(Role.PLAYER.name());
 		newUserForm.setAvatar("smiley.jpg");
 		UserTO userToResponse = this.restTemplate.postForObject(this.usersUrl, newUserForm, UserTO.class);
 
@@ -422,7 +420,7 @@ public class PlaygroundTests {
 		.isNotNull()
 		.extracting("email", "username", "role","avatar")
 		.containsExactly(newUserForm.getEmail(), newUserForm.getUsername(),newUserForm.getRole(),newUserForm.getAvatar());
-
+		
 	}
 
 	@Test(expected=Exception.class)
@@ -430,42 +428,46 @@ public class PlaygroundTests {
 	{
 		//Given
 		UserEntity userEntity= new UserEntity();
-		userEntity.setEmail("test@user.com");
-		userEntity.setUsername("test");
-		userEntity.setRole(Role.MANAGER);
+		userEntity.setEmail(authPlayerEmail);
+		userEntity.setUsername("player");
+		userEntity.setRole(Role.PLAYER.name());
+		userEntity.setAvatar("smiley.jpg");
 		this.userService.addUser(userEntity);
 
 		//When
 		NewUserForm newUserForm = new NewUserForm();
-		newUserForm.setEmail("test@user.com");
-		newUserForm.setUsername("test");
-		newUserForm.setRole("admin");
-		newUserForm.setAvatar("smiley.jpg");
+		newUserForm.setEmail("player@user.com");
+		newUserForm.setUsername("player2");
+		newUserForm.setRole(Role.PLAYER.name());
+		newUserForm.setAvatar("avatar.jpg");
 		this.restTemplate.postForObject(this.usersUrl, newUserForm, UserTO.class);
 
 		//Then The response is status <> 2xx
 	}
 
+	//TODO - Option - Add tests for post new MANAGER
+	
 	@Test
-	public void testGetUserconfirmSuccessfully() throws Exception
+	public void testGetUserConfirmSuccessfully() throws Exception
 	{
-		//Given
+		//Given - 
+		//Database contains user:
 		UserEntity userEntity= new UserEntity();
-		userEntity.setEmail("test@user.com");
-		userEntity.setUsername("test");
-		userEntity.setRole(Role.MANAGER);
+		userEntity.setEmail(authManagerEmail);
+		userEntity.setUsername("manager");
+		userEntity.setRole(Role.MANAGER.name());
 		userEntity.setPlayground("playground");
-		userEntity.setAvatar("smiley.jpg");
+		userEntity.setAvatar("smiley.jpg");		
 		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
 
 		//When
-		UserTO userTO = this.restTemplate.getForObject(this.usersUrl+"/confirm/{playground}/{email}/{code}", UserTO.class, "playground","test@user.com",confirmCode);
+		UserTO actuallyReturned = this.restTemplate.getForObject(this.usersUrl+"/confirm/{playground}/{email}/{code}", UserTO.class, "playground",authManagerEmail,confirmCode);
 
 		//Then
-		assertThat(userTO)
+		assertThat(actuallyReturned)
 		.isNotNull()
 		.extracting("email", "username","playground", "role","avatar")
-		.containsExactly(userEntity.getEmail(), userEntity.getUsername(),userEntity.getPlayground(),userEntity.getRole().name(),userEntity.getAvatar());
+		.containsExactly(userEntity.getEmail(), userEntity.getUsername(),userEntity.getPlayground(),userEntity.getRole(),userEntity.getAvatar());
 	}
 
 	@Test(expected=Exception.class)
@@ -473,39 +475,42 @@ public class PlaygroundTests {
 	{
 		//Given
 		UserEntity userEntity= new UserEntity();
-		userEntity.setEmail("test@user.com");
-		userEntity.setUsername("test");
-		userEntity.setRole(Role.MANAGER);
-		userEntity.setPlayground("playground");
-		userEntity.setConfirmCode(777);
-		this.userService.addUser(userEntity);
+		userEntity.setEmail(authManagerEmail);
+		userEntity.setUsername("manager");
+		userEntity.setRole(Role.MANAGER.name());
+		userEntity.setPlayground(authUserPlayground);
+		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
 
 		//When
-		this.restTemplate.getForObject(this.usersUrl+"/confirm/{playground}/{email}/{code}", UserTO.class, "playground","test@user.com",666);
+		this.restTemplate.getForObject(this.usersUrl+"/confirm/{playground}/{email}/{code}",
+				UserTO.class, authUserPlayground,authManagerEmail,confirmCode - 1);
 
 		//Then The response is status <> 2xx
-
 	}
 
 	@Test
 	public void testGetUserDetailsSuccessfully() throws Exception
 	{
-		//Given
+		//Given - 
+		//Database contains confirmed user
 		UserEntity userEntity= new UserEntity();
-		userEntity.setEmail("test@user.com");
-		userEntity.setUsername("test");
-		userEntity.setRole(Role.MANAGER);
-		userEntity.setPlayground("playground");
-		this.userService.addUser(userEntity);
-
+		userEntity.setEmail(authPlayerEmail);
+		userEntity.setPlayground(authUserPlayground);
+		userEntity.setUsername("palyer");
+		userEntity.setRole(Role.PLAYER.name());
+		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
+		System.err.println("confirm code: " + confirmCode);
+		userEntity.setConfirmCode(confirmCode);
+		this.userService.confirmUser(userEntity);
+		
 		//When
-		UserTO userTO = this.restTemplate.getForObject(this.usersUrl+"/login/{playground}/{email}", UserTO.class, "playground","test@user.com");
+		UserTO actuallyReturned = this.restTemplate.getForObject(this.usersUrl+"/login/{playground}/{email}", UserTO.class, authUserPlayground,authPlayerEmail);
 
 		//Then
-		assertThat(userTO)
+		assertThat(actuallyReturned)
 		.isNotNull()
 		.extracting("email", "username","playground","role")
-		.containsExactly(userEntity.getEmail(), userEntity.getUsername(),userEntity.getPlayground(),userEntity.getRole().name());
+		.containsExactly(userEntity.getEmail(), userEntity.getUsername(),userEntity.getPlayground(),userEntity.getRole());
 
 	}
 
@@ -513,51 +518,55 @@ public class PlaygroundTests {
 	public void testGetUserDetailsWithInvalidEmail() throws Exception
 	{
 		//Given - Database is empty
-
+		
 		//When
-		this.restTemplate.getForObject(this.usersUrl+"/login/{playground}/{email}", UserTO.class, "playground","test@user.com");
+		this.restTemplate.getForObject(this.usersUrl+"/login/{playground}/{email}", UserTO.class, "playground","wrong@user.com");
 
 		//Then The response is status <> 2xx
 	}
-
+	
+	//TODO - Michael - Add test for get user details with existing user (wrong email/unauthorized...)
 
 	@Test
 	public void testUpdateUserDetailsSuccessfully() throws Exception
 	{
-		//Given
+		//Given - 
+		//Database contains user:
 		UserEntity userEntity= new UserEntity();
-		userEntity.setEmail("test@user.com");
-		userEntity.setUsername("test");
-		userEntity.setRole(Role.MANAGER);
-		userEntity.setPlayground("playground");
+		userEntity.setEmail(authManagerEmail);
+		userEntity.setUsername("manager");
+		userEntity.setRole(Role.MANAGER.name());
+		userEntity.setPlayground(authUserPlayground);
 		userEntity.setAvatar("smiley.jpg");
-		this.userService.addUser(userEntity);
-
+		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
+		userEntity.setConfirmCode(confirmCode);
+		this.userService.confirmUser(userEntity);
+		
 		//When
 		UserTO userTO = new UserTO(userEntity);
 		userTO.setAvatar("smile.jpg");
-		userTO.setUsername("test2");
-		this.restTemplate.put(this.usersUrl+"/{playground}/{email}", userTO, "playground","test@user.com");
+		userTO.setUsername("manager2");
+		this.restTemplate.put(this.usersUrl+"/{playground}/{email}", userTO, authUserPlayground,authManagerEmail);
 
 		//Then The response is status 2xx
+		//TODO - Michael - Add test for the updated user details 
 
 	}
 
 	@Test(expected=Exception.class)
-	public void testUpdateUserDetailsWithNonExistingUser() throws Exception
-	{
-		//Given - Database is empty
+	public void testUpdateUserDetailsWithNonExistingUser() throws Exception{
+		//Given - 
+		//Database is empty
 		
 		//When
 		UserTO userTO= new UserTO();
-		userTO.setEmail("test@user.com");
-		userTO.setUsername("test2");
-		userTO.setRole("admin");
-		userTO.setAvatar("smile.jpg");
-		this.restTemplate.put(this.usersUrl+"/{playground}/{email}", userTO, "playground","test@user.com");
+		userTO.setEmail("unexistingUser@user.com");
+		userTO.setPlayground(authUserPlayground);
+		userTO.setRole(Role.PLAYER.name());
+		this.restTemplate.put(this.usersUrl+"/{playground}/{email}", userTO, "playground","unexistingUser@user.com");
 
 		//Then The response is status <> 2xx
-	}*/
+	}
 
 	private void createAuthroizedUser(Role role,String userEmail) throws Exception {
 		UserEntity userEntity = new UserEntity(userEmail,authUserPlayground);

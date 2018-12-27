@@ -157,7 +157,7 @@ public class ElementEntity{
 	public void setCreatorPlayground(String creatorPlayground) {
 		this.creatorPlayground = creatorPlayground;
 	}
-
+	
 	public String getCreatorEmail() {
 		return creatorEmail;
 	}
@@ -172,4 +172,14 @@ public class ElementEntity{
 		return this.getPlayground().equals(other.getPlayground()) && 
 				this.getId() == (other.getId());
 	}
+
+	@Override
+	public String toString() {
+		return "ElementEntity [attributes=" + attributes + ", x=" + x + ", y=" + y + ", name=" + name + ", createDate="
+				+ createDate + ", expirationDate=" + expirationDate + ", type=" + type + ", creatorPlayground="
+				+ creatorPlayground + ", creatorEmail=" + creatorEmail + ", id=" + id + ", playground=" + playground
+				+ "]";
+	}
+	
+	
 }
