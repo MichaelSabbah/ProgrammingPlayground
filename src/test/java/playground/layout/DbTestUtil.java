@@ -10,14 +10,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 final class DbTestUtil {
-	
+
 	private DbTestUtil() {
-		
+
 	}
-	
+
 	public static void resetAutoIncrementColumns(ApplicationContext applicationContext,
-												 String... tableNames) throws SQLException{
-		
+			String... tableNames) throws SQLException{
+
 		String resetSqlTemplate = getResetSqlTemplate(applicationContext);
 		DataSource dataSource = applicationContext.getBean(DataSource.class);
 		try(Connection dbConnection = dataSource.getConnection()){
@@ -34,5 +34,5 @@ final class DbTestUtil {
 		Environment environment = applicationContext.getBean(Environment.class);
 		return environment.getRequiredProperty("test.reset.sql.template");
 	}	
-	
+
 }
