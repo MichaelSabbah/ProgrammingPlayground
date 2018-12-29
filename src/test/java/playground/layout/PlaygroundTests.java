@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.AssertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,13 +23,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import playground.layout.to.ActivityTO;
 import playground.layout.to.ElementTO;
 import playground.layout.to.UserTO;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.User.UserEntity;
+import playground.logic.helpers.PlaygroundConsts;
 import playground.logic.helpers.Role;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
+import playground.plugins.Feedback;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
@@ -42,6 +44,7 @@ public class PlaygroundTests {
 	
 	private String url;
 	private String usersUrl;
+	private String activitiesUrl;
 	
 	private String authManagerEmail;
 	private String authPlayerEmail;
@@ -66,6 +69,7 @@ public class PlaygroundTests {
 		this.restTemplate = new RestTemplate();
 		this.url = "http://localhost:" + this.port + "/playground/elements";
 		this.usersUrl = "http://localhost:" + this.port + "/playground/users";
+		this.activitiesUrl = "http://localhost:" + this.port + "/playground/activities";
 		
 		//Details for Manager and Player
 		//Used for validation on elements operation 
@@ -584,7 +588,7 @@ public class PlaygroundTests {
 	}
 
 	@Test(expected=OKException.class)
-	public void testGetUserDetailsWithInvalidEmail() throws Exception
+	public void testGetUserDetailsWithInvalidEmail() throws Throwable
 	{
 		//Given - Database is empty
 		
@@ -639,16 +643,58 @@ public class PlaygroundTests {
 		userTO.setPlayground(authUserPlayground);
 		userTO.setRole(Role.PLAYER.name());
 		try {
-		this.restTemplate.put(this.usersUrl+"/{playground}/{email}", userTO, "playground","unexistingUser@user.com");
+			this.restTemplate.put(this.usersUrl+"/{playground}/{email}", userTO, "playground","unexistingUser@user.com");
 		}
-		catch(HttpClientErrorException ex)
-		{
+		catch(HttpClientErrorException ex){
 			HttpStatus httpStatus = ex.getStatusCode();
 			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
 		}
 		//Then The response is status <> 2xx
 	}
-
+	
+	
+	
+	//Activity tests
+	
+	@Test
+	public void testAnswerTheQuestionActivityPluginSuccessfully() throws Throwable{
+		//Given -
+		//And database contains player
+		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
+		//And database contains element
+		createAuthroizedUser(Role.MANAGER,authManagerEmail);
+		ElementEntity elementEntity = new ElementEntity();
+		elementEntity.setName("Question");
+		elementEntity.setType("MultipleChoiceQuestion");
+		Map<String,Object> moreAttributes = new HashMap<String,Object>();
+		moreAttributes.put("question", "the question");
+		moreAttributes.put("a", "answer a");
+		moreAttributes.put("b", "answer b");
+		moreAttributes.put("c", "answer c");
+		moreAttributes.put("d", "answer d");
+		moreAttributes.put("answer", "a");
+		elementEntity.setAttributes(moreAttributes);
+		ElementEntity exisingElementEntity = elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
+		
+		//When
+		ActivityTO activityTO = new ActivityTO();
+		activityTO.setElementId(String.valueOf(exisingElementEntity .getId()));
+		activityTO.setElementPlayground(exisingElementEntity.getPlayground());
+		activityTO.setType("AnswerTheQuestion");
+		moreAttributes = new HashMap<String,Object>();
+		moreAttributes.put(PlaygroundConsts.ANSWER_KEY, "a");
+		activityTO.setAttributes(moreAttributes);
+		
+		Feedback feedbackReturend  = (Feedback)this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
+				activityTO, Object.class, authUserPlayground,authPlayerEmail);
+		
+		//Then
+		assertThat(feedbackReturend)
+		.isNotNull()
+		.extracting("feedback")
+		.containsExactly("You right");
+	}
+	
 	private void createAuthroizedUser(Role role,String userEmail) throws Throwable {
 		UserEntity userEntity = new UserEntity(userEmail,authUserPlayground);
 		userEntity.setRole(role.name());
@@ -656,4 +702,5 @@ public class PlaygroundTests {
 		userEntity.setConfirmCode(confirmCode);
 		this.userService.confirmUser(userEntity);
 	}
+	
 }
