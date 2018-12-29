@@ -685,8 +685,47 @@ public class PlaygroundTests {
 		moreAttributes.put(PlaygroundConsts.ANSWER_KEY, "a");
 		activityTO.setAttributes(moreAttributes);
 		
-		Feedback feedbackReturend  = (Feedback)this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
-				activityTO, Object.class, authUserPlayground,authPlayerEmail);
+		Feedback feedbackReturend  = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
+				activityTO, Feedback.class, authUserPlayground,authPlayerEmail);
+		
+		//Then
+		assertThat(feedbackReturend)
+		.isNotNull()
+		.extracting("feedback")
+		.containsExactly("You right");
+	}
+	
+	@Test(expected=OKException.class)
+	public void testAnswerTheQuestionActivityPluginSuccessfully() throws Throwable{
+		//Given -
+		//And database contains player
+		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
+		//And database contains element
+		createAuthroizedUser(Role.MANAGER,authManagerEmail);
+		ElementEntity elementEntity = new ElementEntity();
+		elementEntity.setName("Question");
+		elementEntity.setType("MultipleChoiceQuestion");
+		Map<String,Object> moreAttributes = new HashMap<String,Object>();
+		moreAttributes.put("question", "the question");
+		moreAttributes.put("a", "answer a");
+		moreAttributes.put("b", "answer b");
+		moreAttributes.put("c", "answer c");
+		moreAttributes.put("d", "answer d");
+		moreAttributes.put("answer", "a");
+		elementEntity.setAttributes(moreAttributes);
+		ElementEntity exisingElementEntity = elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
+		
+		//When
+		ActivityTO activityTO = new ActivityTO();
+		activityTO.setElementId(String.valueOf(exisingElementEntity .getId()));
+		activityTO.setElementPlayground(exisingElementEntity.getPlayground());
+		activityTO.setType("AnswerTheQuestion");
+		moreAttributes = new HashMap<String,Object>();
+		moreAttributes.put(PlaygroundConsts.ANSWER_KEY, "a");
+		activityTO.setAttributes(moreAttributes);
+		
+		Feedback feedbackReturend  = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
+				activityTO, Feedback.class, authUserPlayground,authPlayerEmail);
 		
 		//Then
 		assertThat(feedbackReturend)
