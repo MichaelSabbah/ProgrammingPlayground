@@ -11,7 +11,7 @@ import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Activity.ActivityIdGenerator;
 import playground.logic.exceptions.notfound.ActivityTypeNotFoundException;
 import playground.logic.services.ActivityService;
-import playground.plugins.ActivityPlugable;
+import playground.plugins.ActivityPlugin;
 
 @Service
 public class JpaActivityService implements ActivityService {
@@ -46,8 +46,8 @@ public class JpaActivityService implements ActivityService {
 			
 			String className = "playground.plugins." + activityType + "Plugin";
 			Class<?> theClass = Class.forName(className);
-			ActivityPlugable activityPlugin = (ActivityPlugable) this.spring.getBean(theClass);
-			return activityPlugin.ActivateActivity(activityEntity);
+			ActivityPlugin activityPlugin = (ActivityPlugin) this.spring.getBean(theClass);
+			return activityPlugin.activate(activityEntity);
 		}
 		catch (ClassNotFoundException e) {
 			throw new ActivityTypeNotFoundException("NO_SUCH_ACTIVITY_TYPE");
