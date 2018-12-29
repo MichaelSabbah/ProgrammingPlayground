@@ -25,7 +25,7 @@ public class ManagerAuthenticationAspect {
 	}
 	
 	@Before("@annotation(playground.aop.ManagerAuthentication) && args(email,playground,..)")
-	public void roleValidation(JoinPoint joinPoint, String email, String playground) throws Throwable {
+	public void managerRoleValidation(JoinPoint joinPoint, String email, String playground) throws Throwable {
 		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCodeAndRole(email,playground,-1,Role.MANAGER.name());
 		
 		if(user.size() == 0) {

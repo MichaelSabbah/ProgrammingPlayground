@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import playground.aop.IsElementExists;
+import playground.aop.PlayerAuthentication;
 import playground.dal.ActivityDao;
 import playground.dal.ActivityIdGeneratorDao;
 import playground.logic.Entities.Activity.ActivityEntity;
@@ -30,7 +31,7 @@ public class JpaActivityService implements ActivityService {
 
 	@Override
 	@IsElementExists
-	//@PlayerAuthentication
+	@PlayerAuthentication
 	public Object invokeActivity(String userEmail,String userPlayground,String elementId,String elementPlayground,ActivityEntity activityEntity) throws Exception {
 		String activityType = activityEntity.getType();
 		if(activityType == null || activityType.isEmpty())
