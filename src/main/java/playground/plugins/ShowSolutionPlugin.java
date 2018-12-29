@@ -1,5 +1,7 @@
 package playground.plugins;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -7,19 +9,24 @@ import com.sun.javafx.collections.MappingChange.Map;
 
 import playground.dal.ActivityDao;
 import playground.dal.ElementDao;
+import playground.dal.UserDao;
 import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
+import playground.logic.Entities.User.UserEntity;
 import playground.logic.exceptions.notacceptable.InvalidAnswerException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
+import playground.logic.exceptions.notfound.UserNotFoundException;
 @Component
 public class ShowSolutionPlugin implements ActivityPlugin{
 	ElementDao elements;
 	ActivityDao activities;
+	UserDao users;
 	@Autowired
-	public ShowSolutionPlugin(ElementDao eDao,ActivityDao aDao) {
+	public ShowSolutionPlugin(ElementDao eDao,ActivityDao aDao,UserDao uDao) {
 		this.elements=eDao;
 		this.activities=aDao;
+		this.users=uDao;
 	}
 
 	@Override
@@ -27,16 +34,26 @@ public class ShowSolutionPlugin implements ActivityPlugin{
 		Answer answer=new Answer();
 			ElementEntity element=getElementById(activityEntity.getPlayground(), activityEntity.getElementId());
 			java.util.Map<String, Object> map=element.getAttributes();
-			if(map.get("solution")!=null)
-			{
+			if(map.get("solution")!=null){
+				List<UserEntity> usersList=users.findByEmailAndPlayground(activityEntity.getPlayerEmail(),activityEntity.getPlayerPlayground());
+				if(usersList.size()>0){
+					UserEntity user=usersList.get(0);
+					if(user.getPoints()>=2) {
+						user.setPoints(user.getPoints()-2);
+						users.save(user);
+				}
+					else
+						throw new NotEnoughPointsException();
+				}
+				else throw new UserNotFoundException();
 				String answerString=(String) map.get("solution");
 				answer.setAnswer(answerString);
 				activities.save(activityEntity);
+				
 				return answer;
 			}
 			else
 				throw new InvalidAnswerException();
-		
 	}
 
 	public ElementDao getElements() {
