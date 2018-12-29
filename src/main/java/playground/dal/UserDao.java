@@ -23,5 +23,4 @@ public interface UserDao extends CrudRepository<UserEntity, String>{
 	public List<UserEntity> findByEmailAndPlayground(
 			@Param("email") String email,
 			@Param("playground") String playground);
-
 }

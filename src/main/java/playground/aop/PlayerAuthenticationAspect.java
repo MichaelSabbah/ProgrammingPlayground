@@ -31,5 +31,4 @@ public class PlayerAuthenticationAspect {
 			throw new NotAuthorizeUserException("This user is not palyer");
 		}
 	}
-	
 }

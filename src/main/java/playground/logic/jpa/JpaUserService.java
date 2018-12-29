@@ -47,14 +47,11 @@ public class JpaUserService implements UserService{
 
 	@Override
 	public UserEntity confirmUser(UserEntity user) throws Exception {
-//<<<<<<< HEAD
 		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail())
 									  .orElseThrow(()->
 									  new UserNotFoundException("User not found"));
-//=======
-//		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotFoundException("User Not Exists"));
-//>>>>>>> efd8261bf159a3c66d95d838e79bc51a5e5c8eb5
+		
 		if(!(userToVerify.getPlayground().equals(user.getPlayground())))
 		{
 			throw new UserNotFoundException("User Not Exists");
@@ -73,20 +70,8 @@ public class JpaUserService implements UserService{
 
 	@Override
 	public UserEntity loginUser(UserEntity user) throws Exception {
-//<<<<<<< HEAD
 		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotFoundException("User not found"));
-//		if(userToVerify == null)
-//		{
-//			throw new UserNotExistsException("User Not Exists");
-//		}
-//=======
-//		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotFoundException("User Not Exists"));
-//		if(userToVerify == null)
-//		{
-//			throw new UserNotFoundException("User Not Exists");
-//		}
-//>>>>>>> efd8261bf159a3c66d95d838e79bc51a5e5c8eb5
 		
 		//Think again about playground checking
 		if(!userToVerify.getPlayground().equals(user.getPlayground())) {
@@ -122,6 +107,5 @@ public class JpaUserService implements UserService{
 	@Transactional
 	public void cleanAll() {
 		this.userDao.deleteAll();
-
 	}
 }

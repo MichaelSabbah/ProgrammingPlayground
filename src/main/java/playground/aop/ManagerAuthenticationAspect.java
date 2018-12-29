@@ -32,6 +32,4 @@ public class ManagerAuthenticationAspect {
 			throw new UnauthorizedUserException("The user is not a manager");
 		}
 	}
-	
-	
 }

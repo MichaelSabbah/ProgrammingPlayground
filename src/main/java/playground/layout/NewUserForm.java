@@ -1,7 +1,6 @@
 package playground.layout;
 
 import playground.logic.Entities.User.UserEntity;
-import playground.logic.helpers.Role;
 
 public class NewUserForm {
 
@@ -69,5 +68,4 @@ public class NewUserForm {
 	public String toString() {
 		return "NewUserForm [email=" + email + ", username=" + username + ", avatar=" + avatar + ", role=" + role + "]";
 	}
-
 }
