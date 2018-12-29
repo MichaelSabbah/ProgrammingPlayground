@@ -19,10 +19,13 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.TypeHost;
 
 import playground.layout.to.ActivityTO;
 import playground.layout.to.ElementTO;
@@ -36,6 +39,7 @@ import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
 import playground.plugins.AdMessage;
+import playground.plugins.Answer;
 import playground.plugins.Feedback;
 
 @RunWith(SpringRunner.class)
@@ -219,8 +223,10 @@ public class PlaygroundTests {
 		ElementTO elementTORequest = new ElementTO();
 		elementTORequest.setType("Quiz");
 		try {
+
 			restTemplate.put(url + "/{playground}/{email}/{playground}/{id}", 
-					elementTORequest, authUserPlayground,authManagerEmail,"playground",1);
+					elementTORequest, authUserPlayground,authManagerEmail,"playground","1");
+
 		}
 		catch(HttpClientErrorException ex)
 		{
@@ -815,6 +821,34 @@ public class PlaygroundTests {
 			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
 		}
 
+		//Then The status code <> 2xx
+	}
+
+	@Test
+	public void testPostNewMessageActivitySuccessfully() throws Throwable {
+		//Given - 
+		//Database contains player:
+		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
+		//And database contains AdBoard element
+		createAuthroizedUser(Role.MANAGER, authManagerEmail);
+		ElementEntity adBoardElement = new ElementEntity();
+		adBoardElement.setName("Ad Board");
+		adBoardElement.setType("AdBoard");
+		ElementEntity temp = this.elementService.addNewElement(authManagerEmail, authUserPlayground, adBoardElement);
+
+		// When
+		ActivityTO postActivity = new ActivityTO();
+		postActivity.setType("PostNewMessage");
+		postActivity.setElementId(String.valueOf(temp.getId()));
+		postActivity.setElementPlayground(temp.getPlayground());
+		Map<String, Object> actTemp = new HashMap<>();
+		actTemp.put("message", "The message");
+		postActivity.setAttributes(actTemp);
+
+		this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
+				postActivity, Nullable.class, authUserPlayground, authPlayerEmail);
+
+		//Then The status code is 2xx
 	}
 
 	@Test
@@ -866,7 +900,7 @@ public class PlaygroundTests {
 	{
 		//Given
 		String regularEmail = "player@user.com";
-		
+
 		//When
 		ActivityEntity activityEntity = new ActivityEntity();
 		activityEntity.setPlayground(authUserPlayground);
@@ -876,16 +910,117 @@ public class PlaygroundTests {
 		activityEntity.setElementId("1");
 		activityEntity.setElementPlayground(authUserPlayground);
 		try {
-		AdMessage[] messages = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}", activityEntity, AdMessage[].class, authUserPlayground, regularEmail);
+			AdMessage[] messages = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}", activityEntity, AdMessage[].class, authUserPlayground, regularEmail);
 		}
 		catch (HttpClientErrorException ex) {
 			HttpStatus httpStatus = ex.getStatusCode();
 			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
 		}
-		
+
 		//Then
 	}
 
+
+	@Test(expected=OKException.class)
+	public void testPostNewMessageActivityByManagerUnsuccessfully() throws Throwable {
+		//Given - 
+		//Database contains user of type manager:
+		createAuthroizedUser(Role.MANAGER, authManagerEmail);
+		//And database contains AdBoard element
+		ElementEntity adBoardElement = new ElementEntity();
+		adBoardElement.setName("Ad Board");
+		adBoardElement.setType("AdBoard");
+		ElementEntity temp = this.elementService.addNewElement(authManagerEmail, authUserPlayground, adBoardElement);
+
+		// When
+		ActivityTO postActivity = new ActivityTO();
+		postActivity.setType("PostNewMessage");
+		postActivity.setElementId(String.valueOf(temp.getId()));
+		postActivity.setElementPlayground(temp.getPlayground());
+		Map<String, Object> actTemp = new HashMap<>();
+		actTemp.put("message", "The message");
+		postActivity.setAttributes(actTemp);
+
+		try {
+			this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
+					postActivity, Nullable.class, authUserPlayground, authManagerEmail);
+		}catch (HttpClientErrorException ex) {
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.UNAUTHORIZED, ex.getMessage());
+		}
+		//Then The status code is <> 2xx
+	}
+
+	@Test
+	public void testShowSolutionActivitySuccessfully() throws Throwable {
+		//Given - 
+		//And database contains user of type player
+		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
+		//And database contains element
+		createAuthroizedUser(Role.MANAGER,authManagerEmail);
+		ElementEntity elementEntity = new ElementEntity();
+		elementEntity.setName("Question");
+		elementEntity.setType("MultipleChoiceQuestion");
+		Map<String,Object> moreAttributes = new HashMap<String,Object>();
+		moreAttributes.put("question", "the question");
+		moreAttributes.put("a", "answer a");
+		moreAttributes.put("b", "answer b");
+		moreAttributes.put("c", "answer c");
+		moreAttributes.put("d", "answer d");
+		moreAttributes.put("answer", "a");
+		elementEntity.setAttributes(moreAttributes);
+		ElementEntity temp = elementService.addNewElement(authManagerEmail, authUserPlayground, elementEntity);
+
+		//When
+		ActivityTO postActivity = new ActivityTO();
+		postActivity.setType("ShowSolution");
+		postActivity.setElementId(String.valueOf(temp.getId()));
+		postActivity.setElementPlayground(temp.getPlayground());
+		Answer answer = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
+				postActivity, Answer.class, authUserPlayground, authPlayerEmail);
+
+		//Then
+		assertThat(answer)
+		.isNotNull()
+		.extracting("answer")
+		.containsExactly("a");		
+	}
+
+	@Test(expected=OKException.class)
+	public void testShowSolutionOfElementWithoutAnswerAttribute() throws Throwable {
+		//Given - 
+		//And database contains user of type player
+		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
+		//And database contains element
+		createAuthroizedUser(Role.MANAGER,authManagerEmail);
+		ElementEntity elementEntity = new ElementEntity();
+		elementEntity.setName("AdBoard");
+		elementEntity.setType("MultipleChoiceQuestion");
+		Map<String,Object> moreAttributes = new HashMap<String,Object>();
+		moreAttributes.put("question", "the question");
+		moreAttributes.put("a", "answer a");
+		moreAttributes.put("b", "answer b");
+		moreAttributes.put("c", "answer c");
+		moreAttributes.put("d", "answer d");
+		elementEntity.setAttributes(moreAttributes);
+		ElementEntity temp = elementService.addNewElement(authManagerEmail, authUserPlayground, elementEntity);
+
+		//When
+		ActivityTO postActivity = new ActivityTO();
+		postActivity.setType("ShowSolution");
+		postActivity.setElementId(String.valueOf(temp.getId()));
+		postActivity.setElementPlayground(temp.getPlayground());
+
+		try {
+			this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
+					postActivity, Answer.class, authUserPlayground, authPlayerEmail);
+		}catch (HttpClientErrorException ex) {
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
+		}
+		//Then The status code is <> 2xx
+
+	}
 	private void createAuthroizedUser(Role role,String userEmail) throws Throwable {
 		UserEntity userEntity = new UserEntity(userEmail,authUserPlayground);
 		userEntity.setRole(role.name());
