@@ -1,3 +1,4 @@
+
 package playground.plugins;
 
 import java.io.IOException;
@@ -5,6 +6,7 @@ import java.io.IOException;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,6 +24,7 @@ import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
 import playground.logic.helpers.PlaygroundConsts;
 
+@Component
 public class FindBugActivityPlugin implements ActivityPlugin {
 	
 	private ElementDao elementDao;
@@ -60,7 +63,7 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 		}
 		
 		//Answer must be with the 'answer' attribute
-		if (userAnswer.getAnswer() == null) {
+		if (userAnswer == null || userAnswer.getAnswer() == null) {
 			throw new InvalidAnswerException("Answer is invalid");
 		}			
 		

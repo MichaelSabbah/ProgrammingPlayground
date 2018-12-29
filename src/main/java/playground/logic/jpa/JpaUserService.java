@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import playground.aop.BasicAuthentication;
+import playground.aop.PlaygroundLogger;
 import playground.dal.UserDao;
 import playground.logic.Entities.User.UserEntity;
 //import playground.logic.exceptions.UserNotExistsException;
@@ -37,6 +38,7 @@ public class JpaUserService implements UserService{
 
 	@Override
 	@Transactional
+	@PlaygroundLogger
 	public UserEntity addUser(UserEntity user) throws Throwable {
 		if(!this.userDao.existsById(user.getEmail())) {
 			user.setConfirmCode(this.rnd.nextInt(VERIFICATION_RANGE));
@@ -46,6 +48,7 @@ public class JpaUserService implements UserService{
 	}
 
 	@Override
+	@PlaygroundLogger
 	public UserEntity confirmUser(UserEntity user) throws Throwable {
 		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail())
@@ -68,6 +71,7 @@ public class JpaUserService implements UserService{
 	}
 
 	@Override
+	@PlaygroundLogger
 	public UserEntity loginUser(UserEntity user) throws Throwable {
 		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotFoundException("User not found"));
@@ -87,6 +91,7 @@ public class JpaUserService implements UserService{
 	@Override
 	@Transactional
 	@BasicAuthentication
+	@PlaygroundLogger
 	public void updateUser(String userEmail,String userPlayground, UserEntity updateUser){
 		UserEntity dbUser = this.userDao.findByEmailAndPlayground(userEmail, userPlayground).get(0);
 		if(updateUser.getUsername()!= null && updateUser.getUsername() != dbUser.getUsername())
@@ -104,6 +109,7 @@ public class JpaUserService implements UserService{
 
 	@Override
 	@Transactional
+	@PlaygroundLogger
 	public void cleanAll() {
 		this.userDao.deleteAll();
 	}

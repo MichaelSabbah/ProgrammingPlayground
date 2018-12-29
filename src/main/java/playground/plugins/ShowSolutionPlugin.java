@@ -1,6 +1,7 @@
 package playground.plugins;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,9 +13,9 @@ import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
 import playground.logic.Entities.User.UserEntity;
 import playground.logic.exceptions.notacceptable.InvalidAnswerException;
-import playground.logic.exceptions.notacceptable.NotEnoughPointsException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
+import playground.logic.helpers.PlaygroundConsts;
 
 @Component
 public class ShowSolutionPlugin implements ActivityPlugin{
@@ -30,26 +31,25 @@ public class ShowSolutionPlugin implements ActivityPlugin{
 	public Object activate(ActivityEntity activityEntity) throws Exception {
 		Answer answer=new Answer();
 			ElementEntity element=getElementById(activityEntity.getPlayground(), activityEntity.getElementId());
-			java.util.Map<String, Object> map=element.getAttributes();
-			if(map.get("solution")!=null){
+			Map<String, Object> map=element.getAttributes();
+			if(map.get(PlaygroundConsts.ANSWER_KEY)!=null){
 				List<UserEntity> usersList=users.findByEmailAndPlayground(activityEntity.getPlayerEmail(),activityEntity.getPlayerPlayground());
 				if(usersList.size()>0){
 					UserEntity user=usersList.get(0);
 					if(user.getPoints()>=2) {
 						user.setPoints(user.getPoints()-2);
 						users.save(user);
+					}
+				}else { 
+					throw new UserNotFoundException("No user with email: " + activityEntity.getPlayerEmail());
 				}
-					//else
-						//throw new NotEnoughPointsException();
-				}
-				else throw new UserNotFoundException();
-				String answerString=(String) map.get("solution");
+				String answerString=(String) map.get(PlaygroundConsts.ANSWER_KEY);
 				answer.setAnswer(answerString);
 				
 				return answer;
 			}
 			else
-				throw new InvalidAnswerException();
+				throw new InvalidAnswerException("Invalid answer");
 	}
 
 	public ElementDao getElements() {

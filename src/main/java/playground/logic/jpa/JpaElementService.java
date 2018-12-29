@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javassist.NotFoundException;
 import playground.aop.BasicAuthentication;
 import playground.aop.ManagerAuthentication;
+import playground.aop.PlaygroundLogger;
 import playground.dal.ElementDao;
 import playground.dal.ElementIdGeneratorDao;
 import playground.logic.Entities.Element.ElementEntity;
@@ -44,6 +45,7 @@ public class JpaElementService implements ElementService{
 	@Override
 	@Transactional
 	@ManagerAuthentication
+	@PlaygroundLogger
 	public ElementEntity addNewElement(String userEmail,String userPlayground,ElementEntity element) {	
 
 		//Get element id from idGenerator
@@ -64,6 +66,7 @@ public class JpaElementService implements ElementService{
 	@Override
 	@Transactional
 	@ManagerAuthentication
+	@PlaygroundLogger
 	public ElementEntity updateElement(String userEmail,String userPlaygorund,String playground, String id, ElementEntity entityUpdates)
 			throws Throwable {
 
@@ -102,6 +105,7 @@ public class JpaElementService implements ElementService{
 	@Override
 	@Transactional(readOnly=true)
 	@BasicAuthentication
+	@PlaygroundLogger
 	public ElementEntity getElementById(String userEmail,String userPlaygorund,String playground, String id) throws Throwable {
 
 		ElementId elementId = new ElementId();
@@ -117,6 +121,7 @@ public class JpaElementService implements ElementService{
 	@Override
 	@Transactional(readOnly=true)
 	@BasicAuthentication
+	@PlaygroundLogger
 	public List<ElementEntity> getAllElements(String userEmail,String userPlayground,int size, int page) {
 		Page<ElementEntity> elementsReturned = this.elements.findAll(
 				PageRequest.of(page, size, Direction.DESC, "name"));
@@ -126,6 +131,7 @@ public class JpaElementService implements ElementService{
 	@Override
 	@Transactional(readOnly=true)
 	@BasicAuthentication
+	@PlaygroundLogger
 	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlaygorund,int x, int y, int distance,int size,int page) throws Throwable {
 		if(distance < 0) {
 			throw new InvalidFormatException("Invalid distance");
@@ -140,6 +146,7 @@ public class JpaElementService implements ElementService{
 	@Override
 	@Transactional(readOnly=true)
 	@BasicAuthentication
+	@PlaygroundLogger
 	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlaygorund,String attributeName, String value,int size, int page) throws Throwable {		
 		String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
 		List<ElementEntity> elementsReturned = this.elements.findAllByJsonAttributesContaining(jsonAttribute,PageRequest.of(page, size));
@@ -152,6 +159,7 @@ public class JpaElementService implements ElementService{
 
 	@Override
 	@Transactional
+	@PlaygroundLogger
 	public void cleanAll() {
 		elements.deleteAll();
 
