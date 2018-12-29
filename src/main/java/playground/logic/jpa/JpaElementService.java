@@ -17,7 +17,7 @@ import playground.dal.ElementIdGeneratorDao;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
 import playground.logic.Entities.Element.ElementIdGenerator;
-import playground.logic.exceptions.ElementNotFoundException;
+import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.services.ElementService;
 
 @Service
@@ -169,9 +169,4 @@ public class JpaElementService implements ElementService{
 		elements.deleteAll();
 
 	}
-
-	private boolean isInDistance(double x1, double y1, double x2, double y2, double distance){
-		return Math.sqrt(Math.pow((x2-x1),2) + Math.pow((y2-y1),2)) <= distance;
-	}
-
 }

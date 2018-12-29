@@ -9,10 +9,18 @@ import org.springframework.transaction.annotation.Transactional;
 import playground.aop.BasicAuthentication;
 import playground.dal.UserDao;
 import playground.logic.Entities.User.UserEntity;
-import playground.logic.exceptions.InvalidConfirmCodeException;
-import playground.logic.exceptions.NotAuthorizeUserException;
-import playground.logic.exceptions.UserExistsException;
-import playground.logic.exceptions.UserNotExistsException;
+//import playground.logic.exceptions.UserNotExistsException;
+//<<<<<<< HEAD
+//import playground.logic.exceptions.InvalidConfirmCodeException;
+//import playground.logic.exceptions.NotAuthorizeUserException;
+//import playground.logic.exceptions.UserExistsException;
+//import playground.logic.exceptions.UserNotExistsException;
+//=======
+import playground.logic.exceptions.conflict.UserAlreadyExistsException;
+import playground.logic.exceptions.notacceptable.InvalidConfirmCodeException;
+import playground.logic.exceptions.notfound.UserNotFoundException;
+import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
+//>>>>>>> efd8261bf159a3c66d95d838e79bc51a5e5c8eb5
 import playground.logic.services.UserService;
 
 @Service 
@@ -34,18 +42,22 @@ public class JpaUserService implements UserService{
 			user.setConfirmCode(this.rnd.nextInt(VERIFICATION_RANGE));
 			return this.userDao.save(user);
 		}
-		throw new UserExistsException("User Already Exists");
+		throw new UserAlreadyExistsException("User Already Exists");
 	}
 
 	@Override
 	public UserEntity confirmUser(UserEntity user) throws Exception {
+//<<<<<<< HEAD
 		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail())
 									  .orElseThrow(()->
-									  new UserNotExistsException("User Not Exists"));
+									  new UserNotFoundException("User not found"));
+//=======
+//		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotFoundException("User Not Exists"));
+//>>>>>>> efd8261bf159a3c66d95d838e79bc51a5e5c8eb5
 		if(!(userToVerify.getPlayground().equals(user.getPlayground())))
 		{
-			throw new UserNotExistsException("User Not Exists");
+			throw new UserNotFoundException("User Not Exists");
 		}
 		
 		if(userToVerify.getConfirmCode() == user.getConfirmCode()) {
@@ -61,20 +73,28 @@ public class JpaUserService implements UserService{
 
 	@Override
 	public UserEntity loginUser(UserEntity user) throws Exception {
-		//TODO - Michael - Add query in DAO to find user bt id(email) and confirmCode (Check if aspect can be good)
-		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotExistsException("User Not exists"));
+//<<<<<<< HEAD
+		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
+		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotFoundException("User not found"));
 //		if(userToVerify == null)
 //		{
 //			throw new UserNotExistsException("User Not Exists");
 //		}
+//=======
+//		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotFoundException("User Not Exists"));
+//		if(userToVerify == null)
+//		{
+//			throw new UserNotFoundException("User Not Exists");
+//		}
+//>>>>>>> efd8261bf159a3c66d95d838e79bc51a5e5c8eb5
 		
 		//Think again about playground checking
 		if(!userToVerify.getPlayground().equals(user.getPlayground())) {
-			throw new UserNotExistsException("User Not Exists");
+			throw new UserNotFoundException("User Not Exists");
 		}
 		
 		if(userToVerify.getConfirmCode() != -1) {
-			throw new NotAuthorizeUserException("User is not confirmed");
+			throw new UnauthorizedUserException("User is not confirmed");
 		}
 		
 		return userToVerify;

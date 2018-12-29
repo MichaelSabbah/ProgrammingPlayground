@@ -25,7 +25,11 @@ import playground.layout.to.ElementTO;
 import playground.layout.to.UserTO;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.User.UserEntity;
-import playground.logic.exceptions.ElementNotFoundException;
+//<<<<<<< HEAD
+//import playground.logic.exceptions.ElementNotFoundException;
+//=======
+import playground.logic.exceptions.conflict.ElementAlreadyExistsException;
+import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
 import playground.logic.helpers.Role;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
