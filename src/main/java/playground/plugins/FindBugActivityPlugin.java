@@ -61,14 +61,10 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 			throw new InternalError(e.getMessage());
 		}
 
-		//Answer must be with the 'answer' attribute
 		if (userAnswer == null || userAnswer.getAnswer() == null) {
 			throw new InvalidAnswerException("Answer is invalid");
 		}			
 
-		//Check if user answer is correct
-
-		//Get relevant element
 		ElementId elementId = new ElementId();
 		String playground = activityEntity.getElementPlayground();
 		int id = Integer.parseInt(activityEntity.getElementId());
@@ -84,16 +80,13 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 			throw new InvalidAnswerException("Answer is invalid");
 		}
 
-		//Get the relevant user
 		UserEntity user = userDao.findById(activityEntity.getPlayerEmail())
 				.orElseThrow(()->
 				new UserNotFoundException("No use with email: " + activityEntity.getPlayerEmail()));
 
-		//Get the correct answer
 		Answer correctAnswer = new Answer();
 		correctAnswer.setAnswer(correctAnswerAsString);
 
-		//Update user points
 		if(userAnswer.equals(correctAnswer)) {
 			feedback.setFeedback("You right");
 			user.setPoints(user.getPoints() + PlaygroundConsts.MULTICHOICES_QUESTION_POINTS);
@@ -106,10 +99,7 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 				user.setPoints(userNewPoints);
 			}
 		}
-
-		//Update user with new points
 		userDao.save(user);
-
 		return feedback;
 	}
 }

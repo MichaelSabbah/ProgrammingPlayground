@@ -9,8 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javassist.NotFoundException;
 import playground.aop.BasicAuthentication;
 import playground.aop.ManagerAuthentication;
 import playground.aop.PlaygroundLogger;
@@ -20,10 +18,7 @@ import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
 import playground.logic.Entities.Element.ElementIdGenerator;
 import playground.logic.exceptions.notacceptable.InvalidFormatException;
-import playground.logic.exceptions.notacceptable.NotAcceptableException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
-import playground.logic.exceptions.notfound.UserNotFoundException;
-import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
 import playground.logic.services.ElementService;
 
 @Service
@@ -47,15 +42,10 @@ public class JpaElementService implements ElementService{
 	@ManagerAuthentication
 	@PlaygroundLogger
 	public ElementEntity addNewElement(String userEmail,String userPlayground,ElementEntity element) {	
-
-		//Get element id from idGenerator
+		
 		int id = elementIdGeneratorDao.save(new ElementIdGenerator()).getId();
-
-		//Set element id - compose key
 		element.setPlayground(userPlayground);
 		element.setId(id);
-
-		//Initialize element fields
 		element.setCreatorEmail(userEmail);
 		element.setCreatorPlayground(userPlayground);
 		element.setCreateDate(new Date());
@@ -75,10 +65,10 @@ public class JpaElementService implements ElementService{
 		ElementId elementId = new ElementId();
 		elementId.setId(Integer.parseInt(id));
 		elementId.setPlayground(playground);
-		
+
 		existing = this.elements.findById(elementId)
-		.orElseThrow(()->
-		new ElementNotFoundException("no element with playground: " + playground + " and id: " + id));
+				.orElseThrow(()->
+				new ElementNotFoundException("no element with playground: " + playground + " and id: " + id));
 
 		if(entityUpdates.getAttributes() != null && !entityUpdates.getAttributes().isEmpty()) {
 			existing.setAttributes(entityUpdates.getAttributes());
@@ -111,10 +101,10 @@ public class JpaElementService implements ElementService{
 		ElementId elementId = new ElementId();
 		elementId.setId(Integer.parseInt(id));
 		elementId.setPlayground(playground);
-		
-		ElementEntity element = this.elements.findById(elementId)//this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
+
+		ElementEntity element = this.elements.findById(elementId)
 				.orElseThrow(()->
-				 new ElementNotFoundException("No element with playground: " + playground + " and id: " + id));
+				new ElementNotFoundException("No element with playground: " + playground + " and id: " + id));
 		return element;
 	}
 
@@ -154,7 +144,6 @@ public class JpaElementService implements ElementService{
 			throw new ElementNotFoundException("Element with this attribute name and value is not existing");
 		}
 		return elementsReturned;
-
 	}
 
 	@Override

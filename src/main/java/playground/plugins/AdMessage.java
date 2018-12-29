@@ -7,7 +7,6 @@ public class AdMessage {
 	public AdMessage() {}
 
 	public AdMessage(String message) {
-		super();
 		this.message = message;
 	}
 
