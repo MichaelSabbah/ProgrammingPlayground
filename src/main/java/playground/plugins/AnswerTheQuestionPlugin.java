@@ -63,7 +63,7 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 		}
 		
 		//Answer must be with the 'answer' attribute
-		if (userAnswer.getAnswer() == null) {
+		if (userAnswer == null || userAnswer.getAnswer() == null) {
 			throw new InvalidAnswerException("Answer is invalid");
 		}			
 		

@@ -1,4 +1,3 @@
-
 package playground.logic.jpa;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import playground.aop.IsElementExists;
 import playground.aop.PlayerAuthentication;
+import playground.aop.PlaygroundLogger;
 import playground.dal.ActivityDao;
 import playground.dal.ActivityIdGeneratorDao;
 import playground.logic.Entities.Activity.ActivityEntity;
@@ -21,7 +21,7 @@ public class JpaActivityService implements ActivityService {
 	private ApplicationContext spring;
 	private ActivityDao activityDao;
 	private ActivityIdGeneratorDao activityIdGeneratorDao;
-	
+
 	@Autowired
 	public JpaActivityService(ApplicationContext spring, ActivityDao activityDao,
 			ActivityIdGeneratorDao activityIdGeneratorDao) {
@@ -33,6 +33,7 @@ public class JpaActivityService implements ActivityService {
 	@Override
 	@IsElementExists
 	@PlayerAuthentication
+	@PlaygroundLogger
 	public Object invokeActivity(String userEmail,String userPlayground,String elementId,String elementPlayground,ActivityEntity activityEntity) throws Exception {
 		String activityType = activityEntity.getType();
 		if(activityType == null || activityType.isEmpty()){
@@ -41,9 +42,9 @@ public class JpaActivityService implements ActivityService {
 		try{
 			int id = activityIdGeneratorDao.save(new ActivityIdGenerator()).getId();
 			activityEntity.setId(id);
-			
+
 			activityDao.save(activityEntity);
-			
+
 			String className = "playground.plugins." + activityType + "Plugin";
 			Class<?> theClass = Class.forName(className);
 			ActivityPlugin activityPlugin = (ActivityPlugin) this.spring.getBean(theClass);
