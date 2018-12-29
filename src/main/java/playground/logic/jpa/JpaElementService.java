@@ -106,11 +106,11 @@ public class JpaElementService implements ElementService{
 		ElementEntity element = this.elements.findById(elementId)//this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
 				.orElseThrow(()->
 				 new ElementNotFoundException("no element with playground: " + playground + " and id: " + id));
-		
-		if(element == null) {
-			throw new ElementNotFoundException("no element with playground: " + playground + " and id: " + id );
-		}
-		
+//		
+//		if(element == null) {
+//			throw new ElementNotFoundException("no element with playground: " + playground + " and id: " + id );
+//		}
+//		
 		return element;
 		
 		
