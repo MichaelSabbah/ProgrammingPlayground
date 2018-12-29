@@ -54,7 +54,7 @@ public class WebUI {
 		this.userService = userService;
 	}
 
-	@RequestMapping(//V
+	@RequestMapping(
 			method=RequestMethod.POST,
 			path="/playground/users",
 			produces=MediaType.APPLICATION_JSON_VALUE,
@@ -64,7 +64,7 @@ public class WebUI {
 		return new UserTO(this.userService.addUser(userEntity));
 	}
 
-	@RequestMapping(//V
+	@RequestMapping(
 			method=RequestMethod.GET,
 			path="/playground/users/confirm/{playground}/{email}/{code}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
@@ -76,7 +76,7 @@ public class WebUI {
 		return new UserTO(this.userService.confirmUser(userEntity));
 	}
 
-	@RequestMapping(//V
+	@RequestMapping(
 			method=RequestMethod.GET,
 			path="/playground/users/login/{playground}/{email}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
@@ -87,7 +87,7 @@ public class WebUI {
 		return new UserTO(this.userService.loginUser(userEntity));
 	}
 
-	@RequestMapping(//?
+	@RequestMapping(
 			method=RequestMethod.PUT,
 			path="/playground/users/{playground}/{email}",
 			consumes=MediaType.APPLICATION_JSON_VALUE)
@@ -155,11 +155,6 @@ public class WebUI {
 				.map(ElementTO::new) 
 				.collect(Collectors.toList()) 
 				.toArray(new ElementTO[0]);		
-//		ElementTO[] elementsAsArray = new ElementTO[1];
-//		List<ElementEntity> elements = this.elementService.getAllElements(email, userPlayground, size, page);
-//		elementsAsArray[0] = new ElementTO(elements.get(0));
-//		return elementsAsArray;
-	
 	}
 
 	@RequestMapping(
