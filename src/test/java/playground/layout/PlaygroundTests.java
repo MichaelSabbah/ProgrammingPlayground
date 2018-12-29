@@ -214,7 +214,7 @@ public class PlaygroundTests {
 		elementTORequest.setType("Quiz");
 		try {
 		restTemplate.put(url + "/{playground}/{email}/{playground}/{id}", 
-				elementTORequest, authUserPlayground,authManagerEmail,"playground",1);
+				elementTORequest, authUserPlayground,authManagerEmail,"playground","1");
 		}
 		catch(HttpClientErrorException ex)
 		{
@@ -647,7 +647,7 @@ public class PlaygroundTests {
 		}
 		catch(HttpClientErrorException ex){
 			HttpStatus httpStatus = ex.getStatusCode();
-			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
+			this.checkHttpStatusCode(httpStatus, HttpStatus.UNAUTHORIZED, ex.getMessage());
 		}
 		
 		//Then The response is status <> 2xx
