@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.InternalError;
-
 import playground.dal.ElementDao;
 import playground.dal.UserDao;
 import playground.logic.Entities.Activity.ActivityEntity;

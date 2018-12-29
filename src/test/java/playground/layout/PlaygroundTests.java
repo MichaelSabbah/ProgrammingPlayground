@@ -26,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import playground.layout.to.ElementTO;
 import playground.layout.to.UserTO;
+import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.User.UserEntity;
 import playground.logic.helpers.Role;
@@ -48,9 +49,6 @@ public class PlaygroundTests {
 	private String authUserPlayground;
 
 	private RestTemplate restTemplate;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 	
 	@Autowired
 	private ElementService elementService;
@@ -648,6 +646,32 @@ public class PlaygroundTests {
 		}
 		//Then The response is status <> 2xx
 	}
+	
+	public void testGetMessagesActivitySuccessfully() throws Throwable
+	{
+		String email = "player@user.com";
+		createAuthroizedUser(Role.PLAYER,email);
+		
+		ElementEntity elementEntity = new ElementEntity();
+		elementEntity.setName("Message");
+		elementEntity.setType("Messages");
+		elementEntity.setPlayground(authUserPlayground);
+		elementEntity.setCreatorEmail(authManagerEmail);
+		elementEntity = elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
+		
+		ActivityEntity activityEntity = new ActivityEntity();
+		activityEntity.setPlayground(authUserPlayground);
+		activityEntity.setId(elementEntity.getId());
+		activityEntity.setElementPlayground(activityEntity.getElementPlayground());
+		activityEntity.setPlayerEmail(email);
+		activityEntity.setPlayerPlayground(authUserPlayground);
+		activityEntity.setType("PostNewMessage");
+		HashMap<String,Object> map = new HashMap();
+		map.put("message", "bla bla bla bla");
+		activityEntity.setAttributes(map);
+		
+		
+	}
 
 	private void createAuthroizedUser(Role role,String userEmail) throws Throwable {
 		UserEntity userEntity = new UserEntity(userEmail,authUserPlayground);
@@ -656,4 +680,6 @@ public class PlaygroundTests {
 		userEntity.setConfirmCode(confirmCode);
 		this.userService.confirmUser(userEntity);
 	}
+	
+	
 }

@@ -7,12 +7,14 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.stereotype.Component;
 import org.springframework.data.domain.Page;
 
 import playground.dal.ActivityDao;
 import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.helpers.PlaygroundConsts;
 
+@Component
 public class GetMessagesPlugin implements ActivityPlugin {
 
 	private ActivityDao activityDao;
