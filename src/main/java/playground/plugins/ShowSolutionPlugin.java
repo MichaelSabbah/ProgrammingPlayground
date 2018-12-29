@@ -20,12 +20,10 @@ import playground.logic.exceptions.notfound.UserNotFoundException;
 @Component
 public class ShowSolutionPlugin implements ActivityPlugin{
 	ElementDao elements;
-	ActivityDao activities;
 	UserDao users;
 	@Autowired
-	public ShowSolutionPlugin(ElementDao eDao,ActivityDao aDao,UserDao uDao) {
+	public ShowSolutionPlugin(ElementDao eDao,UserDao uDao) {
 		this.elements=eDao;
-		this.activities=aDao;
 		this.users=uDao;
 	}
 
@@ -48,7 +46,6 @@ public class ShowSolutionPlugin implements ActivityPlugin{
 				else throw new UserNotFoundException();
 				String answerString=(String) map.get("solution");
 				answer.setAnswer(answerString);
-				activities.save(activityEntity);
 				
 				return answer;
 			}
@@ -63,15 +60,6 @@ public class ShowSolutionPlugin implements ActivityPlugin{
 	public void setElements(ElementDao elements) {
 		this.elements = elements;
 	}
-
-	public ActivityDao getActivities() {
-		return activities;
-	}
-
-	public void setActivities(ActivityDao activities) {
-		this.activities = activities;
-	}
-
 	public ElementEntity getElementById(String playground, String id) throws ElementNotFoundException {
 
 		ElementId elementId = new ElementId();
