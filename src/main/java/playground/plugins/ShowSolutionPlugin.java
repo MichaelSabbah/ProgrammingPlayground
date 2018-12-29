@@ -41,7 +41,8 @@ public class ShowSolutionPlugin implements ActivityPlugin{
 						users.save(user);
 				}
 					else
-						throw new NotEnoughPointsException();
+						//throw new NotEnoughPointsException();
+						throw new Exception();
 				}
 				else throw new UserNotFoundException();
 				String answerString=(String) map.get("solution");

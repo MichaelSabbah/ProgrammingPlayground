@@ -53,6 +53,8 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 				throw new InternalError("Json mapping error");
 			} catch (IOException e) {
 				throw new InternalError("IO error");
+			} catch (Throwable e) {
+				throw new InternalError(e.getMessage());
 			}
 			
 			if (answer.getAnswer() == null) {

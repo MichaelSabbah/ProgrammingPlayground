@@ -53,4 +53,3 @@ public class JpaActivityService implements ActivityService {
 		}
 	}
 }
->>>>>>> 17bf88feda1ad31d94f9614454c7f65deb1433f7

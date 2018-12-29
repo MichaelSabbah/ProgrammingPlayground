@@ -10,12 +10,7 @@ import playground.logic.Entities.Activity.ActivityEntity;
 public class PostNewMessagePlugin implements ActivityPlugin {
 
 	private ActivityDao activityDao;
-<<<<<<< HEAD
-
-=======
-	
 	@Autowired
->>>>>>> 17bf88feda1ad31d94f9614454c7f65deb1433f7
 	public void setActivityDao(ActivityDao activityDao) {
 		this.activityDao = activityDao;
 	}
