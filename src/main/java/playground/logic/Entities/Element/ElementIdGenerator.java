@@ -12,7 +12,7 @@ import javax.persistence.Table;
 public class ElementIdGenerator {
 
 	private int id;
-	
+
 	public ElementIdGenerator() {}
 
 	@Id

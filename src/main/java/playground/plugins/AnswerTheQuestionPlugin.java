@@ -43,7 +43,7 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 
 	@Override
 	public Object activate(ActivityEntity activityEntity) throws InvalidAnswerException, ElementNotFoundException, UserNotFoundException {
-		
+
 		Answer userAnswer;
 		Feedback feedback = new Feedback();
 		
@@ -51,13 +51,15 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 			userAnswer = this.jackson.readValue( 
 					activityEntity.getJsonAttributes(),
 					Answer.class);
-			
+
 		} catch (JsonParseException e) {
 			throw new InternalError("Json parsing error");
 		} catch (JsonMappingException e) {
 			throw new InternalError("Json mapping error");
 		} catch (IOException e) {
 			throw new InternalError("IO error");
+		} catch (Throwable e) {
+			throw new InternalError(e.getMessage());
 		}
 		
 		//Answer must be with the 'answer' attribute

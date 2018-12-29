@@ -21,9 +21,7 @@ import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.exceptions.conflict.ConflictException;
 import playground.logic.exceptions.internal.InternalErrorException;
 import playground.logic.exceptions.notacceptable.NotAcceptableException;
-import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.exceptions.unauthorized.UnauthorizedException;
-import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
 import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
@@ -59,7 +57,7 @@ public class WebUI {
 			path="/playground/users",
 			produces=MediaType.APPLICATION_JSON_VALUE,
 			consumes=MediaType.APPLICATION_JSON_VALUE)
-	public UserTO register (@RequestBody NewUserForm newUserForm) throws Exception {
+	public UserTO register (@RequestBody NewUserForm newUserForm) throws Throwable {
 		UserEntity userEntity = newUserForm.toUserEntity();
 		return new UserTO(this.userService.addUser(userEntity));
 	}
@@ -71,7 +69,7 @@ public class WebUI {
 	public UserTO verifyRegistration(
 			@PathVariable("playground") String playground,
 			@PathVariable("email") String email,
-			@PathVariable("code") String code) throws Exception {
+			@PathVariable("code") String code) throws Throwable {
 		UserEntity userEntity = new UserEntity(email,playground,Integer.parseInt(code));
 		return new UserTO(this.userService.confirmUser(userEntity));
 	}
@@ -82,7 +80,7 @@ public class WebUI {
 			produces=MediaType.APPLICATION_JSON_VALUE)
 	public UserTO login(
 			@PathVariable("playground") String playground,
-			@PathVariable("email") String email) throws Exception {
+			@PathVariable("email") String email) throws Throwable {
 		UserEntity userEntity = new UserEntity(email,playground);
 		return new UserTO(this.userService.loginUser(userEntity));
 	}
@@ -93,7 +91,7 @@ public class WebUI {
 			consumes=MediaType.APPLICATION_JSON_VALUE)
 	public void updateUser(@PathVariable("playground") String playground,
 			@PathVariable("email") String email,
-			@RequestBody UserTO userTo) throws Exception{
+			@RequestBody UserTO userTo) throws Throwable{
 		UserEntity userEntity = userTo.toUserEntity();
 		userEntity.setEmail(email);
 		userEntity.setPlayground(playground);
@@ -108,9 +106,8 @@ public class WebUI {
 			consumes=MediaType.APPLICATION_JSON_VALUE)
 	public ElementTO addNewElement(@PathVariable("userPlayground") String userPlayground,
 			@PathVariable("email") String email,
-			@RequestBody ElementTO elementTo) throws UnauthorizedUserException{
-		ElementEntity elementEntity;
-		elementEntity = elementService.addNewElement(email,userPlayground,elementTo.toEntity());	
+			@RequestBody ElementTO elementTo) throws Throwable{
+		ElementEntity elementEntity = elementService.addNewElement(email,userPlayground,elementTo.toEntity());	
 		return new ElementTO(elementEntity);
 	}
 
@@ -123,7 +120,7 @@ public class WebUI {
 			@PathVariable("email") String email,
 			@PathVariable("playground") String playground,
 			@PathVariable("id") String id,
-			@RequestBody ElementTO elementTo) throws ElementNotFoundException{
+			@RequestBody ElementTO elementTo) throws Throwable{
 		elementService.updateElement(email,userPlayground,playground, id, elementTo.toEntity());
 	}
 
@@ -135,7 +132,7 @@ public class WebUI {
 			@PathVariable("userPlayground") String userPlayground,
 			@PathVariable("email") String email,
 			@PathVariable("playground") String playground,
-			@PathVariable("id") String id) throws ElementNotFoundException {
+			@PathVariable("id") String id) throws Throwable {
 
 		return new ElementTO(elementService.getElementById(email,userPlayground,playground, id));
 	}
@@ -166,7 +163,7 @@ public class WebUI {
 			@RequestParam(name="page", required=false, defaultValue="0") int page,
 			@PathVariable("userPlayground")String userPlayground,
 			@PathVariable("email")String email,@PathVariable("x")Integer x,
-			@PathVariable("y")Integer y,@PathVariable("distance")Integer distance) throws NumberFormatException{
+			@PathVariable("y")Integer y,@PathVariable("distance")Integer distance) throws Throwable{
 		return 
 				this.elementService.getElementsByDistance(email,userPlayground,x, y, distance, size, page) // MessageEntity List
 				.stream() 
@@ -184,7 +181,7 @@ public class WebUI {
 			@RequestParam(name="page", required=false, defaultValue="0") int page,
 			@PathVariable("userPlayground")String userPlayground,
 			@PathVariable("email")String email,@PathVariable("attributeName")String attributeName,
-			@PathVariable("value")String value) throws ElementNotFoundException{
+			@PathVariable("value")String value) throws Throwable{
 
 		return elementService.getElementsByAttribute(email,userPlayground,attributeName, value, size, page)
 				.stream()
@@ -199,7 +196,7 @@ public class WebUI {
 			produces=MediaType.APPLICATION_JSON_VALUE,
 			consumes=MediaType.APPLICATION_JSON_VALUE)
 	public Object postActivity(@RequestBody ActivityTO activityTO,@PathVariable("userPlayground")String userPlayground,
-			@PathVariable("email")String email) throws Exception {
+			@PathVariable("email")String email) throws Throwable {
 		ActivityEntity activityEntity = activityTO.toEntity();
 		activityEntity.setPlayerEmail(email);
 		activityEntity.setPlayerPlayground(userPlayground);

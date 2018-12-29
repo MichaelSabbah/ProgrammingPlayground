@@ -10,7 +10,7 @@ public class ActivityIdGenerator {
 	private int id;
 
 	public ActivityIdGenerator() {}
-	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {
@@ -20,6 +20,6 @@ public class ActivityIdGenerator {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
-	
+
+
 }
