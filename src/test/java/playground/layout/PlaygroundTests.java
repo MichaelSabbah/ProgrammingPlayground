@@ -649,6 +649,7 @@ public class PlaygroundTests {
 			HttpStatus httpStatus = ex.getStatusCode();
 			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
 		}
+		
 		//Then The response is status <> 2xx
 	}
 	
@@ -696,9 +697,9 @@ public class PlaygroundTests {
 	}
 	
 	@Test(expected=OKException.class)
-	public void testAnswerTheQuestionActivityPluginSuccessfully() throws Throwable{
+	public void testAnswerTheQuestionActivityPluginWithoutAnswerAttribute() throws Throwable{
 		//Given -
-		//And database contains player
+		//And database contains user of type player
 		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
 		//And database contains element
 		createAuthroizedUser(Role.MANAGER,authManagerEmail);
@@ -716,22 +717,23 @@ public class PlaygroundTests {
 		ElementEntity exisingElementEntity = elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 		
 		//When
-		ActivityTO activityTO = new ActivityTO();
-		activityTO.setElementId(String.valueOf(exisingElementEntity .getId()));
-		activityTO.setElementPlayground(exisingElementEntity.getPlayground());
-		activityTO.setType("AnswerTheQuestion");
-		moreAttributes = new HashMap<String,Object>();
-		moreAttributes.put(PlaygroundConsts.ANSWER_KEY, "a");
-		activityTO.setAttributes(moreAttributes);
+		ActivityTO postActivity = new ActivityTO();
+		postActivity.setElementId(String.valueOf(exisingElementEntity .getId()));
+		postActivity.setElementPlayground(exisingElementEntity.getPlayground());
+		postActivity.setType("AnswerTheQuestion");
+//		moreAttributes = new HashMap<String,Object>();
+//		moreAttributes.put(PlaygroundConsts.ANSWER_KEY, "a");
+//		postActivity.setAttributes(moreAttributes);
+
+		try {
+			this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
+					postActivity, Feedback.class, authUserPlayground,authPlayerEmail);
+		}catch(HttpClientErrorException ex){
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
+		}
 		
-		Feedback feedbackReturend  = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
-				activityTO, Feedback.class, authUserPlayground,authPlayerEmail);
-		
-		//Then
-		assertThat(feedbackReturend)
-		.isNotNull()
-		.extracting("feedback")
-		.containsExactly("You right");
+		//Then The response is status <> 2xx
 	}
 	
 	private void createAuthroizedUser(Role role,String userEmail) throws Throwable {
