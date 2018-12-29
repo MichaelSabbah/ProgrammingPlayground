@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.InternalError;
 
-import playground.dal.ActivityDao;
 import playground.dal.ElementDao;
 import playground.dal.UserDao;
 import playground.logic.Entities.Activity.ActivityEntity;
@@ -28,7 +27,7 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 	private ElementDao elementDao;
 	private UserDao userDao;
 	private ObjectMapper jackson;
-	private final int POINTS = 7;
+	
 	
 	@PostConstruct
 	public void init() {

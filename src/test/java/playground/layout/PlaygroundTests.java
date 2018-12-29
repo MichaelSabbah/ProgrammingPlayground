@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import playground.layout.to.ActivityTO;
 import playground.layout.to.ElementTO;
 import playground.layout.to.UserTO;
 import playground.logic.Entities.Element.ElementEntity;
@@ -31,6 +32,7 @@ import playground.logic.Entities.User.UserEntity;
 import playground.logic.helpers.Role;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
+import playground.plugins.Feedback;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
@@ -647,6 +649,43 @@ public class PlaygroundTests {
 			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
 		}
 		//Then The response is status <> 2xx
+	}
+	
+	@Test
+	public void testFindBugInBadCodeActivityPluginSuccessfully() throws Throwable {
+		// Given
+		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
+		createAuthroizedUser(Role.MANAGER, authManagerEmail);
+		
+		Map<String, Object> attribute = new HashMap<>();
+		attribute.put("code", "int x = 5; char a = 'w' + 'z'; double name = \"Hello\"; float num = 5.5;");
+		attribute.put("answer", "double name = \"Hello\"");
+
+		ElementEntity element = new ElementEntity();
+		element.setName("Bad Code");
+		element.setPlayground("playground");
+		
+		element.setType("FindTheBug");
+		element.setAttributes(attribute);
+		
+		ElementEntity temp = elementService.addNewElement(authManagerEmail, authUserPlayground, element);
+		
+		// When
+		ActivityTO postActivity = new ActivityTO();
+		postActivity.setType("FindBugActivity");
+		postActivity.setElementId(String.valueOf(temp.getId()));
+		postActivity.setElementPlayground(temp.getPlayground());
+		
+		Map<String, Object> actTemp = new HashMap<>();
+		actTemp.put("answer", "double name = \"Hello\"");
+		
+		Feedback feedback = this.restTemplate.postForObject("/playground/activities/{userPlayground}/{email}", postActivity, Feedback.class, authUserPlayground, authPlayerEmail);
+		
+		// Then
+		assertThat(feedback)
+		.isNotNull()
+		.extracting("answer")
+		.containsExactly(element.getAttributes().get("answer"));
 	}
 
 	private void createAuthroizedUser(Role role,String userEmail) throws Throwable {
