@@ -167,9 +167,9 @@ public class WebUI {
 			@RequestParam(name="page", required=false, defaultValue="0") int page,
 			@PathVariable("userPlayground")String userPlayground,
 			@PathVariable("email")String email,@PathVariable("x")Integer x,
-			@PathVariable("y")Integer y,@PathVariable("distance")Integer distance) throws NumberFormatException, ElementNotFoundException{
+			@PathVariable("y")Integer y,@PathVariable("distance")Integer distance) throws NumberFormatException{
 		return 
-				this.elementService.getElementsByDistance(email,userPlayground,x, y, distance,size,page) // MessageEntity List
+				this.elementService.getElementsByDistance(email,userPlayground,x, y, distance, size, page) // MessageEntity List
 				.stream() 
 				.map(ElementTO::new) 
 				.collect(Collectors.toList()) 
