@@ -5,5 +5,7 @@ public class UnauthorizedUserException extends UnauthorizedException{
 	private static final long serialVersionUID = 1L;
 
 	public UnauthorizedUserException() {}
-	public UnauthorizedUserException(String message) {super(message);}
+	public UnauthorizedUserException(String message) {
+		super(message);
+	}
 }
