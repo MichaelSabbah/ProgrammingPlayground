@@ -3,19 +3,19 @@ package playground.logic.Entities.Activity;
 import java.io.Serializable;
 
 public class ActivityId implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 	protected String playground;
 	protected int id;
-	
+
 	public ActivityId(String playground, int id) {
 		this.playground = playground;
 		this.id = id;
 	}
-	
+
 	public ActivityId() {}
 
-	
+
 	public String getPlayground() {
 		return playground;
 	}
@@ -59,9 +59,9 @@ public class ActivityId implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

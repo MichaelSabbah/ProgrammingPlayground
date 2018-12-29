@@ -15,14 +15,14 @@ import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
 @Component
 @Aspect
 public class BasicAuthenticationAspect {
-	
+
 	private UserDao userDao;
 
 	@Autowired
 	private void setUserService(UserDao userDao){
 		this.userDao = userDao;
 	}
-	
+
 	@Before("@annotation(playground.aop.BasicAuthentication) && args(userEmail,userPlayground,..)")
 	public void validateAuthorizedUser(JoinPoint joinPoint,String userEmail,String userPlayground) throws Throwable {
 		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCode(userEmail,userPlayground,-1);

@@ -5,9 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.sun.javafx.collections.MappingChange.Map;
-
-import playground.dal.ActivityDao;
 import playground.dal.ElementDao;
 import playground.dal.UserDao;
 import playground.logic.Entities.Activity.ActivityEntity;
@@ -15,8 +12,10 @@ import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
 import playground.logic.Entities.User.UserEntity;
 import playground.logic.exceptions.notacceptable.InvalidAnswerException;
+import playground.logic.exceptions.notacceptable.NotEnoughPointsException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
+
 @Component
 public class ShowSolutionPlugin implements ActivityPlugin{
 	ElementDao elements;

@@ -37,7 +37,7 @@ public class JpaUserService implements UserService{
 
 	@Override
 	@Transactional
-	public UserEntity addUser(UserEntity user) throws Exception {
+	public UserEntity addUser(UserEntity user) throws Throwable {
 		if(!this.userDao.existsById(user.getEmail())) {
 			user.setConfirmCode(this.rnd.nextInt(VERIFICATION_RANGE));
 			return this.userDao.save(user);
@@ -46,49 +46,48 @@ public class JpaUserService implements UserService{
 	}
 
 	@Override
-	public UserEntity confirmUser(UserEntity user) throws Exception {
+	public UserEntity confirmUser(UserEntity user) throws Throwable {
 		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail())
-									  .orElseThrow(()->
-									  new UserNotFoundException("User not found"));
-		
+				.orElseThrow(()->
+				new UserNotFoundException("User not found"));
+
 		if(!(userToVerify.getPlayground().equals(user.getPlayground())))
 		{
 			throw new UserNotFoundException("User Not Exists");
 		}
-		
+
 		if(userToVerify.getConfirmCode() == user.getConfirmCode()) {
 			userToVerify.setConfirmCode(-1);	
 		}
 		else {
 			throw new InvalidConfirmCodeException("not valid code");
 		}
-		
+
 		return this.userDao.save(userToVerify);
-		//return userToVerify;
 	}
 
 	@Override
-	public UserEntity loginUser(UserEntity user) throws Exception {
+	public UserEntity loginUser(UserEntity user) throws Throwable {
 		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotFoundException("User not found"));
-		
+
 		//Think again about playground checking
 		if(!userToVerify.getPlayground().equals(user.getPlayground())) {
 			throw new UserNotFoundException("User Not Exists");
 		}
-		
+
 		if(userToVerify.getConfirmCode() != -1) {
 			throw new UnauthorizedUserException("User is not confirmed");
 		}
-		
+
 		return userToVerify;
 	}
 
 	@Override
 	@Transactional
 	@BasicAuthentication
-	public void updateUser(String userEmail,String userPlayground, UserEntity updateUser)throws Exception {
+	public void updateUser(String userEmail,String userPlayground, UserEntity updateUser){
 		UserEntity dbUser = this.userDao.findByEmailAndPlayground(userEmail, userPlayground).get(0);
 		if(updateUser.getUsername()!= null && updateUser.getUsername() != dbUser.getUsername())
 		{
@@ -99,7 +98,7 @@ public class JpaUserService implements UserService{
 		{
 			dbUser.setAvatar(updateUser.getAvatar());
 		}
-		
+
 		this.userDao.save(dbUser);
 	}
 

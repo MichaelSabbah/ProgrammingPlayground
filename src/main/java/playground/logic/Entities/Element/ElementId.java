@@ -5,12 +5,12 @@ import java.io.Serializable;
 public class ElementId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	protected String playground;
 	protected int id;
-	
+
 	public ElementId() {}
-	
+
 	public ElementId(String playground, int id) {
 		this.playground = playground;
 		this.id = id;
