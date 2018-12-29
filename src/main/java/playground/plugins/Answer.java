@@ -1,18 +1,17 @@
 package playground.plugins;
 
 public class Answer {
-	
-	private char answer;
-	
+	String answer;
+
 	public Answer() {
-		
 	}
 
-	public char getAnswer() {
+	public String getAnswer() {
 		return answer;
 	}
 
-	public void setAnswer(char answer) {
+	public void setAnswer(String answer) {
 		this.answer = answer;
 	}
 }
+

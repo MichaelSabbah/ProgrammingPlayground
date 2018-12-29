@@ -1,11 +1,16 @@
 package playground.plugins;
 
+import java.io.IOException;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.InternalError;
 
 import playground.dal.ActivityDao;
 import playground.dal.UserDao;
@@ -16,7 +21,6 @@ import playground.logic.exceptions.notacceptable.InvalidAnswerException;
 public class AnswerTheQuestionPlugin implements ActivityPlugin{
 	
 	private final int SCORE = 5;
-	private final String SOLUTION_KEY = "solution";
 	
 	private ActivityDao activityDao;
 	private UserDao userDao;
@@ -36,15 +40,25 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 	@Override
 	public Object activate(ActivityEntity activityEntity) throws InvalidAnswerException {
 		
-		String solution = (String)activityEntity.getAttributes().get(SOLUTION_KEY);
-		
-		if("null".equals(solution)) {
-			throw new InvalidAnswerException("Answer not contain solution");
-		}
-		
-		Answer answer = new Answer(solution);
-		
-		
+			Answer answer;
+			try {
+					
+				answer = this.jackson.readValue( 
+						activityEntity.getJsonAttributes(),
+						Answer.class);
+				
+			} catch (JsonParseException e) {
+				throw new InternalError("Json parsing error");
+			} catch (JsonMappingException e) {
+				throw new InternalError("Json mapping error");
+			} catch (IOException e) {
+				throw new InternalError("IO error");
+			}
+			
+			if (answer.getAnswer() == null) {
+				throw new InvalidAnswerException("Answer is invalid");
+			}
+
 		return activityDao.save(activityEntity);
 	}
 }
