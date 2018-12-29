@@ -20,7 +20,7 @@ public class JpaActivityService implements ActivityService {
 	private ApplicationContext spring;
 	private ActivityDao activityDao;
 	private ActivityIdGeneratorDao activityIdGeneratorDao;
-	
+
 	@Autowired
 	public JpaActivityService(ApplicationContext spring, ActivityDao activityDao,
 			ActivityIdGeneratorDao activityIdGeneratorDao) {
@@ -32,7 +32,7 @@ public class JpaActivityService implements ActivityService {
 	@Override
 	@IsElementExists
 	@PlayerAuthentication
-	public Object invokeActivity(String userEmail,String userPlayground,String elementId,String elementPlayground,ActivityEntity activityEntity) throws Exception {
+	public Object invokeActivity(String userEmail,String userPlayground,String elementId,String elementPlayground,ActivityEntity activityEntity) throws Throwable {
 		String activityType = activityEntity.getType();
 		if(activityType == null || activityType.isEmpty()){
 			throw new ActivityTypeNotFoundException("NO_ACTIVITY_TYPE_SPECIFIED");
@@ -40,9 +40,9 @@ public class JpaActivityService implements ActivityService {
 		try{
 			int id = activityIdGeneratorDao.save(new ActivityIdGenerator()).getId();
 			activityEntity.setId(id);
-			
+
 			activityDao.save(activityEntity);
-			
+
 			String className = "playground.plugins." + activityType + "Plugin";
 			Class<?> theClass = Class.forName(className);
 			ActivityPlugin activityPlugin = (ActivityPlugin) this.spring.getBean(theClass);

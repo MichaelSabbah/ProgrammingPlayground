@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PlaygroundLoggerAspect {
 	private Log log = LogFactory.getLog(PlaygroundLoggerAspect.class);
-	
+
 	@Around("@annotation(playground.aop.PlaygroundLogger)")
 	public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
 		String className = joinPoint.getTarget().getClass().getSimpleName();

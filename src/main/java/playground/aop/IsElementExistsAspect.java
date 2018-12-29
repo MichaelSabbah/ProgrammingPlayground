@@ -24,7 +24,7 @@ public class IsElementExistsAspect {
 	}
 
 	@Before("@annotation(playground.aop.IsElementExists) && args(userEmail,userPlayground,elementId,elementPlayground,..)")
-	public void isElementExists(JoinPoint joinPoint,String userEmail,String userPlayground,String elementId,String elementPlayground) throws ElementNotFoundException
+	public void isElementExists(JoinPoint joinPoint,String userEmail,String userPlayground,String elementId,String elementPlayground) throws Throwable
 	{
 		try
 		{

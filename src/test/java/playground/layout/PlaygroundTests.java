@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.AssertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,19 +18,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import playground.layout.to.ElementTO;
 import playground.layout.to.UserTO;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.User.UserEntity;
-//<<<<<<< HEAD
-//import playground.logic.exceptions.ElementNotFoundException;
-//=======
-import playground.logic.exceptions.conflict.ElementAlreadyExistsException;
-import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
 import playground.logic.helpers.Role;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
@@ -76,6 +74,15 @@ public class PlaygroundTests {
 		this.authUserPlayground = "playground";
 	}
 	
+	private void checkHttpStatusCode(HttpStatus current,HttpStatus expected,String exceptionMessage) throws Exception
+	{
+		if(current == expected)
+		{
+			throw new OKException(exceptionMessage);
+		}
+		throw new BadException(exceptionMessage);
+	}
+	
 	
 	@Before
 	public void before() throws SQLException
@@ -107,7 +114,7 @@ public class PlaygroundTests {
 	//Elements tests
 	
 	@Test
-	public void testPostElementSuccessfully() throws Exception{
+	public void testPostElementSuccessfully() throws Throwable{
 		
 		Map<String,Object> attributes = new HashMap<String,Object>();
 		attributes.put("testKey","testValue");
@@ -134,8 +141,8 @@ public class PlaygroundTests {
 	}
 
 
-	@Test(expected=Exception.class)
-	public void testPostElementByUnauthorizedUser() throws Exception{
+	@Test(expected=OKException.class)
+	public void testPostElementByUnauthorizedUser() throws Throwable{
 
 		//Given - 
 		//User of type PLAYER exist
@@ -146,8 +153,13 @@ public class PlaygroundTests {
 		ElementTO elementTo = new ElementTO();
 		elementTo.setName("element1");
 		elementTo.setType("Ad Board");
-		restTemplate.postForObject(url + "/{playground}/{email}",elementTo,ElementTO.class,authUserPlayground,authManagerEmail);
-
+		try {
+			restTemplate.postForObject(url + "/{playground}/{email}",elementTo,ElementTO.class,authUserPlayground,authManagerEmail);
+		}
+		catch (HttpClientErrorException e) {
+			HttpStatus httpStatus = e.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.UNAUTHORIZED,e.getMessage());
+		}
 		//Then The response is status <> 2xx		
 	}
 
@@ -155,7 +167,7 @@ public class PlaygroundTests {
 
 	@Test
 	@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-	public void testUpdateElementSuccessfully() throws Exception{
+	public void testUpdateElementSuccessfully() throws Throwable{
 		//Given
 		//Database contain user of type manager
 		//Database contain element
@@ -185,8 +197,8 @@ public class PlaygroundTests {
 		
 	}
 	
-	@Test(expected=Exception.class)
-	public void testUpdateNotExistsElement() throws Exception{
+	@Test(expected=OKException.class)
+	public void testUpdateNotExistsElement() throws Throwable{
 		
 		//Given - 
 		//User of type MANAGER exist
@@ -196,8 +208,15 @@ public class PlaygroundTests {
 		//When
 		ElementTO elementTORequest = new ElementTO();
 		elementTORequest.setType("Quiz");
+		try {
 		restTemplate.put(url + "/{playground}/{email}/{playground}/{id}", 
 				elementTORequest, authUserPlayground,authManagerEmail,"playground",1);
+		}
+		catch(HttpClientErrorException ex)
+		{
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
+		}
 
 		//Then The response is status <> 2xx
 	}
@@ -206,7 +225,7 @@ public class PlaygroundTests {
 	
 	@Test
 	@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-	public void testGetElementByIdSuccessfully() throws Exception{
+	public void testGetElementByIdSuccessfully() throws Throwable{
 		
 		//Given - 
 		//Database contains user
@@ -233,8 +252,8 @@ public class PlaygroundTests {
 	
 	//TODO - Michael - Add test for get element by id with user of type MANAGER
 
-	@Test(expected=Exception.class)
-	public void testGetNotExistsElement() throws Exception{
+	@Test(expected=OKException.class)
+	public void testGetNotExistsElement() throws Throwable{
 		
 		//Given - 
 		//Database contains user
@@ -242,14 +261,21 @@ public class PlaygroundTests {
 		//No elements exist
 		
 		//When
+		try {
 		restTemplate.getForObject(url + "/{playground}/{email}/{playground}/{id}",
 				ElementTO.class, authUserPlayground,authPlayerEmail,"playground",1);
+		}
+		catch(HttpClientErrorException ex)
+		{
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
+		}
 
 		//Then The response is status <> 2xx
 	}
 
 	@Test
-	public void testGetAllElementsSuccessfully() throws Exception{
+	public void testGetAllElementsSuccessfully() throws Throwable{
 		
 		//Given - 
 		//Database contains user
@@ -281,8 +307,8 @@ public class PlaygroundTests {
 	}
 
 
-	@Test(expected=Exception.class)
-	public void testGetAllElementsWithUnauthorizedUser() throws Exception{
+	@Test(expected=OKException.class)
+	public void testGetAllElementsWithUnauthorizedUser() throws Throwable{
 		
 		//Given - 
 		//No user exists
@@ -294,14 +320,21 @@ public class PlaygroundTests {
 		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 		
 		//When
+		try {
 		restTemplate.getForObject(url + "/{playground}/{email}/all",
 				ElementTO[].class, authUserPlayground,authPlayerEmail);
+		}
+		catch(HttpClientErrorException ex)
+		{
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.UNAUTHORIZED, ex.getMessage());
+		}
 
 		//Then The response is status <> 2xx
 	}
 
 	@Test
-	public void testGetAllElementsByLocationAndDistanceSuccessfully() throws Exception{
+	public void testGetAllElementsByLocationAndDistanceSuccessfully() throws Throwable{
 
 		//Given - 
 		//Database contains user
@@ -330,8 +363,8 @@ public class PlaygroundTests {
 	
 	
 	
-	@Test(expected=Exception.class)
-	public void testGetAllElementsByLocationAndNegativeDistance() throws Exception{
+	@Test(expected=OKException.class)
+	public void testGetAllElementsByLocationAndNegativeDistance() throws Throwable{
 		
 		//Given - 
 		//Database contains user
@@ -347,16 +380,23 @@ public class PlaygroundTests {
 		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		//When
+		try {
 		restTemplate.getForObject(url + "/{playground}/{email}/near/{x}/{y}/{distance}", 
 				ElementTO[].class, 
 				authUserPlayground,authPlayerEmail,2,2,-1);
+		}
+		catch(HttpClientErrorException ex)
+		{
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
+		}
 
 		//Then The response is status <> 2xx
 	}
 
 
 	@Test
-	public void testGetAllElementsByAttributeSuccessfully() throws Exception{
+	public void testGetAllElementsByAttributeSuccessfully() throws Throwable{
 		//Given - 
 		//Database contains user
 		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
@@ -383,8 +423,8 @@ public class PlaygroundTests {
 		.hasSize(1);
 	}
 
-	@Test(expected=Exception.class)
-	public void  testGetAllElementsWithNonExistingElementValue() throws Exception{
+	@Test(expected=OKException.class)
+	public void  testGetAllElementsWithNonExistingElementValue() throws Throwable{
 		//Given - 
 		//Database contains user
 		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
@@ -401,9 +441,16 @@ public class PlaygroundTests {
 		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		//When
+		try {
 		restTemplate.getForObject(url + "/{playground}/{email}/search/{attributeName}/{value}", 
 				ElementTO[].class, 
 				authUserPlayground,authPlayerEmail,"color","blue");
+		}
+		catch(HttpClientErrorException ex)
+		{
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
+		}
 
 		//Then The response is status <> 2xx		
 	}
@@ -430,8 +477,8 @@ public class PlaygroundTests {
 		
 	}
 
-	@Test(expected=Exception.class)
-	public void testPostExistsUser() throws Exception
+	@Test(expected=OKException.class)
+	public void testPostExistsUser() throws Throwable
 	{
 		//Given
 		UserEntity userEntity= new UserEntity();
@@ -447,7 +494,14 @@ public class PlaygroundTests {
 		newUserForm.setUsername("player2");
 		newUserForm.setRole(Role.PLAYER.name());
 		newUserForm.setAvatar("avatar.jpg");
+		try {
 		this.restTemplate.postForObject(this.usersUrl, newUserForm, UserTO.class);
+		}
+		catch(HttpClientErrorException ex)
+		{
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.CONFLICT, ex.getMessage());
+		}
 
 		//Then The response is status <> 2xx
 	}
@@ -455,7 +509,7 @@ public class PlaygroundTests {
 	//TODO - Option - Add tests for post new MANAGER
 	
 	@Test
-	public void testGetUserConfirmSuccessfully() throws Exception
+	public void testGetUserConfirmSuccessfully() throws Throwable
 	{
 		//Given - 
 		//Database contains user:
@@ -477,8 +531,8 @@ public class PlaygroundTests {
 		.containsExactly(userEntity.getEmail(), userEntity.getUsername(),userEntity.getPlayground(),userEntity.getRole(),userEntity.getAvatar());
 	}
 
-	@Test(expected=Exception.class)
-	public void testGetUserConfirmWithInvalidCode() throws Exception
+	@Test(expected=OKException.class)
+	public void testGetUserConfirmWithInvalidCode() throws Throwable
 	{
 		//Given
 		UserEntity userEntity= new UserEntity();
@@ -489,14 +543,22 @@ public class PlaygroundTests {
 		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
 
 		//When
+		try
+		{
 		this.restTemplate.getForObject(this.usersUrl+"/confirm/{playground}/{email}/{code}",
 				UserTO.class, authUserPlayground,authManagerEmail,confirmCode - 1);
+		}
+		catch(HttpClientErrorException ex)
+		{
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
+		}
 
 		//Then The response is status <> 2xx
 	}
 
 	@Test
-	public void testGetUserDetailsSuccessfully() throws Exception
+	public void testGetUserDetailsSuccessfully() throws Throwable
 	{
 		//Given - 
 		//Database contains confirmed user
@@ -521,21 +583,27 @@ public class PlaygroundTests {
 
 	}
 
-	@Test(expected=Exception.class)
+	@Test(expected=OKException.class)
 	public void testGetUserDetailsWithInvalidEmail() throws Exception
 	{
 		//Given - Database is empty
 		
 		//When
+		try {
 		this.restTemplate.getForObject(this.usersUrl+"/login/{playground}/{email}", UserTO.class, "playground","wrong@user.com");
-
+		}
+		catch(HttpClientErrorException ex)
+		{
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
+		}
 		//Then The response is status <> 2xx
 	}
 	
 	//TODO - Michael - Add test for get user details with existing user (wrong email/unauthorized...)
 
 	@Test
-	public void testUpdateUserDetailsSuccessfully() throws Exception
+	public void testUpdateUserDetailsSuccessfully() throws Throwable
 	{
 		//Given - 
 		//Database contains user:
@@ -560,7 +628,7 @@ public class PlaygroundTests {
 
 	}
 
-	@Test(expected=Exception.class)
+	@Test(expected=OKException.class)
 	public void testUpdateUserDetailsWithNonExistingUser() throws Exception{
 		//Given - 
 		//Database is empty
@@ -570,12 +638,18 @@ public class PlaygroundTests {
 		userTO.setEmail("unexistingUser@user.com");
 		userTO.setPlayground(authUserPlayground);
 		userTO.setRole(Role.PLAYER.name());
+		try {
 		this.restTemplate.put(this.usersUrl+"/{playground}/{email}", userTO, "playground","unexistingUser@user.com");
-
+		}
+		catch(HttpClientErrorException ex)
+		{
+			HttpStatus httpStatus = ex.getStatusCode();
+			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_FOUND, ex.getMessage());
+		}
 		//Then The response is status <> 2xx
 	}
 
-	private void createAuthroizedUser(Role role,String userEmail) throws Exception {
+	private void createAuthroizedUser(Role role,String userEmail) throws Throwable {
 		UserEntity userEntity = new UserEntity(userEmail,authUserPlayground);
 		userEntity.setRole(role.name());
 		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();

@@ -12,6 +12,8 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import playground.logic.exceptions.internal.InternalErrorException;
+
 @Entity
 @IdClass(ActivityId.class)
 public class ActivityEntity {
@@ -110,22 +112,22 @@ public class ActivityEntity {
 	}
 
 	@Lob
-	public String getJsonAttributes() {
+	public String getJsonAttributes() throws Throwable {
 		try {
 			return new ObjectMapper().writeValueAsString(this.attributes);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new InternalErrorException(e.getMessage());
 		}
 	}
 
-	public void setJsonAttributes(String jsonAttributes) {
+	public void setJsonAttributes(String jsonAttributes) throws Throwable {
 		try {
 			this.attributes = new ObjectMapper().readValue(jsonAttributes, Map.class);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new InternalErrorException(e.getMessage());
 		}
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		ActivityEntity other = (ActivityEntity)obj;

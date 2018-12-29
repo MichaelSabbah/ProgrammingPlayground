@@ -15,6 +15,8 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import playground.logic.exceptions.internal.InternalErrorException;
+
 @Entity
 @IdClass(ElementId.class)
 public class ElementEntity{
@@ -28,9 +30,9 @@ public class ElementEntity{
 	private String type;
 	private String creatorPlayground;
 	private String creatorEmail;
-    private int id;
+	private int id;
 	private String playground;
-	
+
 	public ElementEntity(String playground, int id, String name, Date createDate, Date expirationDate,
 			String type, String creatorPlayground, String creatorEmail){
 		this.playground = playground;
@@ -52,7 +54,7 @@ public class ElementEntity{
 		this.x = 0.0;
 		this.y = 0.0;
 	}
-	
+
 	@Id
 	@Column(name="id", nullable=false)
 	public int getId() {
@@ -62,7 +64,7 @@ public class ElementEntity{
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	@Id
 	@Column(name="playground", nullable=false)
 	public String getPlayground() {
@@ -72,7 +74,7 @@ public class ElementEntity{
 	public void setPlayground(String playground) {
 		this.playground = playground;
 	}
-	
+
 	public Double getX() {
 		return x;
 	}
@@ -114,7 +116,7 @@ public class ElementEntity{
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
-	
+
 
 	public String getType() {
 		return type;
@@ -123,30 +125,30 @@ public class ElementEntity{
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 	@Transient
 	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
-	
+
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
-	
+
 	@Lob
-	public String getJsonAttributes() {
+	public String getJsonAttributes() throws Throwable {
 		try {
 			return new ObjectMapper().writeValueAsString(this.attributes);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		} catch (Exception ex) {
+			throw new InternalErrorException(ex.getMessage());
 		}
 	}
 
-	public void setJsonAttributes(String jsonAttributes) {
+	public void setJsonAttributes(String jsonAttributes) throws Throwable {
 		try {
 			this.attributes = new ObjectMapper().readValue(jsonAttributes, Map.class);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		} catch (Exception ex) {
+			throw new InternalErrorException(ex.getMessage());
 		}
 	}
 
@@ -157,7 +159,7 @@ public class ElementEntity{
 	public void setCreatorPlayground(String creatorPlayground) {
 		this.creatorPlayground = creatorPlayground;
 	}
-	
+
 	public String getCreatorEmail() {
 		return creatorEmail;
 	}
@@ -180,6 +182,6 @@ public class ElementEntity{
 				+ creatorPlayground + ", creatorEmail=" + creatorEmail + ", id=" + id + ", playground=" + playground
 				+ "]";
 	}
-	
-	
+
+
 }

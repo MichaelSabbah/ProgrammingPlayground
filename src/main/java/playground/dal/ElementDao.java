@@ -16,11 +16,11 @@ public interface ElementDao extends PagingAndSortingRepository<ElementEntity, El
 	public List<ElementEntity> findAllByJsonAttributesContaining(
 			@Param("jsonAttribute") String jsonAttribute, 
 			Pageable pageable);
-	
+
 	public Optional<ElementEntity> findByIdAndPlayground(
 			@Param("id") int id,
 			@Param("playground") String playground);
-	
+
 	public Page<ElementEntity> findAllByXBetweenAndYBetween(
 			double xMin,
 			double xMax,
