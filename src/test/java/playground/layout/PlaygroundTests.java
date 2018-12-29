@@ -25,6 +25,7 @@ import playground.layout.to.ElementTO;
 import playground.layout.to.UserTO;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.User.UserEntity;
+import playground.logic.exceptions.ElementNotFoundException;
 import playground.logic.helpers.Role;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
@@ -287,10 +288,10 @@ public class PlaygroundTests {
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
 		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
-
+		
 		//When
 		restTemplate.getForObject(url + "/{playground}/{email}/all",
-				ElementTO.class, authUserPlayground,authPlayerEmail);
+				ElementTO[].class, authUserPlayground,authPlayerEmail);
 
 		//Then The response is status <> 2xx
 	}
@@ -322,7 +323,9 @@ public class PlaygroundTests {
 		
 		//TODO - Michael - Add test for the elements array that return
 	}
-
+	
+	
+	
 	@Test(expected=Exception.class)
 	public void testGetAllElementsByLocationAndNegativeDistance() throws Exception{
 		
@@ -337,12 +340,12 @@ public class PlaygroundTests {
 		elementEntity.setX(1.0);
 		elementEntity.setY(1.0);
 
-		elementService.addNewElement(authPlayerEmail,authUserPlayground,elementEntity);
+		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		//When
-		restTemplate.getForObject(url + "{playground}/{email}/near/{x}/{y}{distance}", 
-				ElementTO.class, 
-				"playground","test@user.com",2,2,-1);
+		restTemplate.getForObject(url + "/{playground}/{email}/near/{x}/{y}/{distance}", 
+				ElementTO[].class, 
+				authUserPlayground,authPlayerEmail,2,2,-1);
 
 		//Then The response is status <> 2xx
 	}
@@ -394,9 +397,9 @@ public class PlaygroundTests {
 		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		//When
-		restTemplate.getForObject(url + "{playground}/{email}/search/{attributeName}/{value}", 
-				ElementTO.class, 
-				"playground","test@user.com","color","blue");
+		restTemplate.getForObject(url + "/{playground}/{email}/search/{attributeName}/{value}", 
+				ElementTO[].class, 
+				authUserPlayground,authPlayerEmail,"color","blue");
 
 		//Then The response is status <> 2xx		
 	}
@@ -436,7 +439,7 @@ public class PlaygroundTests {
 
 		//When
 		NewUserForm newUserForm = new NewUserForm();
-		newUserForm.setEmail("player@user.com");
+		newUserForm.setEmail(authPlayerEmail);
 		newUserForm.setUsername("player2");
 		newUserForm.setRole(Role.PLAYER.name());
 		newUserForm.setAvatar("avatar.jpg");
@@ -571,7 +574,8 @@ public class PlaygroundTests {
 	private void createAuthroizedUser(Role role,String userEmail) throws Exception {
 		UserEntity userEntity = new UserEntity(userEmail,authUserPlayground);
 		userEntity.setRole(role.name());
-		this.userService.addUser(userEntity);
+		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
+		userEntity.setConfirmCode(confirmCode);
 		this.userService.confirmUser(userEntity);
 	}
 }

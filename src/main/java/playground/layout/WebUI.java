@@ -1,5 +1,6 @@
 package playground.layout;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,7 +140,8 @@ public class WebUI {
 			method=RequestMethod.GET,
 			path="/playground/elements/{userPlayground}/{email}/all",
 			produces=MediaType.APPLICATION_JSON_VALUE)
-	public ElementTO[] getAllElementsByPlayer(@RequestParam(name="size", required=false, defaultValue="10") int size, 
+	public ElementTO[] getAllElementsByPlayer(
+			@RequestParam(name="size", required=false, defaultValue="10") int size, 
 			@RequestParam(name="page", required=false, defaultValue="0") int page,
 			@PathVariable("userPlayground") String userPlayground,
 			@PathVariable("email") String email) {
@@ -149,13 +151,18 @@ public class WebUI {
 				.map(ElementTO::new) 
 				.collect(Collectors.toList()) 
 				.toArray(new ElementTO[0]);		
+//		ElementTO[] elementsAsArray = new ElementTO[1];
+//		List<ElementEntity> elements = this.elementService.getAllElements(email, userPlayground, size, page);
+//		elementsAsArray[0] = new ElementTO(elements.get(0));
+//		return elementsAsArray;
+	
 	}
 
 	@RequestMapping(
 			method = RequestMethod.GET,
 			path = "/playground/elements/{userPlayground}/{email}/near/{x}/{y}/{distance}",
 			produces=MediaType.APPLICATION_JSON_VALUE)
-	public ElementTO[] getNearElementsByLocation(
+	public ElementTO[] getAllElementsByLocationAndDistance (
 			@RequestParam(name="size", required=false, defaultValue="10") int size, 
 			@RequestParam(name="page", required=false, defaultValue="0") int page,
 			@PathVariable("userPlayground")String userPlayground,
@@ -178,7 +185,7 @@ public class WebUI {
 			@RequestParam(name="page", required=false, defaultValue="0") int page,
 			@PathVariable("userPlayground")String userPlayground,
 			@PathVariable("email")String email,@PathVariable("attributeName")String attributeName,
-			@PathVariable("value")String value){
+			@PathVariable("value")String value) throws ElementNotFoundException{
 
 		return elementService.getElementsByAttribute(email,userPlayground,attributeName, value, size, page)
 				.stream()

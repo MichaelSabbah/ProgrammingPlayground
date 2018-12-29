@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -122,36 +123,52 @@ public class JpaElementService implements ElementService{
 	@Override
 	@Transactional(readOnly=true)
 	@BasicAuthentication
-	public List<ElementEntity> getAllElements(String userEmail,String userPlaygorund,int size, int page) {
-		return
-				this.elements.findAll(
-						PageRequest.of(page, size, Direction.DESC, "createDate"))
-				.getContent();
+	public List<ElementEntity> getAllElements(String userEmail,String userPlayground,int size, int page) {
+		//return
+		Page<ElementEntity> elementsReturned = this.elements.findAll(
+				PageRequest.of(page, size, Direction.DESC, "name"));
+		
+		System.err.println(elementsReturned.toString());
+		System.err.println("content: " + elementsReturned.getContent().toString());
+		return elementsReturned.getContent();
+		
+		//.getContent();
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	@BasicAuthentication
 	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlaygorund,int x, int y, int distance,int size,int page) throws ElementNotFoundException {
-		List<ElementEntity> elements = this.elements.findAll(
-				PageRequest.of(page, size))
-				.getContent();
-
-		for(int i = 0 ; i < elements.size() ; i++) {
-			if(!isInDistance(x, y, elements.get(i).getX(), elements.get(i).getY(), distance)) {
-				elements.remove(i);
-			}
+//		List<ElementEntity> elements = this.elements.findAll(
+//				PageRequest.of(page, size))
+//				.getContent();
+		if(distance < 0) {
+			throw new ElementNotFoundException("Not valid distance");
+			//TODO - Michael - Check about the exception should be thrown here
 		}
+		
+		List<ElementEntity> elementsByDistance = this.elements.findAllByXBetween(
+				x - distance, x + distance, PageRequest.of(page, size));
 
-		return elements;
+//		for(int i = 0 ; i < elements.size() ; i++) {
+//			if(!isInDistance(x, y, elements.get(i).getX(), elements.get(i).getY(), distance)) {
+//				elements.remove(i);
+//			}
+//		}
+
+		return elementsByDistance;
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	@BasicAuthentication
-	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlaygorund,String attributeName, String value,int size, int page) {		
+	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlaygorund,String attributeName, String value,int size, int page) throws ElementNotFoundException {		
 		String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
-		return this.elements.findAllByJsonAttributesContaining(jsonAttribute,PageRequest.of(page, size));
+		List<ElementEntity> elementsReturned = this.elements.findAllByJsonAttributesContaining(jsonAttribute,PageRequest.of(page, size));
+		if(elementsReturned.size() == 0) {
+			throw new ElementNotFoundException("Element with this attribute name and value is not existing");
+		}
+		return elementsReturned;
 
 	}
 

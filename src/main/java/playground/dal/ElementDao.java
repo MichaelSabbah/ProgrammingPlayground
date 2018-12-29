@@ -19,5 +19,11 @@ public interface ElementDao extends PagingAndSortingRepository<ElementEntity, El
 	public Optional<ElementEntity> findByIdAndPlayground(
 			@Param("id") int id,
 			@Param("playground") String playground);
-
+	
+	public List<ElementEntity> findAllByXBetween(
+			double xMin,
+			double xMax,
+			Pageable pageable);
+//			@Param("yMin") int yMin,
+//			@Param("yMax") int yMax);
 }

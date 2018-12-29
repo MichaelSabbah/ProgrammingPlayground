@@ -39,7 +39,7 @@ public class JpaUserService implements UserService{
 
 	@Override
 	public UserEntity confirmUser(UserEntity user) throws Exception {
-		//TODO - Michael - Add query in DAO to find user bt id(email) and confirmCode (Check if aspect can be good)
+		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail())
 									  .orElseThrow(()->
 									  new UserNotExistsException("User Not Exists"));
