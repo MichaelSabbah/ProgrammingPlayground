@@ -33,12 +33,10 @@ public class JpaActivityService implements ActivityService {
 	//@PlayerAuthentication
 	public Object invokeActivity(String userEmail,String userPlayground,String elementId,String elementPlayground,ActivityEntity activityEntity) throws Exception {
 		String activityType = activityEntity.getType();
-		if(activityType == null || activityType.isEmpty())
-		{
+		if(activityType == null || activityType.isEmpty()){
 			throw new ActivityTypeNotFoundException("NO_ACTIVITY_TYPE_SPECIFIED");
 		}
-		try
-		{
+		try{
 			int id = activityIdGeneratorDao.save(new ActivityIdGenerator()).getId();
 			activityEntity.setId(id);
 			

@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javassist.NotFoundException;
-import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.User.UserEntity;
+import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.exceptions.conflict.ConflictException;
 import playground.logic.exceptions.internal.InternalErrorException;
 import playground.logic.exceptions.notacceptable.NotAcceptableException;
