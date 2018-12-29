@@ -50,7 +50,6 @@ public class JpaUserService implements UserService{
 	@Override
 	@PlaygroundLogger
 	public UserEntity confirmUser(UserEntity user) throws Throwable {
-		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail())
 				.orElseThrow(()->
 				new UserNotFoundException("User not found"));
@@ -73,10 +72,7 @@ public class JpaUserService implements UserService{
 	@Override
 	@PlaygroundLogger
 	public UserEntity loginUser(UserEntity user) throws Throwable {
-		//TODO - Michael - Add query in DAO to find user by id(email) and confirmCode (Check if aspect can be good)
 		UserEntity userToVerify = this.userDao.findById(user.getEmail()).orElseThrow(()->new UserNotFoundException("User not found"));
-
-		//Think again about playground checking
 		if(!userToVerify.getPlayground().equals(user.getPlayground())) {
 			throw new UserNotFoundException("User Not Exists");
 		}

@@ -9,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import playground.aop.BasicAuthentication;
 import playground.aop.ManagerAuthentication;
 import playground.aop.PlaygroundLogger;
@@ -43,15 +42,10 @@ public class JpaElementService implements ElementService{
 	@ManagerAuthentication
 	@PlaygroundLogger
 	public ElementEntity addNewElement(String userEmail,String userPlayground,ElementEntity element) {	
-
-		//Get element id from idGenerator
+		
 		int id = elementIdGeneratorDao.save(new ElementIdGenerator()).getId();
-
-		//Set element id - compose key
 		element.setPlayground(userPlayground);
 		element.setId(id);
-
-		//Initialize element fields
 		element.setCreatorEmail(userEmail);
 		element.setCreatorPlayground(userPlayground);
 		element.setCreateDate(new Date());
@@ -107,10 +101,10 @@ public class JpaElementService implements ElementService{
 		ElementId elementId = new ElementId();
 		elementId.setId(Integer.parseInt(id));
 		elementId.setPlayground(playground);
-		
-		ElementEntity element = this.elements.findById(elementId)//this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
+
+		ElementEntity element = this.elements.findById(elementId)
 				.orElseThrow(()->
-				 new ElementNotFoundException("No element with playground: " + playground + " and id: " + id));
+				new ElementNotFoundException("No element with playground: " + playground + " and id: " + id));
 		return element;
 	}
 
@@ -150,7 +144,6 @@ public class JpaElementService implements ElementService{
 			throw new ElementNotFoundException("Element with this attribute name and value is not existing");
 		}
 		return elementsReturned;
-
 	}
 
 	@Override

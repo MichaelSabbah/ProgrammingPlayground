@@ -4,8 +4,7 @@ package playground.plugins;
 public class Answer {
 	String answer;
 
-	public Answer() {
-	}
+	public Answer() {}
 
 	public String getAnswer() {
 		return answer;
@@ -31,7 +30,7 @@ public class Answer {
 			return false;
 		return true;
 	}
-	
-	
+
+
 }
 

@@ -7,20 +7,30 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.stereotype.Component;
 import org.springframework.data.domain.Page;
 
 import playground.dal.ActivityDao;
+import playground.dal.ElementDao;
+import playground.dal.UserDao;
 import playground.logic.Entities.Activity.ActivityEntity;
+import playground.logic.Entities.Element.ElementId;
+import playground.logic.exceptions.notfound.ElementNotFoundException;
+import playground.logic.exceptions.notfound.UserNotFoundException;
 import playground.logic.helpers.PlaygroundConsts;
 
+@Component
 public class GetMessagesPlugin implements ActivityPlugin {
 
 	private ActivityDao activityDao;
+	private ElementDao elementDao;
+	private UserDao userDao;
 
 	@Autowired
-	public GetMessagesPlugin(ActivityDao activityDao) {
-		super();
+	public GetMessagesPlugin(ActivityDao activityDao,ElementDao elementDao,UserDao userDao) {
 		this.activityDao = activityDao;
+		this.elementDao = elementDao;
+		this.userDao = userDao;
 	}
 
 	@Override
@@ -28,6 +38,12 @@ public class GetMessagesPlugin implements ActivityPlugin {
 		Map<String,Object> attributes = activityEntity.getAttributes();
 		int page;
 		int size;
+
+		userDao.findById(activityEntity.getPlayerEmail())
+		.orElseThrow(()-> new UserNotFoundException());
+		elementDao.findById(new ElementId(activityEntity.getElementPlayground(), 
+				Integer.parseInt(activityEntity.getElementId())))
+		.orElseThrow(()-> new ElementNotFoundException());
 
 		if(attributes.containsKey("page"))
 		{
@@ -52,7 +68,6 @@ public class GetMessagesPlugin implements ActivityPlugin {
 		ArrayList<AdMessage> adMessages = new ArrayList<AdMessage>();
 		if(activityEntityList != null && activityEntityList.size() != 0)
 		{
-
 			activityEntityList.stream().forEach(activity ->
 			{
 				if(activity.getAttributes().containsKey("message"))
@@ -65,5 +80,4 @@ public class GetMessagesPlugin implements ActivityPlugin {
 
 		return adMessages.toArray(new AdMessage[0]);
 	}
-
 }

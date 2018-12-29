@@ -3,9 +3,10 @@ package playground.plugins;
 public class AdMessage {
 
 	private String message;
+	
+	public AdMessage() {}
 
 	public AdMessage(String message) {
-		super();
 		this.message = message;
 	}
 

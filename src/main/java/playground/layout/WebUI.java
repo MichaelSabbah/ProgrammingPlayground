@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javassist.NotFoundException;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.User.UserEntity;
 import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.exceptions.conflict.ConflictException;
 import playground.logic.exceptions.internal.InternalErrorException;
 import playground.logic.exceptions.notacceptable.NotAcceptableException;
+import playground.logic.exceptions.notfound.NotFoundException;
 import playground.logic.exceptions.unauthorized.UnauthorizedException;
 import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;

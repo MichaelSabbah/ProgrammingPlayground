@@ -3,8 +3,6 @@ package playground.logic.services;
 import java.util.List;
 
 import playground.logic.Entities.Element.ElementEntity;
-import playground.logic.exceptions.conflict.ElementAlreadyExistsException;
-import playground.logic.exceptions.notfound.ElementNotFoundException;
 
 public interface ElementService {
 
