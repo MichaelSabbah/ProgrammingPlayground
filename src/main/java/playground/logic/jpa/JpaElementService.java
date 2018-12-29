@@ -139,20 +139,15 @@ public class JpaElementService implements ElementService{
 	@Transactional(readOnly=true)
 	@BasicAuthentication
 	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlaygorund,int x, int y, int distance,int size,int page) throws NumberFormatException {
-//		List<ElementEntity> elements = this.elements.findAll(
-//				PageRequest.of(page, size))
-//				.getContent();
 		if(distance < 0) {
 			throw new NumberFormatException("Invalid distance");
 			//TODO - Michael - Check about the exception should be thrown here
 		}
 		
-		List<ElementEntity> elementsByDistance = this.elements.findAllByXBetweenAndYBetween(
+		return this.elements.findAllByXBetweenAndYBetween(
 				x - distance, x + distance, y - distance, y + distance,
-				PageRequest.of(page, size));
-				//.getContent();
-
-		return elementsByDistance;
+				PageRequest.of(page, size))
+				.getContent();
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package playground.dal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -20,7 +21,7 @@ public interface ElementDao extends PagingAndSortingRepository<ElementEntity, El
 			@Param("id") int id,
 			@Param("playground") String playground);
 	
-	public List<ElementEntity> findAllByXBetweenAndYBetween(
+	public Page<ElementEntity> findAllByXBetweenAndYBetween(
 			double xMin,
 			double xMax,
 			double yMin,
