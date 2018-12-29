@@ -191,7 +191,6 @@ public class WebUI {
 				.map(ElementTO::new)
 				.collect(Collectors.toList())
 				.toArray(new ElementTO[0]);
-
 	}
 
 	@RequestMapping(
