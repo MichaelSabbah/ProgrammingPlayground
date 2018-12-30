@@ -76,9 +76,7 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 		elementId.setId(id);
 		elementId.setPlayground(playground);
 		
-		ElementEntity element = elementDao.findById(elementId)
-				.orElseThrow(() ->
-				 new ElementNotFoundException("no element with playground: " + playground  + " and id: " + id));
+		ElementEntity element = elementDao.findById(elementId).get();
 		
 		String correctAnswerAsString = (String)element.getAttributes().get(PlaygroundConsts.ANSWER_KEY);
 		if("null".equals(correctAnswerAsString)) {
@@ -86,9 +84,7 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 		}
 		
 		//Get the relevant user
-		UserEntity user = userDao.findById(activityEntity.getPlayerEmail())
-				.orElseThrow(()->
-				new UserNotFoundException("No use with email: " + activityEntity.getPlayerEmail()));
+		UserEntity user = userDao.findById(activityEntity.getPlayerEmail()).get();
 		
 		//Get the correct answer
 		Answer correctAnswer = new Answer();

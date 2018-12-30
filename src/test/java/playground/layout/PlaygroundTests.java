@@ -3,6 +3,8 @@ package playground.layout;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,8 +26,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.TypeHost;
-
 import playground.layout.to.ActivityTO;
 import playground.layout.to.ElementTO;
 import playground.layout.to.UserTO;
@@ -40,7 +40,6 @@ import playground.plugins.Feedback;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class PlaygroundTests {
 
 	@LocalServerPort
@@ -53,7 +52,9 @@ public class PlaygroundTests {
 	private String authManagerEmail;
 	private String authPlayerEmail;
 	private String authUserPlayground;
-
+	
+	private Date futureDate;
+	
 	private RestTemplate restTemplate;
 
 	@Autowired
@@ -64,9 +65,6 @@ public class PlaygroundTests {
 
 	@Autowired
 	private UserService userService;
-
-	//@Autowired
-	//private ElementIdGeneratorDao elementIdGeneratorDao;
 
 	@PostConstruct
 	public void init() {
@@ -80,6 +78,11 @@ public class PlaygroundTests {
 		this.authManagerEmail = "manager@user.com";
 		this.authPlayerEmail = "player@user.com";
 		this.authUserPlayground = "playground";
+		
+		
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.add(Calendar.DAY_OF_YEAR, 1);
+	   	this.futureDate = calendar.getTime();
 	}
 
 	private void checkHttpStatusCode(HttpStatus current,HttpStatus expected,String exceptionMessage) throws Exception
@@ -97,20 +100,12 @@ public class PlaygroundTests {
 	{
 		this.elementService.cleanAll();
 		this.userService.cleanAll();
-
-		//DbTestUtil.resetAutoIncrementColumns(applicationContext, "element_id_generator");
-		//Reset the auto increment element id column
-		//DbTestUtil.resetAutoIncrementColumns(applicationContext, "element_id_generator");
-		//this.elementIdGeneratorDao.deleteAll();
 	}
 
 	@After
 	public void after() throws SQLException {
 		this.elementService.cleanAll();
 		this.userService.cleanAll();
-
-		//DbTestUtil.resetAutoIncrementColumns(applicationContext, "element_id_generator");
-		//this.elementIdGeneratorDao.deleteAll();
 	}
 
 
@@ -127,20 +122,18 @@ public class PlaygroundTests {
 		Map<String,Object> attributes = new HashMap<String,Object>();
 		attributes.put("testKey","testValue");
 
-		//Given - 
-		//User of type manager exist
-		//No elements exist
+		//Given
 		createAuthroizedUser(Role.MANAGER,authManagerEmail);	
 
 		//When
 		ElementTO elementTo = new ElementTO();
 		elementTo.setName("element1");
 		elementTo.setType("Ad Board");
+		elementTo.setExpirationDate(new Date());
 		elementTo.setAttributes(attributes);
 		ElementTO actualReturnedValue = restTemplate.postForObject(url + "/{userPlayground}/{email}",elementTo,ElementTO.class,authUserPlayground,authManagerEmail);
 
 		//Then
-		//TODO - Michael - Think about id checking 
 		assertThat(actualReturnedValue)
 		.isNotNull()
 		.extracting("name","type","playground","creatorPlayground","creatorEmail")
@@ -152,9 +145,7 @@ public class PlaygroundTests {
 	@Test(expected=OKException.class)
 	public void testPostElementByUnauthorizedUser() throws Throwable{
 
-		//Given - 
-		//User of type PLAYER exist
-		//No elements exist
+		//Given
 		createAuthroizedUser(Role.PLAYER,authManagerEmail);
 
 		//When
@@ -246,6 +237,7 @@ public class PlaygroundTests {
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
+		elementEntity.setExpirationDate(futureDate);
 		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		//When
@@ -265,8 +257,7 @@ public class PlaygroundTests {
 	@Test(expected=OKException.class)
 	public void testGetNotExistsElement() throws Throwable{
 
-		//Given - 
-		//Database contains user
+		//Given 
 		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
 		//No elements exist
 
@@ -295,7 +286,7 @@ public class PlaygroundTests {
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
-
+		elementEntity.setExpirationDate(futureDate);
 		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		elementEntity.setName("element2");
@@ -327,6 +318,7 @@ public class PlaygroundTests {
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
+		elementEntity.setExpirationDate(futureDate);
 		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
 		//When
@@ -354,6 +346,7 @@ public class PlaygroundTests {
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
+		elementEntity.setExpirationDate(futureDate);
 		elementEntity.setX(1.0);
 		elementEntity.setY(1.0);
 		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
@@ -384,6 +377,7 @@ public class PlaygroundTests {
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
+		elementEntity.setExpirationDate(futureDate);
 		elementEntity.setX(1.0);
 		elementEntity.setY(1.0);
 
@@ -415,6 +409,7 @@ public class PlaygroundTests {
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Ad Board");
+		elementEntity.setExpirationDate(futureDate);
 		elementEntity.setX(1.0);
 		elementEntity.setY(1.0);
 		Map<String,Object> moreAttributes = new HashMap<String,Object>();
@@ -443,6 +438,7 @@ public class PlaygroundTests {
 		ElementEntity elementEntity = new ElementEntity();
 		elementEntity.setName("element1");
 		elementEntity.setType("Quiz");
+		elementEntity.setExpirationDate(futureDate);
 		elementEntity.setX(1.0);
 		elementEntity.setY(1.0);
 		Map<String,Object> moreAttributes = new HashMap<String,Object>();

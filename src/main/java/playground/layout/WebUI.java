@@ -145,7 +145,7 @@ public class WebUI {
 			@RequestParam(name="size", required=false, defaultValue="10") int size, 
 			@RequestParam(name="page", required=false, defaultValue="0") int page,
 			@PathVariable("userPlayground") String userPlayground,
-			@PathVariable("email") String email) {
+			@PathVariable("email") String email) throws Throwable {
 		return 
 				this.elementService.getAllElements(email,userPlayground,size,page) 
 				.stream() 

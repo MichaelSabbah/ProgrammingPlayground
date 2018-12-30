@@ -10,31 +10,33 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javassist.NotFoundException;
 import playground.aop.BasicAuthentication;
 import playground.aop.ManagerAuthentication;
 import playground.aop.PlaygroundLogger;
 import playground.dal.ElementDao;
 import playground.dal.ElementIdGeneratorDao;
+import playground.dal.UserDao;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
 import playground.logic.Entities.Element.ElementIdGenerator;
+import playground.logic.Entities.User.UserEntity;
 import playground.logic.exceptions.notacceptable.InvalidFormatException;
-import playground.logic.exceptions.notacceptable.NotAcceptableException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
-import playground.logic.exceptions.notfound.UserNotFoundException;
-import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
+import playground.logic.helpers.Role;
 import playground.logic.services.ElementService;
+import playground.logic.services.UserService;
 
 @Service
 public class JpaElementService implements ElementService{
 
 	private ElementDao elements;
+	private UserService users;
 	private ElementIdGeneratorDao elementIdGeneratorDao;
 
 	@Autowired
-	public void setElementService(ElementDao elements) {
+	public void setElementService(ElementDao elements, UserService users) {
 		this.elements = elements;
+		this.users = users;
 	}
 
 	@Autowired
@@ -111,20 +113,47 @@ public class JpaElementService implements ElementService{
 		ElementId elementId = new ElementId();
 		elementId.setId(Integer.parseInt(id));
 		elementId.setPlayground(playground);
-		
-		ElementEntity element = this.elements.findById(elementId)//this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
+
+		ElementEntity element = this.elements.findById(elementId)
 				.orElseThrow(()->
 				 new ElementNotFoundException("No element with playground: " + playground + " and id: " + id));
-		return element;
+		
+		UserEntity user = new UserEntity();
+		user.setEmail(userEmail);
+		
+		Date date = null;
+		
+		if(users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+			if(element.getExpirationDate().compareTo(new Date()) > 0)
+				return element;
+			else
+				throw new ElementNotFoundException("No element with playground: " + playground + " and id: " + id);
+		}else {
+			return element;
+		}
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	@BasicAuthentication
 	@PlaygroundLogger
-	public List<ElementEntity> getAllElements(String userEmail,String userPlayground,int size, int page) {
-		Page<ElementEntity> elementsReturned = this.elements.findAll(
+	public List<ElementEntity> getAllElements(String userEmail,String userPlayground,int size, int page) throws Throwable {
+		
+		UserEntity user = new UserEntity();
+		user.setEmail(userEmail);
+		
+		Date date = null;
+		
+		if(users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+			date = new Date();
+		}else {
+			date = new Date(1);
+		}
+		
+		Page<ElementEntity> elementsReturned = this.elements.findAllByExpirationDateAfter(
+				date,
 				PageRequest.of(page, size, Direction.DESC, "name"));
+		
 		return elementsReturned.getContent();
 	}
 
@@ -133,14 +162,32 @@ public class JpaElementService implements ElementService{
 	@BasicAuthentication
 	@PlaygroundLogger
 	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlaygorund,int x, int y, int distance,int size,int page) throws Throwable {
+		
 		if(distance < 0) {
 			throw new InvalidFormatException("Invalid distance");
 		}
-
-		return this.elements.findAllByXBetweenAndYBetween(
+		
+		UserEntity user = new UserEntity();
+		user.setEmail(userEmail);
+		
+		Date date = null;
+		
+		if(users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+			date = new Date();
+		}else {
+			date = new Date(1);
+		}
+		
+		List<ElementEntity> elementsReturned = this.elements.findAllByXBetweenAndYBetweenAndExpirationDateAfter(
 				x - distance, x + distance, y - distance, y + distance,
+				date,
 				PageRequest.of(page, size))
 				.getContent();
+		
+		if(elementsReturned.size() == 0) {
+			throw new ElementNotFoundException("No elements exist in this range");
+		}
+		return elementsReturned;
 	}
 
 	@Override
@@ -149,7 +196,22 @@ public class JpaElementService implements ElementService{
 	@PlaygroundLogger
 	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlaygorund,String attributeName, String value,int size, int page) throws Throwable {		
 		String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
-		List<ElementEntity> elementsReturned = this.elements.findAllByJsonAttributesContaining(jsonAttribute,PageRequest.of(page, size));
+		
+		UserEntity user = new UserEntity();
+		user.setEmail(userEmail);
+		
+		Date date = null;
+		if(users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+			date = new Date();
+		}else {
+			date = new Date(1);
+		}
+
+		List<ElementEntity> elementsReturned = this.elements.findAllByJsonAttributesContainingAndExpirationDateAfter(
+				jsonAttribute,
+				new Date(),
+				PageRequest.of(page, size));
+		
 		if(elementsReturned.size() == 0) {
 			throw new ElementNotFoundException("Element with this attribute name and value is not existing");
 		}

@@ -1,5 +1,6 @@
 package playground.dal;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,19 +13,26 @@ import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
 
 public interface ElementDao extends PagingAndSortingRepository<ElementEntity, ElementId>{
-
-	public List<ElementEntity> findAllByJsonAttributesContaining(
+	
+	public List<ElementEntity> findAllByJsonAttributesContainingAndExpirationDateAfter(
 			@Param("jsonAttribute") String jsonAttribute, 
+			@Param("expirationDate")Date date,
 			Pageable pageable);
 
-	public Optional<ElementEntity> findByIdAndPlayground(
+	public Optional<ElementEntity> findByIdAndPlaygroundAndExpirationDateAfter(
 			@Param("id") int id,
-			@Param("playground") String playground);
+			@Param("playground") String playground,
+			@Param("expirationDate")Date date);
 
-	public Page<ElementEntity> findAllByXBetweenAndYBetween(
+	public Page<ElementEntity> findAllByXBetweenAndYBetweenAndExpirationDateAfter(
 			double xMin,
 			double xMax,
 			double yMin,
 			double yMax,
+			Date date,
+			Pageable pageable);
+	
+	public Page<ElementEntity> findAllByExpirationDateAfter( 
+			Date date,
 			Pageable pageable);
 }
