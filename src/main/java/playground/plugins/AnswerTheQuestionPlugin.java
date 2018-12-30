@@ -29,12 +29,12 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 	private UserDao userDao;
 	private ElementDao elementDao;
 	private ObjectMapper jackson;
-	
+
 	@PostConstruct
 	public void init() {
 		this.jackson = new ObjectMapper();
 	}
-	
+
 	@Autowired
 	public AnswerTheQuestionPlugin(UserDao userDao, ElementDao elementDao) {
 		this.userDao = userDao;
@@ -46,7 +46,7 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 
 		Answer userAnswer;
 		Feedback feedback = new Feedback();
-		
+
 		try {
 			userAnswer = this.jackson.readValue( 
 					activityEntity.getJsonAttributes(),
@@ -61,36 +61,31 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 		} catch (Throwable e) {
 			throw new InternalError(e.getMessage());
 		}
-		
-		//Answer must be with the 'answer' attribute
+
 		if (userAnswer == null || userAnswer.getAnswer() == null) {
 			throw new InvalidAnswerException("Answer is invalid");
 		}			
-		
-		//Check if user answer is correct
-		
-		//Get relevant element
 		ElementId elementId = new ElementId();
 		String playground = activityEntity.getElementPlayground();
 		int id = Integer.parseInt(activityEntity.getElementId());
 		elementId.setId(id);
 		elementId.setPlayground(playground);
-		
-		ElementEntity element = elementDao.findById(elementId).get();
-		
+
+		ElementEntity element = elementDao.findById(elementId)
+				.orElseThrow(() ->
+				new ElementNotFoundException("no element with playground: " + playground  + " and id: " + id));
+
 		String correctAnswerAsString = (String)element.getAttributes().get(PlaygroundConsts.ANSWER_KEY);
 		if("null".equals(correctAnswerAsString)) {
 			throw new InvalidAnswerException("Answer is invalid");
 		}
-		
-		//Get the relevant user
-		UserEntity user = userDao.findById(activityEntity.getPlayerEmail()).get();
-		
-		//Get the correct answer
+
+		UserEntity user = userDao.findById(activityEntity.getPlayerEmail())
+				.orElseThrow(()->
+				new UserNotFoundException("No use with email: " + activityEntity.getPlayerEmail()));
 		Answer correctAnswer = new Answer();
 		correctAnswer.setAnswer(correctAnswerAsString);
-		
-		//Update user points
+
 		if(userAnswer.equals(correctAnswer)) {
 			feedback.setFeedback("You right");
 			user.setPoints(user.getPoints() + PlaygroundConsts.MULTICHOICES_QUESTION_POINTS);
@@ -103,10 +98,7 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 				user.setPoints(userNewPoints);
 			}
 		}
-		
-		//Update user with new points
 		userDao.save(user);
-		
 		return feedback;
 	}
 }

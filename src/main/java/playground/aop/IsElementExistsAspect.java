@@ -17,7 +17,6 @@ import playground.logic.exceptions.notfound.ElementNotFoundException;
 public class IsElementExistsAspect {
 
 	private ElementDao elementDao;
-
 	@Autowired
 	public void setElementDao(ElementDao elementDao) {
 		this.elementDao = elementDao;

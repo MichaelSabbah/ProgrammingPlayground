@@ -1,4 +1,3 @@
-
 package playground.plugins;
 
 import java.io.IOException;
@@ -26,16 +25,16 @@ import playground.logic.helpers.PlaygroundConsts;
 
 @Component
 public class FindBugActivityPlugin implements ActivityPlugin {
-	
+
 	private ElementDao elementDao;
 	private UserDao userDao;
 	private ObjectMapper jackson;
-	
+
 	@PostConstruct
 	public void init() {
 		this.jackson = new ObjectMapper();
 	}
-	
+
 	@Autowired
 	public FindBugActivityPlugin(ElementDao elementDao, UserDao userDao) {
 		this.elementDao = elementDao;
@@ -46,7 +45,7 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 	public Object activate(ActivityEntity activityEntity) throws InvalidAnswerException, ElementNotFoundException, UserNotFoundException {
 		Answer userAnswer;
 		Feedback feedback = new Feedback();
-		
+
 		try {
 			userAnswer = this.jackson.readValue( 
 					activityEntity.getJsonAttributes(),
@@ -61,40 +60,33 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 		} catch (Throwable e) {
 			throw new InternalError(e.getMessage());
 		}
-		
-		//Answer must be with the 'answer' attribute
+
 		if (userAnswer == null || userAnswer.getAnswer() == null) {
 			throw new InvalidAnswerException("Answer is invalid");
 		}			
-		
-		//Check if user answer is correct
-		
-		//Get relevant element
+
 		ElementId elementId = new ElementId();
 		String playground = activityEntity.getElementPlayground();
 		int id = Integer.parseInt(activityEntity.getElementId());
 		elementId.setId(id);
 		elementId.setPlayground(playground);
-		
+
 		ElementEntity element = elementDao.findById(elementId)
 				.orElseThrow(() ->
-				 new ElementNotFoundException("no element with playground: " + playground  + " and id: " + id));
-		
+				new ElementNotFoundException("no element with playground: " + playground  + " and id: " + id));
+
 		String correctAnswerAsString = (String)element.getAttributes().get(PlaygroundConsts.ANSWER_KEY);
 		if("null".equals(correctAnswerAsString)) {
 			throw new InvalidAnswerException("Answer is invalid");
 		}
-		
-		//Get the relevant user
+
 		UserEntity user = userDao.findById(activityEntity.getPlayerEmail())
 				.orElseThrow(()->
 				new UserNotFoundException("No use with email: " + activityEntity.getPlayerEmail()));
-		
-		//Get the correct answer
+
 		Answer correctAnswer = new Answer();
 		correctAnswer.setAnswer(correctAnswerAsString);
-		
-		//Update user points
+
 		if(userAnswer.equals(correctAnswer)) {
 			feedback.setFeedback("You right");
 			user.setPoints(user.getPoints() + PlaygroundConsts.MULTICHOICES_QUESTION_POINTS);
@@ -107,11 +99,7 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 				user.setPoints(userNewPoints);
 			}
 		}
-		
-		//Update user with new points
 		userDao.save(user);
-		
 		return feedback;
 	}
-
 }

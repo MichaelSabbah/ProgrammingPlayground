@@ -8,9 +8,7 @@ public class ErrorMessage {
 		this.message = message;
 	}
 
-	public ErrorMessage() {
-		super();
-	}
+	public ErrorMessage() {}
 
 	public String getMessage() {
 		return message;

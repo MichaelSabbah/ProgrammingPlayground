@@ -14,9 +14,7 @@ public class UserEntity {
 	private long points;
 	private int confirmCode;
 
-	public UserEntity() {
-		super();
-	}
+	public UserEntity() {}
 
 
 	public UserEntity(String email, String playground) {

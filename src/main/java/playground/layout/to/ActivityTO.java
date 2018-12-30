@@ -45,7 +45,7 @@ public class ActivityTO {
 
 		ActivityEntity activityEntity = new ActivityEntity(this.playground, -1, this.elementPlayground, this.elementId, this.type, 
 				this.playerPlayground, this.playerEmail, this.attributes);
-		
+
 		if(!"null".equals(this.id)  && this.id != null) {
 			activityEntity.setId(Integer.parseInt(this.id));
 		}
