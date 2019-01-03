@@ -440,6 +440,7 @@ public class PlaygroundTests {
 		newUserForm.setRole(Role.PLAYER.name());
 		newUserForm.setAvatar("smiley.jpg");
 		UserTO userToResponse = this.restTemplate.postForObject(this.usersUrl, newUserForm, UserTO.class);
+		this.restTemplate.getForObject("http://localhost:" + this.port + "/playground/users/sms/{Playground}/{email}/{phoneNumber}",Void.class , authUserPlayground,authPlayerEmail,"0503336906");
 
 		//Then
 		assertThat(userToResponse)

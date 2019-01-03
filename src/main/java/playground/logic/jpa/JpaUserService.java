@@ -15,14 +15,15 @@ import playground.logic.exceptions.conflict.UserAlreadyExistsException;
 import playground.logic.exceptions.notacceptable.InvalidConfirmCodeException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
 import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
+import playground.logic.helpers.PlaygroundConsts;
+import playground.logic.services.ISmsService;
 import playground.logic.services.UserService;
 
 @Service 
 public class JpaUserService implements UserService{
 	private UserDao userDao;
 	private Random rnd;
-	private final int VERIFICATION_RANGE = 100;
-
+	
 	@Autowired
 	public JpaUserService(UserDao userDao) {
 		this.userDao = userDao;
@@ -34,11 +35,15 @@ public class JpaUserService implements UserService{
 	@PlaygroundLogger
 	public UserEntity addUser(UserEntity user) throws Throwable {
 		if(!this.userDao.existsById(user.getEmail())) {
-			user.setConfirmCode(this.rnd.nextInt(VERIFICATION_RANGE));
+			user.setPlayground(PlaygroundConsts.PLAYGROUND_NAME);
+			int generatedCode = generateConfirmCode();
+			user.setConfirmCode(generatedCode);
 			return this.userDao.save(user);
 		}
 		throw new UserAlreadyExistsException("User Already Exists");
 	}
+	
+	
 
 	@Override
 	@PlaygroundLogger
@@ -101,5 +106,10 @@ public class JpaUserService implements UserService{
 	@PlaygroundLogger
 	public void cleanAll() {
 		this.userDao.deleteAll();
+	}
+	
+	private int generateConfirmCode()
+	{
+		return this.rnd.nextInt(PlaygroundConsts.END_VERIFICATION_RANGE)+PlaygroundConsts.START_VERIFICATION_RANGE;
 	}
 }
