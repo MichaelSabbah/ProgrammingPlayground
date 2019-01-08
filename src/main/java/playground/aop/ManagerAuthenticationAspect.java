@@ -26,7 +26,7 @@ public class ManagerAuthenticationAspect {
 
 	@Before("@annotation(playground.aop.ManagerAuthentication) && args(email,playground,..)")
 	public void managerRoleValidation(JoinPoint joinPoint, String email, String playground) throws Throwable {
-		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCodeAndRole(email,playground,-1,Role.MANAGER.name());
+		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCodeAndRole(email,playground,-1,Role.MANAGER.name().toLowerCase());
 
 		if(user.size() == 0) {
 			throw new UnauthorizedUserException("The user is not a manager");

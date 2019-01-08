@@ -26,7 +26,7 @@ public class PlayerAuthenticationAspect {
 
 	@Before("@annotation(playground.aop.PlayerAuthentication) && args(email,playground,..)")
 	public void playerRoleValidation(JoinPoint joinPoint, String email, String playground) throws Throwable{
-		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCodeAndRole(email, playground, -1, Role.PLAYER.name());
+		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCodeAndRole(email, playground, -1, Role.PLAYER.name().toLowerCase());
 		if(user.size() == 0) {
 			throw new UnauthorizedUserException("This user is not palyer");
 		}
