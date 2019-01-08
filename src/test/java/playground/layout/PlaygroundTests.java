@@ -39,6 +39,9 @@ import playground.plugins.AdMessage;
 import playground.plugins.Answer;
 import playground.plugins.Feedback;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 public class PlaygroundTests {
@@ -55,6 +58,7 @@ public class PlaygroundTests {
 	private String authUserPlayground;
 	
 	private Date futureDate;
+	private ObjectMapper objectMapper;
 	
 	private RestTemplate restTemplate;
 
@@ -66,6 +70,7 @@ public class PlaygroundTests {
 
 	@Autowired
 	private ActivityService activityService;
+	
 
 	@PostConstruct
 	public void init() {
@@ -76,6 +81,8 @@ public class PlaygroundTests {
 		this.authManagerEmail = "manager@user.com";
 		this.authPlayerEmail = "player@user.com";
 		this.authUserPlayground = "playground";
+		this.objectMapper = new ObjectMapper();
+		
 		
 		
 	    Calendar calendar = Calendar.getInstance();
@@ -228,6 +235,9 @@ public class PlaygroundTests {
 		//When
 		ElementTO actuallyReturned = restTemplate.getForObject(url + "/{userPlayground}/{email}/{playground}/{id}",
 				ElementTO.class, authUserPlayground,authPlayerEmail,"playground",elementEntity.getId());
+		
+		String test;
+		test = this.objectMapper.writeValueAsString(actuallyReturned);
 
 		//Then
 		assertThat(actuallyReturned)
@@ -642,7 +652,7 @@ public class PlaygroundTests {
 		moreAttributes = new HashMap<String,Object>();
 		moreAttributes.put(PlaygroundConsts.ANSWER_KEY, "a");
 		activityTO.setAttributes(moreAttributes);
-
+		
 		Feedback feedbackReturend  = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
 				activityTO, Feedback.class, authUserPlayground,authPlayerEmail);
 

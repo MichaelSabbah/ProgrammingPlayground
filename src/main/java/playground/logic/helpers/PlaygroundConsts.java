@@ -5,7 +5,7 @@ public class PlaygroundConsts {
 	//More attributes keys
 	public static final String ANSWER_KEY = "answer";
 	public static final String APP_NAME = "PLAYGROUND";
-	public static final String PLAYGROUND_NAME = "playground";
+	public static final String PLAYGROUND_NAME = "Programming Playground";
 	public static final String MESSAGE = "Your Verification Code Is: ";
 	public static final int START_VERIFICATION_RANGE = 100000;
 	public static final int END_VERIFICATION_RANGE = 900000;
