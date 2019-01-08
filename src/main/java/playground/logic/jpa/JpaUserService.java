@@ -16,17 +16,19 @@ import playground.logic.exceptions.notacceptable.InvalidConfirmCodeException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
 import playground.logic.exceptions.unauthorized.UnauthorizedUserException;
 import playground.logic.helpers.PlaygroundConsts;
-import playground.logic.services.ISmsService;
+import playground.logic.services.EmailService;
 import playground.logic.services.UserService;
 
 @Service 
 public class JpaUserService implements UserService{
 	private UserDao userDao;
+	private EmailService emailService;
 	private Random rnd;
 	
 	@Autowired
-	public JpaUserService(UserDao userDao) {
+	public JpaUserService(UserDao userDao, EmailService emailService) {
 		this.userDao = userDao;
+		this.emailService = emailService;
 		this.rnd = new Random();
 	}
 
@@ -38,12 +40,16 @@ public class JpaUserService implements UserService{
 			user.setPlayground(PlaygroundConsts.PLAYGROUND_NAME);
 			int generatedCode = generateConfirmCode();
 			user.setConfirmCode(generatedCode);
-			return this.userDao.save(user);
+			UserEntity tempUser =  this.userDao.save(user);
+			emailService.sendEmail(
+					user.getEmail(), 
+					PlaygroundConsts.VERFICATION_MAIL_SUBJECT, 
+					PlaygroundConsts.VERFICATION_MAIL_TEXT + generatedCode);
+			
+			return tempUser;
 		}
 		throw new UserAlreadyExistsException("User Already Exists");
 	}
-	
-	
 
 	@Override
 	@PlaygroundLogger

@@ -18,7 +18,18 @@ public interface ElementDao extends PagingAndSortingRepository<ElementEntity, El
 			@Param("jsonAttribute") String jsonAttribute, 
 			@Param("expirationDate")Date date,
 			Pageable pageable);
-
+	
+	
+	public List<ElementEntity> findAllByNameEqualsAndExpirationDateAfter(
+			@Param("name") String name,
+			@Param("expirationDate")Date date,
+			Pageable pageable);
+	
+	public List<ElementEntity> findAllByTypeEqualsAndExpirationDateAfter(
+			@Param("type") String type,
+			@Param("expirationDate")Date date,
+			Pageable pageable);
+	
 	public Optional<ElementEntity> findByIdAndPlaygroundAndExpirationDateAfter(
 			@Param("id") int id,
 			@Param("playground") String playground,

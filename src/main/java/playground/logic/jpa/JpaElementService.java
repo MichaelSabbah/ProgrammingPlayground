@@ -21,6 +21,7 @@ import playground.logic.Entities.Element.ElementIdGenerator;
 import playground.logic.Entities.User.UserEntity;
 import playground.logic.exceptions.notacceptable.InvalidFormatException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
+import playground.logic.helpers.PlaygroundConsts;
 import playground.logic.helpers.Role;
 import playground.logic.services.ElementService;
 import playground.logic.services.UserService;
@@ -189,7 +190,7 @@ public class JpaElementService implements ElementService{
 	@BasicAuthentication
 	@PlaygroundLogger
 	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlaygorund,String attributeName, String value,int size, int page) throws Throwable {		
-		String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
+		//String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
 		
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
@@ -200,15 +201,23 @@ public class JpaElementService implements ElementService{
 		}else {
 			date = new Date(1);
 		}
-
-		List<ElementEntity> elementsReturned = this.elements.findAllByJsonAttributesContainingAndExpirationDateAfter(
-				jsonAttribute,
-				new Date(),
-				PageRequest.of(page, size));
 		
-		if(elementsReturned.size() == 0) {
-			throw new ElementNotFoundException("Element with this attribute name and value is not existing");
+		List<ElementEntity> elementsReturned;
+		
+		switch(attributeName) {
+			case PlaygroundConsts.NAME_KEY:
+				elementsReturned = this.elements.findAllByNameEqualsAndExpirationDateAfter(value,date, PageRequest.of(page, size));
+				break;
+			
+			case PlaygroundConsts.TYPE_KEY:
+				elementsReturned = 
+				this.elements.findAllByTypeEqualsAndExpirationDateAfter(value,date,PageRequest.of(page, size));
+				break;
+			
+			default:
+				throw new ElementNotFoundException("Element with this attribute name and value is not existing");
 		}
+
 		return elementsReturned;
 	}
 
@@ -219,4 +228,54 @@ public class JpaElementService implements ElementService{
 		elements.deleteAll();
 
 	}
+
+//	@Override
+//	public List<ElementEntity> getElementsByName(String userEmail, String userPlaygorund, String name, String value,
+//			int size, int page) throws Throwable {
+//
+//		UserEntity user = new UserEntity();
+//		user.setEmail(userEmail);
+//
+//		Date date = null;
+//		if(Role.PLAYER.name().equals(users.loginUser(user).getRole())) {//    users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+//			date = new Date();
+//		}else {
+//			date = new Date(1);
+//		}
+//
+//		List<ElementEntity> elementsReturned = this.elements.findAllByNameEqualsAndExpirationDateAfter(
+//				name,
+//				new Date(),
+//				PageRequest.of(page, size));
+//
+//		if(elementsReturned.size() == 0) {
+//			throw new ElementNotFoundException("Elements with name " + name + " is not existing");
+//		}
+//		return elementsReturned;
+//	}
+//
+//	@Override
+//	public List<ElementEntity> getElementsByType(String userEmail, String userPlaygorund, String type, String value,
+//			int size, int page) throws Throwable {
+//
+//		UserEntity user = new UserEntity();
+//		user.setEmail(userEmail);
+//
+//		Date date = null;
+//		if(Role.PLAYER.name().equals(users.loginUser(user).getRole())) {//    users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+//			date = new Date();
+//		}else {
+//			date = new Date(1);
+//		}
+//
+//		List<ElementEntity> elementsReturned = this.elements.findAllByTypeEqualsAndExpirationDateAfter(
+//				type,
+//				new Date(),
+//				PageRequest.of(page, size));
+//
+//		if(elementsReturned.size() == 0) {
+//			throw new ElementNotFoundException("Elements with type " + type + " is not existing");
+//		}
+//		return elementsReturned;
+//	}
 }

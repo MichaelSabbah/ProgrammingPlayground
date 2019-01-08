@@ -22,9 +22,10 @@ import playground.logic.exceptions.internal.InternalErrorException;
 import playground.logic.exceptions.notacceptable.NotAcceptableException;
 import playground.logic.exceptions.notfound.NotFoundException;
 import playground.logic.exceptions.unauthorized.UnauthorizedException;
+import playground.logic.helpers.PlaygroundConsts;
 import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;
-import playground.logic.services.ISmsService;
+import playground.logic.services.EmailService;
 import playground.logic.services.UserService;
 import playground.layout.NewUserForm;
 import playground.layout.to.ActivityTO;
@@ -37,13 +38,7 @@ public class WebUI {
 	private ElementService elementService;
 	private UserService userService;
 	private ActivityService activityService;
-	private ISmsService smsService;
-	
-	
-	@Autowired
-	public void setSmsService(ISmsService smsService) {
-		this.smsService = smsService;
-	}
+	private EmailService emailService;
 
 	@Autowired
 	public void setActivityService(ActivityService activityService) {
@@ -56,8 +51,13 @@ public class WebUI {
 	}
 
 	@Autowired
-	private void setUserService(UserService userService){
+	public void setUserService(UserService userService){
 		this.userService = userService;
+	}
+	
+	@Autowired
+	public void setEmailService(EmailService emailService){
+		this.emailService = emailService;
 	}
 
 	@RequestMapping(
@@ -215,15 +215,6 @@ public class WebUI {
 		return returnValue;
 	}
 	
-	@RequestMapping(
-			method=RequestMethod.GET,
-			path="/playground/users/sms/{Playground}/{email}/{phoneNumber}")
-	public void getSMSVerificaqtionCode(@PathVariable("Playground")String playground,
-			@PathVariable("email")String email,@PathVariable("phoneNumber")String phoneNumber) throws Throwable {
-		this.smsService.sendSMS(email, playground, phoneNumber);
-		
-	}
-
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public ErrorMessage UnauthorizedExceptionHandler (UnauthorizedException ex) {

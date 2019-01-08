@@ -34,6 +34,7 @@ import playground.logic.helpers.PlaygroundConsts;
 import playground.logic.helpers.Role;
 import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;
+import playground.logic.services.EmailService;
 import playground.logic.services.UserService;
 import playground.plugins.AdMessage;
 import playground.plugins.Answer;
@@ -66,6 +67,9 @@ public class PlaygroundTests {
 
 	@Autowired
 	private ActivityService activityService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@PostConstruct
 	public void init() {
@@ -74,7 +78,7 @@ public class PlaygroundTests {
 		this.usersUrl = "http://localhost:" + this.port + "/playground/users";
 		this.activitiesUrl = "http://localhost:" + this.port + "/playground/activities";
 		this.authManagerEmail = "manager@user.com";
-		this.authPlayerEmail = "player@user.com";
+		this.authPlayerEmail = "sabbah49@gmail.com"; //"player@user.com";
 		this.authUserPlayground = "playground";
 		
 		
@@ -388,7 +392,7 @@ public class PlaygroundTests {
 		//When
 		ElementTO[] actuallyReturned = restTemplate.getForObject(url + "/{userPlayground}/{email}/search/{attributeName}/{value}", 
 				ElementTO[].class, 
-				authUserPlayground,authPlayerEmail,"quizTime","60");
+				authUserPlayground,authPlayerEmail,"name","element1");
 
 		//Then
 		assertThat(actuallyReturned)
@@ -440,7 +444,6 @@ public class PlaygroundTests {
 		newUserForm.setRole(Role.PLAYER.name());
 		newUserForm.setAvatar("smiley.jpg");
 		UserTO userToResponse = this.restTemplate.postForObject(this.usersUrl, newUserForm, UserTO.class);
-		this.restTemplate.getForObject("http://localhost:" + this.port + "/playground/users/sms/{Playground}/{email}/{phoneNumber}",Void.class , authUserPlayground,authPlayerEmail,"0503336906");
 
 		//Then
 		assertThat(userToResponse)
@@ -948,8 +951,8 @@ public class PlaygroundTests {
 			this.checkHttpStatusCode(httpStatus, HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
 		}
 		//Then
-
 	}
+	
 	private void createAuthroizedUser(Role role,String userEmail) throws Throwable {
 		UserEntity userEntity = new UserEntity(userEmail,authUserPlayground);
 		userEntity.setRole(role.name());
