@@ -215,6 +215,7 @@ public class JpaElementService implements ElementService{
 				break;
 			
 			default:
+				//TODO - Michael - Think of using the 'getElementsByJsonAttributes' for the default option
 				throw new ElementNotFoundException("Element with this attribute name and value is not existing");
 		}
 
@@ -228,54 +229,4 @@ public class JpaElementService implements ElementService{
 		elements.deleteAll();
 
 	}
-
-//	@Override
-//	public List<ElementEntity> getElementsByName(String userEmail, String userPlaygorund, String name, String value,
-//			int size, int page) throws Throwable {
-//
-//		UserEntity user = new UserEntity();
-//		user.setEmail(userEmail);
-//
-//		Date date = null;
-//		if(Role.PLAYER.name().equals(users.loginUser(user).getRole())) {//    users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
-//			date = new Date();
-//		}else {
-//			date = new Date(1);
-//		}
-//
-//		List<ElementEntity> elementsReturned = this.elements.findAllByNameEqualsAndExpirationDateAfter(
-//				name,
-//				new Date(),
-//				PageRequest.of(page, size));
-//
-//		if(elementsReturned.size() == 0) {
-//			throw new ElementNotFoundException("Elements with name " + name + " is not existing");
-//		}
-//		return elementsReturned;
-//	}
-//
-//	@Override
-//	public List<ElementEntity> getElementsByType(String userEmail, String userPlaygorund, String type, String value,
-//			int size, int page) throws Throwable {
-//
-//		UserEntity user = new UserEntity();
-//		user.setEmail(userEmail);
-//
-//		Date date = null;
-//		if(Role.PLAYER.name().equals(users.loginUser(user).getRole())) {//    users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
-//			date = new Date();
-//		}else {
-//			date = new Date(1);
-//		}
-//
-//		List<ElementEntity> elementsReturned = this.elements.findAllByTypeEqualsAndExpirationDateAfter(
-//				type,
-//				new Date(),
-//				PageRequest.of(page, size));
-//
-//		if(elementsReturned.size() == 0) {
-//			throw new ElementNotFoundException("Elements with type " + type + " is not existing");
-//		}
-//		return elementsReturned;
-//	}
 }

@@ -34,13 +34,11 @@ import playground.logic.helpers.PlaygroundConsts;
 import playground.logic.helpers.Role;
 import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;
-import playground.logic.services.EmailService;
 import playground.logic.services.UserService;
 import playground.plugins.AdMessage;
 import playground.plugins.Answer;
 import playground.plugins.Feedback;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
@@ -59,6 +57,7 @@ public class PlaygroundTests {
 	private String authUserPlayground;
 	
 	private Date futureDate;
+	private Date pastDate;
 	private ObjectMapper objectMapper;
 	
 	private RestTemplate restTemplate;
@@ -72,6 +71,7 @@ public class PlaygroundTests {
 	@Autowired
 	private ActivityService activityService;
 
+
 	@PostConstruct
 	public void init() {
 		this.restTemplate = new RestTemplate();
@@ -82,12 +82,11 @@ public class PlaygroundTests {
 		this.authPlayerEmail = "sabbah49@gmail.com"; //"player@user.com";
 		this.authUserPlayground = "playground";
 		this.objectMapper = new ObjectMapper();
-		
-		
-		
+
 	    Calendar calendar = Calendar.getInstance();
 	    calendar.add(Calendar.DAY_OF_YEAR, 1);
 	   	this.futureDate = calendar.getTime();
+	   	this.pastDate = new Date(1);
 	}
 
 	private void checkHttpStatusCode(HttpStatus current,HttpStatus expected,String exceptionMessage) throws Exception
@@ -235,9 +234,6 @@ public class PlaygroundTests {
 		//When
 		ElementTO actuallyReturned = restTemplate.getForObject(url + "/{userPlayground}/{email}/{playground}/{id}",
 				ElementTO.class, authUserPlayground,authPlayerEmail,"playground",elementEntity.getId());
-		
-		String test;
-		test = this.objectMapper.writeValueAsString(actuallyReturned);
 
 		//Then
 		assertThat(actuallyReturned)
@@ -294,7 +290,28 @@ public class PlaygroundTests {
 		.hasSize(2);
 	}
 
+	@Test
+	public void testGetAllElementsWhileAllElementsAreExpired() throws Throwable{
+		
+		//Given
+		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
+		createAuthroizedUser(Role.MANAGER,authManagerEmail);
+		ElementEntity elementEntity = new ElementEntity();
+		elementEntity.setName("element1");
+		elementEntity.setType("Ad Board");
+		elementEntity.setExpirationDate(pastDate);
+		elementService.addNewElement(authManagerEmail,authUserPlayground,elementEntity);
 
+		//When
+		ElementTO[] actuallyReturned = this.restTemplate.getForObject(this.url + "/{userPlayground}/{email}/all",
+				ElementTO[].class, authUserPlayground,authPlayerEmail);
+
+		//Then
+		assertThat(actuallyReturned)
+		.isNotNull()
+		.hasSize(0);
+	}
+	
 	@Test(expected=OKException.class)
 	public void testGetAllElementsWithUnauthorizedUser() throws Throwable{
 
@@ -821,7 +838,6 @@ public class PlaygroundTests {
 		map.put("message", "bla bla bla bla");
 		activityEntity.setAttributes(map);
 		activityService.invokeActivity(regularEmail, authUserPlayground, elementEntity.getId()+"", elementEntity.getPlayground(), activityEntity);
-
 
 		//When
 		ActivityEntity activityEntity2 = new ActivityEntity();
