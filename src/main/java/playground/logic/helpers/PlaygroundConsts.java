@@ -4,7 +4,7 @@ public class PlaygroundConsts {
 	
 	//General app consts
 	public static final String APP_NAME = "PLAYGROUND";
-	public static final String PLAYGROUND_NAME = "playground";
+	public static final String PLAYGROUND_NAME = "Programming Playground";
 	
 	//More attributes keys
 	public static final String ANSWER_KEY = "answer";
