@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.data.domain.Page;
 
 import playground.dal.ActivityDao;
@@ -15,6 +18,7 @@ import playground.dal.ElementDao;
 import playground.dal.UserDao;
 import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Element.ElementId;
+import playground.logic.exceptions.internal.InternalErrorException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
 import playground.logic.helpers.PlaygroundConsts;
@@ -25,12 +29,14 @@ public class GetMessagesPlugin implements ActivityPlugin {
 	private ActivityDao activityDao;
 	private ElementDao elementDao;
 	private UserDao userDao;
+	private ObjectMapper objectMapper;
 
 	@Autowired
 	public GetMessagesPlugin(ActivityDao activityDao,ElementDao elementDao,UserDao userDao) {
 		this.activityDao = activityDao;
 		this.elementDao = elementDao;
 		this.userDao = userDao;
+		this.objectMapper = new ObjectMapper();
 	}
 
 	@Override
@@ -70,10 +76,13 @@ public class GetMessagesPlugin implements ActivityPlugin {
 		{
 			activityEntityList.stream().forEach(activity ->
 			{
-				if(activity.getAttributes().containsKey("message"))
-				{
-					String Admessage =(String)activity.getAttributes().get("message");
-					adMessages.add(new AdMessage(Admessage));
+				try {
+					String messageJson = this.objectMapper.writeValueAsString(activity.getAttributes());
+					AdMessage adMessage = this.objectMapper.readValue(messageJson, AdMessage.class);
+					adMessages.add(adMessage);
+				}
+				catch (Exception e) {
+					throw new RuntimeException(e.getMessage());
 				}
 			});
 		}

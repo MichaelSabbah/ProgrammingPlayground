@@ -118,7 +118,7 @@ public class JpaElementService implements ElementService{
 		
 		Date date = null;
 		
-		if(users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			if(element.getExpirationDate().compareTo(new Date()) > 0)
 				return element;
 			else
@@ -139,7 +139,7 @@ public class JpaElementService implements ElementService{
 		
 		Date date = null;
 		
-		if(users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			date = new Date();
 		}else {
 			date = new Date(1);
@@ -167,7 +167,7 @@ public class JpaElementService implements ElementService{
 		
 		Date date = null;
 		
-		if(users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			date = new Date();
 		}else {
 			date = new Date(1);
@@ -196,7 +196,7 @@ public class JpaElementService implements ElementService{
 		user.setEmail(userEmail);
 		
 		Date date = null;
-		if(users.loginUser(user).getRole().equals(Role.PLAYER.name())) {
+		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			date = new Date();
 		}else {
 			date = new Date(1);
