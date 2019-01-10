@@ -6,8 +6,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import playground.logic.Entities.User.UserEntity;
+import playground.logic.Entities.User.UserId;
 
-public interface UserDao extends CrudRepository<UserEntity, String>{
+public interface UserDao extends CrudRepository<UserEntity, UserId>{
 
 	public List<UserEntity> findByEmailAndPlaygroundAndConfirmCode(
 			@Param("email") String email,

@@ -1,9 +1,12 @@
 package playground.logic.Entities.User;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 @Entity
+@IdClass(UserId.class)
 public class UserEntity {
 
 	private String email;
@@ -59,6 +62,7 @@ public class UserEntity {
 	}
 
 	@Id
+	@Column(name="email", nullable=false)
 	public String getEmail() {
 		return email;
 	}
@@ -66,7 +70,9 @@ public class UserEntity {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+	
+	@Id
+	@Column(name="playground", nullable=false)
 	public String getPlayground() {
 		return playground;
 	}

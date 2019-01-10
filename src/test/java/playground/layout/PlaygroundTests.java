@@ -80,7 +80,7 @@ public class PlaygroundTests {
 		this.activitiesUrl = "http://localhost:" + this.port + "/playground/activities";
 		this.authManagerEmail = "manager@user.com";
 		this.authPlayerEmail = "sabbah49@gmail.com"; //"player@user.com";
-		this.authUserPlayground = "playground";
+		this.authUserPlayground = PlaygroundConsts.PLAYGROUND_NAME;
 		this.objectMapper = new ObjectMapper();
 
 	    Calendar calendar = Calendar.getInstance();
@@ -140,7 +140,7 @@ public class PlaygroundTests {
 		assertThat(actualReturnedValue)
 		.isNotNull()
 		.extracting("name","type","playground","creatorPlayground","creatorEmail")
-		.containsExactly(elementTo.getName(),elementTo.getType(),"playground",
+		.containsExactly(elementTo.getName(),elementTo.getType(),authUserPlayground,
 				authUserPlayground,authManagerEmail);
 	}
 
@@ -181,15 +181,15 @@ public class PlaygroundTests {
 		elementTo.setName("element1");
 		elementTo.setType("Quiz");
 		restTemplate.put(url + "/{playground}/{email}/{playground}/{id}",
-				elementTo, authUserPlayground,authManagerEmail,"playground",elementEntity.getId());
+				elementTo, authUserPlayground,authManagerEmail,authUserPlayground,elementEntity.getId());
 
 		//Then
 		ElementEntity actualReturnedValue = this.elementService.getElementById(authManagerEmail, 
-				authUserPlayground, "playground", elementEntity.getId()+"");
+				authUserPlayground, authUserPlayground, elementEntity.getId()+"");
 		assertThat(actualReturnedValue)
 		.isNotNull()
 		.extracting("name","type","playground","creatorPlayground","creatorEmail")
-		.containsExactly(elementTo.getName(),elementTo.getType(),"playground",
+		.containsExactly(elementTo.getName(),elementTo.getType(),authUserPlayground,
 				authUserPlayground,authManagerEmail);
 
 	}
@@ -206,7 +206,7 @@ public class PlaygroundTests {
 		try {
 
 			restTemplate.put(url + "/{playground}/{email}/{playground}/{id}", 
-					elementTORequest, authUserPlayground,authManagerEmail,"playground","1");
+					elementTORequest, authUserPlayground,authManagerEmail,authUserPlayground,"1");
 
 		}
 		catch(HttpClientErrorException ex)
@@ -233,7 +233,7 @@ public class PlaygroundTests {
 
 		//When
 		ElementTO actuallyReturned = restTemplate.getForObject(url + "/{userPlayground}/{email}/{playground}/{id}",
-				ElementTO.class, authUserPlayground,authPlayerEmail,"playground",elementEntity.getId());
+				ElementTO.class, authUserPlayground,authPlayerEmail,authUserPlayground,elementEntity.getId());
 
 		//Then
 		assertThat(actuallyReturned)
@@ -252,7 +252,7 @@ public class PlaygroundTests {
 		//When
 		try {
 			restTemplate.getForObject(url + "/{playground}/{email}/{playground}/{id}",
-					ElementTO.class, authUserPlayground,authPlayerEmail,"playground",1);
+					ElementTO.class, authUserPlayground,authPlayerEmail,authUserPlayground,1);
 		}
 		catch(HttpClientErrorException ex)
 		{
@@ -462,7 +462,7 @@ public class PlaygroundTests {
 
 		//When
 		NewUserForm newUserForm = new NewUserForm();
-		newUserForm.setEmail(authPlayerEmail);
+		newUserForm.setEmail("sabbah49@gmail.com");
 		newUserForm.setUsername("player");
 		newUserForm.setRole(Role.PLAYER.name());
 		newUserForm.setAvatar("smiley.jpg");
@@ -482,6 +482,7 @@ public class PlaygroundTests {
 		//Given
 		UserEntity userEntity= new UserEntity();
 		userEntity.setEmail(authPlayerEmail);
+		userEntity.setPlayground(PlaygroundConsts.PLAYGROUND_NAME);
 		userEntity.setUsername("player");
 		userEntity.setRole(Role.PLAYER.name());
 		userEntity.setAvatar("smiley.jpg");
@@ -506,19 +507,18 @@ public class PlaygroundTests {
 	}
 
 	@Test
-	public void testGetUserConfirmSuccessfully() throws Throwable
-	{
+	public void testGetUserConfirmSuccessfully() throws Throwable{
 		//Given
 		UserEntity userEntity= new UserEntity();
 		userEntity.setEmail(authManagerEmail);
 		userEntity.setUsername("manager");
 		userEntity.setRole(Role.MANAGER.name());
-		userEntity.setPlayground("playground");
+		userEntity.setPlayground(authUserPlayground);
 		userEntity.setAvatar("smiley.jpg");		
 		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
 
 		//When
-		UserTO actuallyReturned = this.restTemplate.getForObject(this.usersUrl+"/confirm/{playground}/{email}/{code}", UserTO.class, "playground",authManagerEmail,confirmCode);
+		UserTO actuallyReturned = this.restTemplate.getForObject(this.usersUrl+"/confirm/{playground}/{email}/{code}", UserTO.class, authUserPlayground, authManagerEmail,confirmCode);
 
 		//Then
 		assertThat(actuallyReturned)
@@ -585,7 +585,7 @@ public class PlaygroundTests {
 
 		//When
 		try {
-			this.restTemplate.getForObject(this.usersUrl+"/login/{playground}/{email}", UserTO.class, "playground","wrong@user.com");
+			this.restTemplate.getForObject(this.usersUrl+"/login/{playground}/{email}", UserTO.class, authUserPlayground,"wrong@user.com");
 		}
 		catch(HttpClientErrorException ex)
 		{
@@ -629,7 +629,7 @@ public class PlaygroundTests {
 		userTO.setPlayground(authUserPlayground);
 		userTO.setRole(Role.PLAYER.name());
 		try {
-			this.restTemplate.put(this.usersUrl+"/{playground}/{email}", userTO, "playground","unexistingUser@user.com");
+			this.restTemplate.put(this.usersUrl+"/{playground}/{email}", userTO, authUserPlayground,"unexistingUser@user.com");
 		}
 		catch(HttpClientErrorException ex){
 			HttpStatus httpStatus = ex.getStatusCode();
@@ -725,7 +725,7 @@ public class PlaygroundTests {
 
 		ElementEntity element = new ElementEntity();
 		element.setName("Bad Code");
-		element.setPlayground("playground");
+		element.setPlayground(authUserPlayground);
 
 		element.setType("FindTheBug");
 		element.setAttributes(attribute);
@@ -763,7 +763,7 @@ public class PlaygroundTests {
 
 		ElementEntity element = new ElementEntity();
 		element.setName("Bad Code");
-		element.setPlayground("playground");
+		element.setPlayground(authUserPlayground);
 
 		element.setType("FindTheBug");
 		element.setAttributes(attribute);
@@ -977,7 +977,7 @@ public class PlaygroundTests {
 	
 	private void createAuthroizedUser(Role role,String userEmail) throws Throwable {
 		UserEntity userEntity = new UserEntity(userEmail,authUserPlayground);
-		userEntity.setRole(role.name());
+		userEntity.setRole(role.name().toLowerCase());
 		int confirmCode = this.userService.addUser(userEntity).getConfirmCode();
 		userEntity.setConfirmCode(confirmCode);
 		this.userService.confirmUser(userEntity);

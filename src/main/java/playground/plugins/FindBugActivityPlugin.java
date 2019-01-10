@@ -18,6 +18,7 @@ import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
 import playground.logic.Entities.User.UserEntity;
+import playground.logic.Entities.User.UserId;
 import playground.logic.exceptions.notacceptable.InvalidAnswerException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
@@ -79,8 +80,12 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 		if("null".equals(correctAnswerAsString)) {
 			throw new InvalidAnswerException("Answer is invalid");
 		}
-
-		UserEntity user = userDao.findById(activityEntity.getPlayerEmail())
+		
+		UserId userId = new UserId();
+		userId.setEmail(activityEntity.getPlayerEmail());
+		userId.setPlayground(activityEntity.getPlayerPlayground());
+		
+		UserEntity user = userDao.findById(userId)
 				.orElseThrow(()->
 				new UserNotFoundException("No use with email: " + activityEntity.getPlayerEmail()));
 

@@ -103,7 +103,7 @@ public class JpaElementService implements ElementService{
 	@Transactional(readOnly=true)
 	@BasicAuthentication
 	@PlaygroundLogger
-	public ElementEntity getElementById(String userEmail,String userPlaygorund,String playground, String id) throws Throwable {
+	public ElementEntity getElementById(String userEmail,String userPlayground,String playground, String id) throws Throwable {
 
 		ElementId elementId = new ElementId();
 		elementId.setId(Integer.parseInt(id));
@@ -115,6 +115,7 @@ public class JpaElementService implements ElementService{
 		
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
+		user.setPlayground(userPlayground);
 		
 		Date date = null;
 		
@@ -136,6 +137,7 @@ public class JpaElementService implements ElementService{
 		
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
+		user.setPlayground(userPlayground);
 		
 		Date date = null;
 		
@@ -156,7 +158,7 @@ public class JpaElementService implements ElementService{
 	@Transactional(readOnly=true)
 	@BasicAuthentication
 	@PlaygroundLogger
-	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlaygorund,int x, int y, int distance,int size,int page) throws Throwable {
+	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlayground,int x, int y, int distance,int size,int page) throws Throwable {
 		
 		if(distance < 0) {
 			throw new InvalidFormatException("Invalid distance");
@@ -164,6 +166,7 @@ public class JpaElementService implements ElementService{
 		
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
+		user.setPlayground(userPlayground);
 		
 		Date date = null;
 		
@@ -189,11 +192,12 @@ public class JpaElementService implements ElementService{
 	@Transactional(readOnly=true)
 	@BasicAuthentication
 	@PlaygroundLogger
-	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlaygorund,String attributeName, String value,int size, int page) throws Throwable {		
+	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlayground,String attributeName, String value,int size, int page) throws Throwable {		
 		//String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
 		
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
+		user.setPlayground(userPlayground);
 		
 		Date date = null;
 		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {

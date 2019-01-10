@@ -18,6 +18,7 @@ import playground.dal.ElementDao;
 import playground.dal.UserDao;
 import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Element.ElementId;
+import playground.logic.Entities.User.UserId;
 import playground.logic.exceptions.internal.InternalErrorException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
@@ -44,8 +45,12 @@ public class GetMessagesPlugin implements ActivityPlugin {
 		Map<String,Object> attributes = activityEntity.getAttributes();
 		int page;
 		int size;
-
-		userDao.findById(activityEntity.getPlayerEmail())
+		
+		UserId userId = new UserId();
+		userId.setEmail(activityEntity.getPlayerEmail());
+		userId.setPlayground(activityEntity.getPlayerPlayground());
+		
+		userDao.findById(userId)
 		.orElseThrow(()-> new UserNotFoundException());
 		elementDao.findById(new ElementId(activityEntity.getElementPlayground(), 
 				Integer.parseInt(activityEntity.getElementId())))

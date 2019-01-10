@@ -10,7 +10,7 @@ import playground.aop.BasicAuthentication;
 import playground.aop.PlaygroundLogger;
 import playground.dal.UserDao;
 import playground.logic.Entities.User.UserEntity;
-
+import playground.logic.Entities.User.UserId;
 import playground.logic.exceptions.conflict.UserAlreadyExistsException;
 import playground.logic.exceptions.notacceptable.InvalidConfirmCodeException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
@@ -36,8 +36,11 @@ public class JpaUserService implements UserService{
 	@Transactional
 	@PlaygroundLogger
 	public UserEntity addUser(UserEntity user) throws Throwable {
-		if(!this.userDao.existsById(user.getEmail())) {
-			user.setPlayground(PlaygroundConsts.PLAYGROUND_NAME);
+		user.setPlayground(PlaygroundConsts.PLAYGROUND_NAME);
+		UserId userId = new UserId();
+		userId.setEmail(user.getEmail());
+		userId.setPlayground(user.getPlayground());
+		if(!this.userDao.existsById(userId)) {
 			int generatedCode = generateConfirmCode();
 			user.setConfirmCode(generatedCode);
 			UserEntity tempUser =  this.userDao.save(user);
@@ -54,7 +57,12 @@ public class JpaUserService implements UserService{
 	@Override
 	@PlaygroundLogger
 	public UserEntity confirmUser(UserEntity user) throws Throwable {
-		UserEntity userToVerify = this.userDao.findById(user.getEmail())
+		UserId userId = new UserId();
+		userId.setEmail(user.getEmail());
+		userId.setPlayground(user.getPlayground());
+		
+		
+		UserEntity userToVerify = this.userDao.findById(userId)
 				.orElseThrow(()->
 				new UserNotFoundException("User not found"));
 
@@ -77,7 +85,11 @@ public class JpaUserService implements UserService{
 	@PlaygroundLogger
 	public UserEntity loginUser(UserEntity user) throws Throwable {
 		
-		UserEntity userToVerify = this.userDao.findById(user.getEmail())
+		UserId userId = new UserId();
+		userId.setEmail(user.getEmail());
+		userId.setPlayground(user.getPlayground());
+		
+		UserEntity userToVerify = this.userDao.findById(userId)
 				.orElseThrow(()->
 				new UserNotFoundException("User not found"));
 

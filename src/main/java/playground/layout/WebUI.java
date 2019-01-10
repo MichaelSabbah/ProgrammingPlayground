@@ -23,7 +23,6 @@ import playground.logic.exceptions.internal.InternalErrorException;
 import playground.logic.exceptions.notacceptable.NotAcceptableException;
 import playground.logic.exceptions.notfound.NotFoundException;
 import playground.logic.exceptions.unauthorized.UnauthorizedException;
-import playground.logic.helpers.PlaygroundConsts;
 import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;
 import playground.logic.services.EmailService;
@@ -216,6 +215,16 @@ public class WebUI {
 
 		return returnValue;
 	}
+	
+	
+	@RequestMapping(
+			method=RequestMethod.GET,
+			path="/email/{userEmail}")
+	public void sendCode(
+			@PathVariable("userEmail")String userEmail) throws Throwable {
+		this.emailService.sendEmail(userEmail, "subject", "body");
+	}
+	
 	
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
