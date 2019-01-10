@@ -43,7 +43,7 @@ public class ShowSolutionPlugin implements ActivityPlugin{
 				}else { 
 					throw new UserNotFoundException("No user with email: " + activityEntity.getPlayerEmail());
 				}
-				String answerString=(String) map.get(PlaygroundConsts.ANSWER_KEY);
+				String answerString=map.get(PlaygroundConsts.ANSWER_KEY)+"";
 				answer.setAnswer(answerString);
 				
 				return answer;

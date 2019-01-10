@@ -76,7 +76,7 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 				.orElseThrow(() ->
 				new ElementNotFoundException("no element with playground: " + playground  + " and id: " + id));
 
-		String correctAnswerAsString = (String)element.getAttributes().get(PlaygroundConsts.ANSWER_KEY);
+		String correctAnswerAsString = element.getAttributes().get(PlaygroundConsts.ANSWER_KEY)+"";
 		if("null".equals(correctAnswerAsString)) {
 			throw new InvalidAnswerException("Answer is invalid");
 		}
