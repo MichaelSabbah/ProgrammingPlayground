@@ -43,12 +43,17 @@ public class JpaActivityService implements ActivityService {
 			int id = activityIdGeneratorDao.save(new ActivityIdGenerator()).getId();
 			activityEntity.setId(id);
 
-			activityDao.save(activityEntity);
+			
 
 			String className = "playground.plugins." + activityType + "Plugin";
 			Class<?> theClass = Class.forName(className);
 			ActivityPlugin activityPlugin = (ActivityPlugin) this.spring.getBean(theClass);
-			return activityPlugin.activate(activityEntity);
+			
+			Object tempObject = activityPlugin.activate(activityEntity);
+			
+			activityDao.save(activityEntity);
+			
+			return tempObject;
 		}
 		catch (ClassNotFoundException e) {
 			throw new ActivityTypeNotFoundException("NO_SUCH_ACTIVITY_TYPE");

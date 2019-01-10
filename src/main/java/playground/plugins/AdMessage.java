@@ -1,6 +1,6 @@
 package playground.plugins;
 
-import java.sql.Date;
+import java.util.Date;
 public class AdMessage {
 
 	private String message;
@@ -22,36 +22,25 @@ public class AdMessage {
 		return avatar;
 	}
 
-
-
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
 	}
-
 
 	public Date getCreated() {
 		return created;
 	}
 
-
-
 	public void setCreated(Date created) {
 		this.created = created;
 	}
-
-
 
 	public String getUserName() {
 		return userName;
 	}
 
-
-
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
-
 
 	public String getMessage() {
 		return message;

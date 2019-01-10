@@ -8,6 +8,7 @@ public class PlaygroundConsts {
 	
 	//More attributes keys
 	public static final String ANSWER_KEY = "answer";
+	public static final String MESSAGE_CREATED_DATE_KEY = "created";
 
 	//Attributes keys
 	public static final String NAME_KEY = "name";

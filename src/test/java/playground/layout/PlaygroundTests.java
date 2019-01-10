@@ -79,7 +79,7 @@ public class PlaygroundTests {
 		this.usersUrl = "http://localhost:" + this.port + "/playground/users";
 		this.activitiesUrl = "http://localhost:" + this.port + "/playground/activities";
 		this.authManagerEmail = "manager@user.com";
-		this.authPlayerEmail = "sabbah49@gmail.com"; //"player@user.com";
+		this.authPlayerEmail = "player@user.com";
 		this.authUserPlayground = PlaygroundConsts.PLAYGROUND_NAME;
 		this.objectMapper = new ObjectMapper();
 
@@ -462,7 +462,7 @@ public class PlaygroundTests {
 
 		//When
 		NewUserForm newUserForm = new NewUserForm();
-		newUserForm.setEmail("sabbah49@gmail.com");
+		newUserForm.setEmail(authPlayerEmail);
 		newUserForm.setUsername("player");
 		newUserForm.setRole(Role.PLAYER.name());
 		newUserForm.setAvatar("smiley.jpg");
