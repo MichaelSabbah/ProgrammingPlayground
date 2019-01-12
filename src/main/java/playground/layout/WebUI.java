@@ -39,7 +39,6 @@ public class WebUI {
 	private ElementService elementService;
 	private UserService userService;
 	private ActivityService activityService;
-	private EmailService emailService;
 
 	@Autowired
 	public void setActivityService(ActivityService activityService) {
@@ -55,12 +54,6 @@ public class WebUI {
 	public void setUserService(UserService userService){
 		this.userService = userService;
 	}
-	
-	@Autowired
-	public void setEmailService(EmailService emailService){
-		this.emailService = emailService;
-	}
-
 	@RequestMapping(
 			method=RequestMethod.POST,
 			path="/playground/users",

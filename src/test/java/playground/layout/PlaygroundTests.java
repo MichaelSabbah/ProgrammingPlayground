@@ -424,7 +424,7 @@ public class PlaygroundTests {
 	}
 
 	@Test(expected=OKException.class)
-	public void  testGetAllElementsWithNonExistingElementValue() throws Throwable{
+	public void  testGetAllElementsWithNonExistingElementAttribute() throws Throwable{
 		//Given
 		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
 		createAuthroizedUser(Role.MANAGER,authManagerEmail);
