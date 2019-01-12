@@ -14,12 +14,6 @@ import playground.logic.Entities.Element.ElementId;
 
 public interface ElementDao extends PagingAndSortingRepository<ElementEntity, ElementId>{
 
-	public List<ElementEntity> findAllByJsonAttributesContainingAndExpirationDateAfter(
-			@Param("jsonAttribute") String jsonAttribute, 
-			@Param("expirationDate")Date date,
-			Pageable pageable);
-
-
 	public List<ElementEntity> findAllByNameEqualsAndExpirationDateAfter(
 			@Param("name") String name,
 			@Param("expirationDate")Date date,
