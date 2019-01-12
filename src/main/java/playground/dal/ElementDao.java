@@ -13,23 +13,23 @@ import playground.logic.Entities.Element.ElementEntity;
 import playground.logic.Entities.Element.ElementId;
 
 public interface ElementDao extends PagingAndSortingRepository<ElementEntity, ElementId>{
-	
+
 	public List<ElementEntity> findAllByJsonAttributesContainingAndExpirationDateAfter(
 			@Param("jsonAttribute") String jsonAttribute, 
 			@Param("expirationDate")Date date,
 			Pageable pageable);
-	
-	
+
+
 	public List<ElementEntity> findAllByNameEqualsAndExpirationDateAfter(
 			@Param("name") String name,
 			@Param("expirationDate")Date date,
 			Pageable pageable);
-	
+
 	public List<ElementEntity> findAllByTypeEqualsAndExpirationDateAfter(
 			@Param("type") String type,
 			@Param("expirationDate")Date date,
 			Pageable pageable);
-	
+
 	public Optional<ElementEntity> findByIdAndPlaygroundAndExpirationDateAfter(
 			@Param("id") int id,
 			@Param("playground") String playground,
@@ -42,7 +42,7 @@ public interface ElementDao extends PagingAndSortingRepository<ElementEntity, El
 			double yMax,
 			Date date,
 			Pageable pageable);
-	
+
 	public Page<ElementEntity> findAllByExpirationDateAfter( 
 			Date date,
 			Pageable pageable);

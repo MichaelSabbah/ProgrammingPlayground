@@ -70,7 +70,7 @@ public class UserEntity {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
 	@Id
 	@Column(name="playground", nullable=false)
 	public String getPlayground() {

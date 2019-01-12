@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailServiceImpl implements EmailService{
-	
+
 	private JavaMailSender mailSender;
-	
+
 	@Autowired
 	public EmailServiceImpl(JavaMailSender mailSender) {
 		this.mailSender = mailSender;
 	}
-	
+
 	@Override
 	public void sendEmail(String email, String mailMessageSubject, String mailMessageText) throws Throwable {
 		SimpleMailMessage mailMessage = new SimpleMailMessage();

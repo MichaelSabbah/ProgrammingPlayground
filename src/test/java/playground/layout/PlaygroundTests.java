@@ -39,8 +39,6 @@ import playground.plugins.AdMessage;
 import playground.plugins.Answer;
 import playground.plugins.Feedback;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 public class PlaygroundTests {
@@ -55,11 +53,10 @@ public class PlaygroundTests {
 	private String authManagerEmail;
 	private String authPlayerEmail;
 	private String authUserPlayground;
-	
+
 	private Date futureDate;
 	private Date pastDate;
-	private ObjectMapper objectMapper;
-	
+
 	private RestTemplate restTemplate;
 
 	@Autowired
@@ -81,12 +78,11 @@ public class PlaygroundTests {
 		this.authManagerEmail = "manager@user.com";
 		this.authPlayerEmail = "player@user.com";
 		this.authUserPlayground = PlaygroundConsts.PLAYGROUND_NAME;
-		this.objectMapper = new ObjectMapper();
 
-	    Calendar calendar = Calendar.getInstance();
-	    calendar.add(Calendar.DAY_OF_YEAR, 1);
-	   	this.futureDate = calendar.getTime();
-	   	this.pastDate = new Date(1);
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_YEAR, 1);
+		this.futureDate = calendar.getTime();
+		this.pastDate = new Date(1);
 	}
 
 	private void checkHttpStatusCode(HttpStatus current,HttpStatus expected,String exceptionMessage) throws Exception
@@ -111,7 +107,6 @@ public class PlaygroundTests {
 		this.elementService.cleanAll();
 		this.userService.cleanAll();
 	}
-
 
 	@Test
 	public void testServerIsBootingCorrectly() throws Exception {
@@ -292,7 +287,7 @@ public class PlaygroundTests {
 
 	@Test
 	public void testGetAllElementsWhileAllElementsAreExpired() throws Throwable{
-		
+
 		//Given
 		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
 		createAuthroizedUser(Role.MANAGER,authManagerEmail);
@@ -311,7 +306,7 @@ public class PlaygroundTests {
 		.isNotNull()
 		.hasSize(0);
 	}
-	
+
 	@Test(expected=OKException.class)
 	public void testGetAllElementsWithUnauthorizedUser() throws Throwable{
 
@@ -424,7 +419,7 @@ public class PlaygroundTests {
 	}
 
 	@Test(expected=OKException.class)
-	public void  testGetAllElementsWithNonExistingElementValue() throws Throwable{
+	public void  testGetAllElementsWithNonExistingElementAttribute() throws Throwable{
 		//Given
 		createAuthroizedUser(Role.PLAYER,authPlayerEmail);
 		createAuthroizedUser(Role.MANAGER,authManagerEmail);
@@ -668,7 +663,7 @@ public class PlaygroundTests {
 		moreAttributes = new HashMap<String,Object>();
 		moreAttributes.put(PlaygroundConsts.ANSWER_KEY, "a");
 		activityTO.setAttributes(moreAttributes);
-		
+
 		Feedback feedbackReturend  = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}",
 				activityTO, Feedback.class, authUserPlayground,authPlayerEmail);
 
@@ -676,7 +671,7 @@ public class PlaygroundTests {
 		assertThat(feedbackReturend)
 		.isNotNull()
 		.extracting("feedback")
-		.containsExactly("You right");
+		.containsExactly(PlaygroundConsts.GOOD_FEEDBACK);
 	}
 
 	@Test(expected=OKException.class)
@@ -719,7 +714,7 @@ public class PlaygroundTests {
 		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
 		createAuthroizedUser(Role.MANAGER, authManagerEmail);
 
-		Map<String, Object> attribute = new HashMap<>();
+		Map<String, Object> attribute = new HashMap<String,Object>();
 		attribute.put("code", "int x = 5; char a = 'w' + 'z'; double name = \"Hello\"; float num = 5.5;");
 		attribute.put("answer", "double name = \"Hello\"");
 
@@ -738,7 +733,7 @@ public class PlaygroundTests {
 		postActivity.setElementId(String.valueOf(temp.getId()));
 		postActivity.setElementPlayground(temp.getPlayground());
 
-		Map<String, Object> actTemp = new HashMap<>();
+		Map<String, Object> actTemp = new HashMap<String, Object>();
 		actTemp.put("answer", "double name = \"Hello\"");
 		postActivity.setAttributes(actTemp);
 
@@ -748,7 +743,7 @@ public class PlaygroundTests {
 		assertThat(feedback)
 		.isNotNull()
 		.extracting("feedback")
-		.containsExactly("You right");
+		.containsExactly(PlaygroundConsts.GOOD_FEEDBACK);
 	}
 
 	@Test(expected=OKException.class)
@@ -757,7 +752,7 @@ public class PlaygroundTests {
 		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
 		createAuthroizedUser(Role.MANAGER, authManagerEmail);
 
-		Map<String, Object> attribute = new HashMap<>();
+		Map<String, Object> attribute = new HashMap<String, Object>();
 		attribute.put("code", "int x = 5; char a = 'w' + 'z'; double name = \"Hello\"; float num = 5.5;");
 		attribute.put("answer", "double name = \"Hello\"");
 
@@ -801,7 +796,7 @@ public class PlaygroundTests {
 		postActivity.setType("PostNewMessage");
 		postActivity.setElementId(String.valueOf(temp.getId()));
 		postActivity.setElementPlayground(temp.getPlayground());
-		Map<String, Object> actTemp = new HashMap<>();
+		Map<String, Object> actTemp = new HashMap<String, Object>();
 		actTemp.put("message", "The message");
 		postActivity.setAttributes(actTemp);
 
@@ -834,7 +829,7 @@ public class PlaygroundTests {
 		activityEntity.setPlayerEmail(regularEmail);
 		activityEntity.setPlayerPlayground(authUserPlayground);
 		activityEntity.setType("PostNewMessage");
-		HashMap<String,Object> map = new HashMap();
+		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("message", "bla bla bla bla");
 		activityEntity.setAttributes(map);
 		activityService.invokeActivity(regularEmail, authUserPlayground, elementEntity.getId()+"", elementEntity.getPlayground(), activityEntity);
@@ -869,7 +864,7 @@ public class PlaygroundTests {
 		activityEntity.setElementId("1");
 		activityEntity.setElementPlayground(authUserPlayground);
 		try {
-			AdMessage[] messages = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}", activityEntity, AdMessage[].class, authUserPlayground, regularEmail);
+			this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}", activityEntity, AdMessage[].class, authUserPlayground, regularEmail);
 		}
 		catch (HttpClientErrorException ex) {
 			HttpStatus httpStatus = ex.getStatusCode();
@@ -895,7 +890,7 @@ public class PlaygroundTests {
 		postActivity.setType("PostNewMessage");
 		postActivity.setElementId(String.valueOf(temp.getId()));
 		postActivity.setElementPlayground(temp.getPlayground());
-		Map<String, Object> actTemp = new HashMap<>();
+		Map<String, Object> actTemp = new HashMap<String,Object>();
 		actTemp.put("message", "The message");
 		postActivity.setAttributes(actTemp);
 
@@ -974,7 +969,7 @@ public class PlaygroundTests {
 		}
 		//Then
 	}
-	
+
 	private void createAuthroizedUser(Role role,String userEmail) throws Throwable {
 		UserEntity userEntity = new UserEntity(userEmail,authUserPlayground);
 		userEntity.setRole(role.name().toLowerCase());

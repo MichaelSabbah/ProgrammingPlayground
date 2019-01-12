@@ -25,7 +25,6 @@ import playground.logic.exceptions.notfound.NotFoundException;
 import playground.logic.exceptions.unauthorized.UnauthorizedException;
 import playground.logic.services.ActivityService;
 import playground.logic.services.ElementService;
-import playground.logic.services.EmailService;
 import playground.logic.services.UserService;
 import playground.layout.NewUserForm;
 import playground.layout.to.ActivityTO;
@@ -54,7 +53,6 @@ public class WebUI {
 	public void setUserService(UserService userService){
 		this.userService = userService;
 	}
-	
 	@RequestMapping(
 			method=RequestMethod.POST,
 			path="/playground/users",
@@ -209,8 +207,8 @@ public class WebUI {
 
 		return returnValue;
 	}
-	
-	
+
+
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public ErrorMessage UnauthorizedExceptionHandler (UnauthorizedException ex) {

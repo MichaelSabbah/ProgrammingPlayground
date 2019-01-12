@@ -1,11 +1,11 @@
 package playground.plugins;
 
 public class Feedback {
-	
+
 	private String feedback;
-	
+
 	public Feedback() {}
-	
+
 	public Feedback(String feedback) {
 		this.feedback = feedback;
 	}
@@ -17,5 +17,4 @@ public class Feedback {
 	public void setFeedback(String feedback) {
 		this.feedback = feedback;
 	}
-
 }

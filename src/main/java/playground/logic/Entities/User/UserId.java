@@ -5,12 +5,12 @@ import java.io.Serializable;
 public class UserId implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	
+
 	protected String email;
 	protected String playground;
-	
+
 	public UserId() {}
-	
+
 	public UserId(String email, String playground) {
 		super();
 		this.email = email;

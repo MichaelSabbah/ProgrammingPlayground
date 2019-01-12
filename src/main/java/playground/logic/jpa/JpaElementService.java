@@ -49,7 +49,7 @@ public class JpaElementService implements ElementService{
 	@ManagerAuthentication
 	@PlaygroundLogger
 	public ElementEntity addNewElement(String userEmail,String userPlayground,ElementEntity element) {	
-		
+
 		int id = elementIdGeneratorDao.save(new ElementIdGenerator()).getId();
 		element.setPlayground(userPlayground);
 		element.setId(id);
@@ -111,12 +111,12 @@ public class JpaElementService implements ElementService{
 
 		ElementEntity element = this.elements.findById(elementId)
 				.orElseThrow(()->
-				 new ElementNotFoundException("No element with playground: " + playground + " and id: " + id));
-		
+				new ElementNotFoundException("No element with playground: " + playground + " and id: " + id));
+
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
 		user.setPlayground(userPlayground);
-		
+
 		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			if(element.getExpirationDate().compareTo(new Date()) > 0)
 				return element;
@@ -132,23 +132,23 @@ public class JpaElementService implements ElementService{
 	@BasicAuthentication
 	@PlaygroundLogger
 	public List<ElementEntity> getAllElements(String userEmail,String userPlayground,int size, int page) throws Throwable {
-		
+
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
 		user.setPlayground(userPlayground);
-		
+
 		Date date = null;
-		
+
 		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			date = new Date();
 		}else {
 			date = new Date(1);
 		}
-		
+
 		Page<ElementEntity> elementsReturned = this.elements.findAllByExpirationDateAfter(
 				date,
 				PageRequest.of(page, size, Direction.DESC, "name"));
-		
+
 		return elementsReturned.getContent();
 	}
 
@@ -157,29 +157,29 @@ public class JpaElementService implements ElementService{
 	@BasicAuthentication
 	@PlaygroundLogger
 	public List<ElementEntity> getElementsByDistance(String userEmail,String userPlayground,int x, int y, int distance,int size,int page) throws Throwable {
-		
+
 		if(distance < 0) {
 			throw new InvalidFormatException("Invalid distance");
 		}
-		
+
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
 		user.setPlayground(userPlayground);
-		
+
 		Date date = null;
-		
+
 		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			date = new Date();
 		}else {
 			date = new Date(1);
 		}
-		
+
 		List<ElementEntity> elementsReturned = this.elements.findAllByXBetweenAndYBetweenAndExpirationDateAfter(
 				x - distance, x + distance, y - distance, y + distance,
 				date,
 				PageRequest.of(page, size))
 				.getContent();
-		
+
 		if(elementsReturned.size() == 0) {
 			throw new ElementNotFoundException("No elements exist in this range");
 		}
@@ -191,34 +191,32 @@ public class JpaElementService implements ElementService{
 	@BasicAuthentication
 	@PlaygroundLogger
 	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlayground,String attributeName, String value,int size, int page) throws Throwable {		
-		//String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
-		
+
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
 		user.setPlayground(userPlayground);
-		
+
 		Date date = null;
 		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			date = new Date();
 		}else {
 			date = new Date(1);
 		}
-		
+
 		List<ElementEntity> elementsReturned;
-		
+
 		switch(attributeName) {
-			case PlaygroundConsts.NAME_KEY:
-				elementsReturned = this.elements.findAllByNameEqualsAndExpirationDateAfter(value,date, PageRequest.of(page, size));
-				break;
-			
-			case PlaygroundConsts.TYPE_KEY:
-				elementsReturned = 
-				this.elements.findAllByTypeEqualsAndExpirationDateAfter(value,date,PageRequest.of(page, size));
-				break;
-			
-			default:
-				//TODO - Michael - Think of using the 'getElementsByJsonAttributes' for the default option
-				throw new ElementNotFoundException("Element with this attribute name and value is not existing");
+		case PlaygroundConsts.NAME_KEY:
+			elementsReturned = this.elements.findAllByNameEqualsAndExpirationDateAfter(value,date, PageRequest.of(page, size));
+			break;
+
+		case PlaygroundConsts.TYPE_KEY:
+			elementsReturned = 
+			this.elements.findAllByTypeEqualsAndExpirationDateAfter(value,date,PageRequest.of(page, size));
+			break;
+
+		default:
+			throw new ElementNotFoundException("Element with this attribute name and value is not existing");
 		}
 
 		return elementsReturned;
@@ -229,6 +227,5 @@ public class JpaElementService implements ElementService{
 	@PlaygroundLogger
 	public void cleanAll() {
 		elements.deleteAll();
-
 	}
 }
