@@ -117,8 +117,6 @@ public class JpaElementService implements ElementService{
 		user.setEmail(userEmail);
 		user.setPlayground(userPlayground);
 		
-		Date date = null;
-		
 		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			if(element.getExpirationDate().compareTo(new Date()) > 0)
 				return element;

@@ -19,7 +19,6 @@ import playground.dal.UserDao;
 import playground.logic.Entities.Activity.ActivityEntity;
 import playground.logic.Entities.Element.ElementId;
 import playground.logic.Entities.User.UserId;
-import playground.logic.exceptions.internal.InternalErrorException;
 import playground.logic.exceptions.notfound.ElementNotFoundException;
 import playground.logic.exceptions.notfound.UserNotFoundException;
 import playground.logic.helpers.PlaygroundConsts;
