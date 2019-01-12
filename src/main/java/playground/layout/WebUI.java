@@ -217,15 +217,6 @@ public class WebUI {
 	}
 	
 	
-	@RequestMapping(
-			method=RequestMethod.GET,
-			path="/email/{userEmail}")
-	public void sendCode(
-			@PathVariable("userEmail")String userEmail) throws Throwable {
-		this.emailService.sendEmail(userEmail, "subject", "body");
-	}
-	
-	
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public ErrorMessage UnauthorizedExceptionHandler (UnauthorizedException ex) {

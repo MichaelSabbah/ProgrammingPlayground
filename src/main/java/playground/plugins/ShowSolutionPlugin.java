@@ -65,7 +65,7 @@ public class ShowSolutionPlugin implements ActivityPlugin{
 		elementId.setPlayground(playground);
 		elementId.setId(Integer.parseInt(id));
 
-		ElementEntity element = this.elements.findById(elementId)//this.elements.findByIdAndPlayground(Integer.parseInt(id), playground)
+		ElementEntity element = this.elements.findById(elementId)
 				.orElseThrow(()->
 				new ElementNotFoundException("No element with id: " + id));
 		return element;

@@ -33,4 +33,8 @@ public class PlaygroundConsts {
 	public static final int START_VERIFICATION_RANGE = 100000;
 	public static final int END_VERIFICATION_RANGE = 900000;
 	
+	//Feedback consts
+	public static final String GOOD_FEEDBACK = "good";
+	public static final String BAD_FEEDBACK = "bad";
+	
 }

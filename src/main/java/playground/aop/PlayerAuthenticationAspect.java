@@ -28,7 +28,7 @@ public class PlayerAuthenticationAspect {
 	public void playerRoleValidation(JoinPoint joinPoint, String email, String playground) throws Throwable{
 		List<UserEntity> user = userDao.findByEmailAndPlaygroundAndConfirmCodeAndRole(email, playground, -1, Role.PLAYER.name().toLowerCase());
 		if(user.size() == 0) {
-			throw new UnauthorizedUserException("This user is not palyer");
+			throw new UnauthorizedUserException("This user is not a palyer");
 		}
 	}
 }
