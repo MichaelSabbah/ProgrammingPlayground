@@ -93,10 +93,10 @@ public class FindBugActivityPlugin implements ActivityPlugin {
 		correctAnswer.setAnswer(correctAnswerAsString);
 
 		if(userAnswer.equals(correctAnswer)) {
-			feedback.setFeedback("You right");
+			feedback.setFeedback("good");
 			user.setPoints(user.getPoints() + PlaygroundConsts.MULTICHOICES_QUESTION_POINTS);
 		}else {
-			feedback.setFeedback("Wrong answer");
+			feedback.setFeedback("bad");
 			long userNewPoints = user.getPoints() - PlaygroundConsts.WRONG_ANSWER_POINTS;
 			if(userNewPoints < 0) {
 				user.setPoints(0);
