@@ -116,9 +116,7 @@ public class JpaElementService implements ElementService{
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
 		user.setPlayground(userPlayground);
-		
-		Date date = null;
-		
+
 		if(users.loginUser(user).getRole().equals(Role.PLAYER.name().toLowerCase())) {
 			if(element.getExpirationDate().compareTo(new Date()) > 0)
 				return element;
@@ -193,7 +191,6 @@ public class JpaElementService implements ElementService{
 	@BasicAuthentication
 	@PlaygroundLogger
 	public List<ElementEntity> getElementsByAttribute(String userEmail,String userPlayground,String attributeName, String value,int size, int page) throws Throwable {		
-		//String jsonAttribute = "\"" + attributeName + "\""  + ":" + "\"" + value + "\"";
 		
 		UserEntity user = new UserEntity();
 		user.setEmail(userEmail);
@@ -219,7 +216,6 @@ public class JpaElementService implements ElementService{
 				break;
 			
 			default:
-				//TODO - Michael - Think of using the 'getElementsByJsonAttributes' for the default option
 				throw new ElementNotFoundException("Element with this attribute name and value is not existing");
 		}
 
@@ -231,6 +227,5 @@ public class JpaElementService implements ElementService{
 	@PlaygroundLogger
 	public void cleanAll() {
 		elements.deleteAll();
-
 	}
 }

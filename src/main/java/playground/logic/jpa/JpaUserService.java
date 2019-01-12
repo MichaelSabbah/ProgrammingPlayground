@@ -36,6 +36,7 @@ public class JpaUserService implements UserService{
 	@Transactional
 	@PlaygroundLogger
 	public UserEntity addUser(UserEntity user) throws Throwable {
+		
 		user.setPlayground(PlaygroundConsts.PLAYGROUND_NAME);
 		UserId userId = new UserId();
 		userId.setEmail(user.getEmail());
@@ -57,10 +58,10 @@ public class JpaUserService implements UserService{
 	@Override
 	@PlaygroundLogger
 	public UserEntity confirmUser(UserEntity user) throws Throwable {
+		
 		UserId userId = new UserId();
 		userId.setEmail(user.getEmail());
 		userId.setPlayground(user.getPlayground());
-		
 		
 		UserEntity userToVerify = this.userDao.findById(userId)
 				.orElseThrow(()->

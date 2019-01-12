@@ -17,26 +17,17 @@ import playground.dal.ActivityDao;
 import playground.dal.ElementDao;
 import playground.dal.UserDao;
 import playground.logic.Entities.Activity.ActivityEntity;
-import playground.logic.Entities.Element.ElementId;
-import playground.logic.Entities.User.UserId;
-import playground.logic.exceptions.internal.InternalErrorException;
-import playground.logic.exceptions.notfound.ElementNotFoundException;
-import playground.logic.exceptions.notfound.UserNotFoundException;
 import playground.logic.helpers.PlaygroundConsts;
 
 @Component
 public class GetMessagesPlugin implements ActivityPlugin {
 
 	private ActivityDao activityDao;
-	private ElementDao elementDao;
-	private UserDao userDao;
 	private ObjectMapper objectMapper;
 
 	@Autowired
 	public GetMessagesPlugin(ActivityDao activityDao,ElementDao elementDao,UserDao userDao) {
 		this.activityDao = activityDao;
-		this.elementDao = elementDao;
-		this.userDao = userDao;
 		this.objectMapper = new ObjectMapper();
 	}
 
@@ -45,16 +36,6 @@ public class GetMessagesPlugin implements ActivityPlugin {
 		Map<String,Object> attributes = activityEntity.getAttributes();
 		int page;
 		int size;
-		
-		UserId userId = new UserId();
-		userId.setEmail(activityEntity.getPlayerEmail());
-		userId.setPlayground(activityEntity.getPlayerPlayground());
-		
-		userDao.findById(userId)
-		.orElseThrow(()-> new UserNotFoundException());
-		elementDao.findById(new ElementId(activityEntity.getElementPlayground(), 
-				Integer.parseInt(activityEntity.getElementId())))
-		.orElseThrow(()-> new ElementNotFoundException());
 
 		if(attributes.containsKey("page"))
 		{

@@ -1,6 +1,7 @@
 package playground.plugins;
 
 import java.util.Date;
+
 public class AdMessage {
 
 	private String message;
@@ -49,5 +50,4 @@ public class AdMessage {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
 }

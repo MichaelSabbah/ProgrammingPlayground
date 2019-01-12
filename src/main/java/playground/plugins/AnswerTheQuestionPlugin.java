@@ -72,10 +72,8 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 		elementId.setId(id);
 		elementId.setPlayground(playground);
 
-		ElementEntity element = elementDao.findById(elementId)
-				.orElseThrow(() ->
-				new ElementNotFoundException("no element with playground: " + playground  + " and id: " + id));
-
+		ElementEntity element = elementDao.findById(elementId).get();
+		
 		String correctAnswerAsString = element.getAttributes().get(PlaygroundConsts.ANSWER_KEY)+"";
 		if("null".equals(correctAnswerAsString)) {
 			throw new InvalidAnswerException("Answer is invalid");
@@ -84,9 +82,8 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 		UserId userId = new UserId();
 		userId.setEmail(activityEntity.getPlayerEmail());
 		userId.setPlayground(activityEntity.getPlayerPlayground());
-		UserEntity user = userDao.findById(userId)
-				.orElseThrow(()->
-				new UserNotFoundException("No use with email: " + activityEntity.getPlayerEmail()));
+		UserEntity user = userDao.findById(userId).get();
+
 		Answer correctAnswer = new Answer();
 		correctAnswer.setAnswer(correctAnswerAsString);
 
@@ -102,6 +99,7 @@ public class AnswerTheQuestionPlugin implements ActivityPlugin{
 				user.setPoints(userNewPoints);
 			}
 		}
+		
 		userDao.save(user);
 		return feedback;
 	}

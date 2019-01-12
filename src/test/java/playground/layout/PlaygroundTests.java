@@ -39,8 +39,6 @@ import playground.plugins.AdMessage;
 import playground.plugins.Answer;
 import playground.plugins.Feedback;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 public class PlaygroundTests {
@@ -58,7 +56,6 @@ public class PlaygroundTests {
 	
 	private Date futureDate;
 	private Date pastDate;
-	private ObjectMapper objectMapper;
 	
 	private RestTemplate restTemplate;
 
@@ -81,7 +78,6 @@ public class PlaygroundTests {
 		this.authManagerEmail = "manager@user.com";
 		this.authPlayerEmail = "player@user.com";
 		this.authUserPlayground = PlaygroundConsts.PLAYGROUND_NAME;
-		this.objectMapper = new ObjectMapper();
 
 	    Calendar calendar = Calendar.getInstance();
 	    calendar.add(Calendar.DAY_OF_YEAR, 1);
@@ -112,14 +108,13 @@ public class PlaygroundTests {
 		this.userService.cleanAll();
 	}
 
-
 	@Test
 	public void testServerIsBootingCorrectly() throws Exception {
 
 	}
 
 	//Elements tests
-
+	
 	@Test
 	public void testPostElementSuccessfully() throws Throwable{
 		//Given
@@ -676,7 +671,7 @@ public class PlaygroundTests {
 		assertThat(feedbackReturend)
 		.isNotNull()
 		.extracting("feedback")
-		.containsExactly("You right");
+		.containsExactly(PlaygroundConsts.GOOD_FEEDBACK);
 	}
 
 	@Test(expected=OKException.class)
@@ -719,7 +714,7 @@ public class PlaygroundTests {
 		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
 		createAuthroizedUser(Role.MANAGER, authManagerEmail);
 
-		Map<String, Object> attribute = new HashMap<>();
+		Map<String, Object> attribute = new HashMap<String,Object>();
 		attribute.put("code", "int x = 5; char a = 'w' + 'z'; double name = \"Hello\"; float num = 5.5;");
 		attribute.put("answer", "double name = \"Hello\"");
 
@@ -738,7 +733,7 @@ public class PlaygroundTests {
 		postActivity.setElementId(String.valueOf(temp.getId()));
 		postActivity.setElementPlayground(temp.getPlayground());
 
-		Map<String, Object> actTemp = new HashMap<>();
+		Map<String, Object> actTemp = new HashMap<String, Object>();
 		actTemp.put("answer", "double name = \"Hello\"");
 		postActivity.setAttributes(actTemp);
 
@@ -748,7 +743,7 @@ public class PlaygroundTests {
 		assertThat(feedback)
 		.isNotNull()
 		.extracting("feedback")
-		.containsExactly("You right");
+		.containsExactly(PlaygroundConsts.GOOD_FEEDBACK);
 	}
 
 	@Test(expected=OKException.class)
@@ -757,7 +752,7 @@ public class PlaygroundTests {
 		createAuthroizedUser(Role.PLAYER, authPlayerEmail);
 		createAuthroizedUser(Role.MANAGER, authManagerEmail);
 
-		Map<String, Object> attribute = new HashMap<>();
+		Map<String, Object> attribute = new HashMap<String, Object>();
 		attribute.put("code", "int x = 5; char a = 'w' + 'z'; double name = \"Hello\"; float num = 5.5;");
 		attribute.put("answer", "double name = \"Hello\"");
 
@@ -801,7 +796,7 @@ public class PlaygroundTests {
 		postActivity.setType("PostNewMessage");
 		postActivity.setElementId(String.valueOf(temp.getId()));
 		postActivity.setElementPlayground(temp.getPlayground());
-		Map<String, Object> actTemp = new HashMap<>();
+		Map<String, Object> actTemp = new HashMap<String, Object>();
 		actTemp.put("message", "The message");
 		postActivity.setAttributes(actTemp);
 
@@ -834,7 +829,7 @@ public class PlaygroundTests {
 		activityEntity.setPlayerEmail(regularEmail);
 		activityEntity.setPlayerPlayground(authUserPlayground);
 		activityEntity.setType("PostNewMessage");
-		HashMap<String,Object> map = new HashMap();
+		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("message", "bla bla bla bla");
 		activityEntity.setAttributes(map);
 		activityService.invokeActivity(regularEmail, authUserPlayground, elementEntity.getId()+"", elementEntity.getPlayground(), activityEntity);
@@ -869,7 +864,7 @@ public class PlaygroundTests {
 		activityEntity.setElementId("1");
 		activityEntity.setElementPlayground(authUserPlayground);
 		try {
-			AdMessage[] messages = this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}", activityEntity, AdMessage[].class, authUserPlayground, regularEmail);
+			this.restTemplate.postForObject(this.activitiesUrl+"/{userPlayground}/{email}", activityEntity, AdMessage[].class, authUserPlayground, regularEmail);
 		}
 		catch (HttpClientErrorException ex) {
 			HttpStatus httpStatus = ex.getStatusCode();
@@ -895,7 +890,7 @@ public class PlaygroundTests {
 		postActivity.setType("PostNewMessage");
 		postActivity.setElementId(String.valueOf(temp.getId()));
 		postActivity.setElementPlayground(temp.getPlayground());
-		Map<String, Object> actTemp = new HashMap<>();
+		Map<String, Object> actTemp = new HashMap<String,Object>();
 		actTemp.put("message", "The message");
 		postActivity.setAttributes(actTemp);
 
